@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Screen Signal — How Much of Your Life is Spent on Your Phone?</title>
-  <meta name="description" content="Screen Signal assesses your smartphone addiction risk, calculates lifetime hours lost to screens, reveals your digital archetype, and creates a tailored digital reset protocol.">
+  <title>Screen Signal — AI Behavioral Screen Analytics</title>
+  <meta name="description" content="Screen Signal is a modern SaaS dashboard to assess smartphone addiction risk, visualize habit drivers, and track your digital detox protocol.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      /* Curated Teal Accent System (Strict Single Accent) */
+      /* Curated Teal Palette */
       --teal-50: #f0fdfa;
       --teal-100: #ccfbf1;
       --teal-200: #99f6e4;
@@ -23,13 +23,13 @@
       --teal-900: #134e4a;
       --teal-950: #042f2e;
 
-      /* Deep Slate Surface Hierarchy */
+      /* Deep Slate Layout Hierarchy */
       --bg-canvas: #070a0f;
-      --bg-surface: #0e141e;
-      --bg-card: #131c28;
-      --bg-card-hover: #192535;
+      --bg-sidebar: #0b0f17;
+      --bg-surface: #0f1622;
+      --bg-card: #131d2b;
+      --bg-card-hover: #182436;
       --bg-input: #090e15;
-      --bg-glass: rgba(19, 28, 40, 0.75);
 
       /* Typography */
       --text-white: #ffffff;
@@ -38,581 +38,472 @@
       --text-muted: #64748b;
       --text-dim: #475569;
 
-      /* Borders & Glows */
+      /* Borders & Glow */
       --border-subtle: #1e293b;
-      --border-card: rgba(255, 255, 255, 0.07);
+      --border-card: rgba(255, 255, 255, 0.08);
       --border-teal: rgba(20, 184, 166, 0.3);
-      --border-teal-glow: rgba(45, 212, 191, 0.5);
+      --border-teal-active: rgba(45, 212, 191, 0.6);
       --teal-glow: rgba(20, 184, 166, 0.25);
-      --teal-glow-sm: 0 0 20px rgba(20, 184, 166, 0.2);
 
       /* Semantic Tints */
       --risk-low: #10b981;
       --risk-mod: #f59e0b;
       --risk-high: #f43f5e;
 
-      /* Curves */
+      /* Metrics */
+      --sidebar-width: 260px;
       --radius-sm: 8px;
       --radius-md: 12px;
-      --radius-lg: 18px;
-      --radius-xl: 24px;
+      --radius-lg: 16px;
       --radius-pill: 9999px;
 
-      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-sans: 'Plus Jakarta Sans', sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       background-color: var(--bg-canvas);
       color: var(--text-primary);
       font-family: var(--font-sans);
-      line-height: 1.6;
       min-height: 100vh;
+      display: flex;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
-      background-image: 
-        radial-gradient(circle at 15% 10%, rgba(20, 184, 166, 0.09) 0%, transparent 45%),
-        radial-gradient(circle at 85% 55%, rgba(13, 148, 136, 0.07) 0%, transparent 40%),
-        radial-gradient(circle at 50% 90%, rgba(4, 47, 46, 0.15) 0%, transparent 50%);
-      background-attachment: fixed;
-    }
-
-    .container {
-      max-width: 1240px;
-      margin: 0 auto;
-      padding: 0 24px;
     }
 
     /* -------------------------------------------------------------
-       NAVBAR (CLEAN, USER-FACING, ZERO DEV JARGON)
+       SIDEBAR NAVIGATION (FIXED LEFT PANEL)
     ------------------------------------------------------------- */
-    nav.navbar {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(7, 10, 15, 0.85);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border-card);
-      padding: 16px 0;
-    }
-
-    .nav-inner {
+    aside.app-sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border-card);
       display: flex;
-      align-items: center;
+      flex-direction: column;
       justify-content: space-between;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 50;
+      padding: 24px 16px;
+      user-select: none;
     }
 
-    .nav-brand {
+    .sidebar-top {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .sidebar-brand {
       display: flex;
       align-items: center;
       gap: 12px;
       text-decoration: none;
       color: var(--text-white);
+      padding: 0 4px;
     }
 
-    .brand-mark {
-      width: 40px;
-      height: 40px;
-      background: linear-gradient(135deg, var(--teal-600), var(--teal-400));
+    .brand-icon-box {
+      width: 38px;
+      height: 38px;
       border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--teal-600), var(--teal-400));
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: var(--teal-glow-sm);
+      box-shadow: 0 0 16px rgba(20, 184, 166, 0.35);
+      flex-shrink: 0;
     }
 
-    .brand-mark svg {
-      width: 22px;
-      height: 22px;
+    .brand-icon-box svg {
+      width: 20px;
+      height: 20px;
       stroke: #042f2e;
       stroke-width: 2.5;
       fill: none;
     }
 
-    .brand-text-wrap {
+    .brand-title-wrap {
       display: flex;
       flex-direction: column;
     }
 
-    .brand-title {
-      font-size: 1.18rem;
+    .brand-name {
+      font-size: 1.12rem;
       font-weight: 800;
       letter-spacing: -0.03em;
       color: var(--text-white);
     }
 
-    .brand-tagline {
-      font-size: 0.7rem;
+    .brand-sub {
+      font-size: 0.68rem;
       font-family: var(--font-mono);
       color: var(--teal-400);
       font-weight: 600;
       letter-spacing: 0.05em;
     }
 
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 28px;
-      list-style: none;
-    }
-
-    @media (max-width: 880px) {
-      .nav-links { display: none; }
-    }
-
-    .nav-links a {
-      color: var(--text-secondary);
-      text-decoration: none;
-      font-size: 0.9rem;
-      font-weight: 600;
-      transition: color 0.15s ease;
-    }
-
-    .nav-links a:hover {
-      color: var(--teal-300);
-    }
-
-    .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .privacy-pill {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.74rem;
-      font-weight: 600;
-      background: rgba(20, 184, 166, 0.1);
-      border: 1px solid var(--border-teal);
-      padding: 6px 14px;
-      border-radius: var(--radius-pill);
-      color: var(--teal-300);
-    }
-
-    .btn-nav-cta {
-      background: var(--teal-400);
-      color: #042f2e;
-      padding: 8px 18px;
-      border-radius: var(--radius-pill);
-      font-size: 0.85rem;
-      font-weight: 700;
-      text-decoration: none;
-      transition: all 0.15s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .btn-nav-cta:hover {
-      background: var(--teal-300);
-      box-shadow: 0 0 16px rgba(45, 212, 191, 0.45);
-      transform: translateY(-1px);
-    }
-
-    /* -------------------------------------------------------------
-       HERO SECTION (HOOK & ENGAGEMENT)
-    ------------------------------------------------------------- */
-    header.hero {
-      padding: 64px 0 50px;
-      text-align: center;
-      position: relative;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 16px;
-      border-radius: var(--radius-pill);
-      background: rgba(20, 184, 166, 0.1);
-      border: 1px solid var(--border-teal);
-      color: var(--teal-300);
-      font-size: 0.82rem;
-      font-weight: 600;
-      margin-bottom: 20px;
-    }
-
-    .hero-title {
-      font-size: 3.5rem;
-      font-weight: 800;
-      letter-spacing: -0.04em;
-      line-height: 1.15;
-      color: var(--text-white);
-      max-width: 900px;
-      margin: 0 auto 20px;
-    }
-
-    .hero-title span.accent {
-      background: linear-gradient(135deg, #ffffff 20%, var(--teal-300) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .hero-subtitle {
-      font-size: 1.15rem;
-      color: var(--text-secondary);
-      max-width: 740px;
-      margin: 0 auto 34px;
-      line-height: 1.65;
-    }
-
-    .hero-cta-group {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-bottom: 48px;
-    }
-
-    .btn-hero-primary {
-      background: var(--teal-400);
-      color: #042f2e;
-      font-weight: 700;
-      font-size: 1rem;
-      padding: 13px 32px;
-      border-radius: var(--radius-pill);
-      text-decoration: none;
-      box-shadow: 0 0 25px rgba(45, 212, 191, 0.35);
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn-hero-primary:hover {
-      background: var(--teal-300);
-      transform: translateY(-2px);
-      box-shadow: 0 0 35px rgba(45, 212, 191, 0.55);
-    }
-
-    .btn-hero-secondary {
-      background: var(--bg-surface);
-      color: var(--text-primary);
-      font-weight: 600;
-      font-size: 1rem;
-      padding: 13px 26px;
-      border-radius: var(--radius-pill);
-      text-decoration: none;
-      border: 1px solid var(--border-subtle);
-      transition: all 0.2s ease;
-    }
-
-    .btn-hero-secondary:hover {
-      border-color: var(--border-teal);
-      color: var(--teal-300);
-      background: var(--bg-card);
-    }
-
-    /* Reality Check Cards */
-    .hero-fact-cards {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      max-width: 960px;
-      margin: 0 auto;
-    }
-
-    @media (max-width: 768px) {
-      .hero-title { font-size: 2.3rem; }
-      .hero-fact-cards { grid-template-columns: 1fr; }
-    }
-
-    .fact-card {
-      background: var(--bg-glass);
-      border: 1px solid var(--border-card);
-      border-radius: var(--radius-lg);
-      padding: 20px;
+    /* Navigation Links */
+    .sidebar-nav {
       display: flex;
       flex-direction: column;
       gap: 6px;
+      list-style: none;
+    }
+
+    .nav-section-title {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0 12px 6px;
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-secondary);
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
       text-align: left;
-      backdrop-filter: blur(12px);
-      border-left: 3px solid var(--teal-500);
+      transition: all 0.15s ease;
     }
 
-    .fact-title {
-      font-size: 0.82rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
+    .nav-btn svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      flex-shrink: 0;
+    }
+
+    .nav-btn:hover {
+      background: var(--bg-card);
       color: var(--teal-300);
+      border-color: rgba(20, 184, 166, 0.15);
     }
 
-    .fact-number {
-      font-size: 1.8rem;
-      font-weight: 800;
+    .nav-btn.active {
+      background: rgba(20, 184, 166, 0.12);
+      border-color: var(--border-teal);
+      color: var(--teal-300);
+      box-shadow: 0 0 14px rgba(20, 184, 166, 0.15);
+    }
+
+    /* Sidebar Footer / Mini Status */
+    .sidebar-footer {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .mini-status-card {
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .mini-status-title {
+      font-size: 0.68rem;
       font-family: var(--font-mono);
-      color: var(--text-white);
-      letter-spacing: -0.02em;
-    }
-
-    .fact-desc {
-      font-size: 0.82rem;
-      color: var(--text-secondary);
-      line-height: 1.45;
-    }
-
-    /* -------------------------------------------------------------
-       SECTION COMMON HEADERS
-    ------------------------------------------------------------- */
-    .section-header {
-      text-align: center;
-      margin-bottom: 36px;
-    }
-
-    .section-eyebrow {
-      font-family: var(--font-mono);
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: var(--teal-400);
+      color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.12em;
-      margin-bottom: 8px;
+      letter-spacing: 0.05em;
     }
 
-    .section-title {
-      font-size: 2.3rem;
+    .mini-status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mini-score-val {
+      font-size: 1.25rem;
       font-weight: 800;
-      letter-spacing: -0.03em;
+      font-family: var(--font-mono);
       color: var(--text-white);
-      margin-bottom: 12px;
     }
 
-    .section-description {
-      font-size: 1.02rem;
-      color: var(--text-secondary);
-      max-width: 660px;
-      margin: 0 auto;
+    .mini-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      text-transform: uppercase;
+    }
+
+    .mini-badge.low { background: rgba(16, 185, 129, 0.15); color: var(--risk-low); }
+    .mini-badge.moderate { background: rgba(245, 158, 11, 0.15); color: var(--risk-mod); }
+    .mini-badge.high { background: rgba(244, 63, 94, 0.15); color: var(--risk-high); }
+
+    .private-tag {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 4px;
     }
 
     /* -------------------------------------------------------------
-       INTERACTIVE ANALYZER (CORE APPLICATION)
+       MAIN WORKSPACE (TABBED VIEWS)
     ------------------------------------------------------------- */
-    section.analyzer-section {
-      padding: 50px 0 70px;
-    }
-
-    .analyzer-layout {
-      display: grid;
-      grid-template-columns: 1.15fr 1fr;
-      gap: 32px;
-      align-items: start;
-    }
-
-    @media (max-width: 980px) {
-      .analyzer-layout { grid-template-columns: 1fr; }
-    }
-
-    /* Left Card: Input Studio */
-    .app-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-card);
-      border-radius: var(--radius-xl);
-      padding: 32px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+    main.app-main {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      padding: 28px 36px;
+      max-width: 1200px;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       gap: 24px;
     }
 
-    .app-card-header {
+    @media (max-width: 900px) {
+      aside.app-sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        border-right: none;
+        border-bottom: 1px solid var(--border-card);
+      }
+      main.app-main { margin-left: 0; padding: 20px 16px; }
+      body { flex-direction: column; }
+    }
+
+    /* Main Header Bar */
+    .workspace-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding-bottom: 18px;
       border-bottom: 1px solid var(--border-subtle);
-      padding-bottom: 16px;
     }
 
-    .app-card-title {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--text-white);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .app-card-title svg {
-      width: 20px;
-      height: 20px;
-      stroke: var(--teal-400);
-      fill: none;
-    }
-
-    .live-chip {
-      font-family: var(--font-mono);
-      font-size: 0.74rem;
-      color: var(--teal-300);
-      background: rgba(20, 184, 166, 0.12);
-      padding: 4px 10px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border-teal);
-      font-weight: 600;
-    }
-
-    /* Presets Box */
-    .presets-box {
-      background: var(--bg-input);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 16px;
+    .workspace-heading-wrap {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 2px;
     }
 
-    .presets-header-title {
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--text-muted);
+    .workspace-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text-white);
     }
 
-    .preset-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-    }
-
-    @media (max-width: 600px) {
-      .preset-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-
-    .preset-btn {
-      background: var(--bg-card);
-      border: 1px solid var(--border-card);
+    .workspace-subtitle {
+      font-size: 0.88rem;
       color: var(--text-secondary);
-      border-radius: var(--radius-sm);
-      padding: 12px 8px;
-      font-size: 0.8rem;
+    }
+
+    .preset-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      padding: 6px 10px;
+      border-radius: var(--radius-pill);
+    }
+
+    .preset-label-mini {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      padding-left: 4px;
+    }
+
+    .preset-chip {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-secondary);
+      padding: 5px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 0.78rem;
       font-weight: 600;
       cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 5px;
       transition: all 0.15s ease;
-      text-align: center;
     }
 
-    .preset-btn:hover {
-      background: var(--teal-950);
-      border-color: var(--teal-700);
-      color: var(--teal-200);
+    .preset-chip:hover {
+      color: var(--teal-300);
+      background: var(--bg-card);
     }
 
-    .preset-btn.active {
+    .preset-chip.active {
       background: var(--teal-900);
-      border-color: var(--teal-400);
+      border-color: var(--teal-500);
       color: var(--teal-100);
-      box-shadow: 0 0 14px rgba(20, 184, 166, 0.35);
+      box-shadow: 0 0 10px rgba(20, 184, 166, 0.3);
     }
 
-    .preset-btn .preset-icon {
-      font-size: 1.15rem;
+    /* Tab View Containers */
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.15s ease;
     }
 
-    /* Sliders List */
-    .sliders-collection {
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(3px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* -------------------------------------------------------------
+       VIEW 1: HABIT ASSESSMENT
+    ------------------------------------------------------------- */
+    .assessment-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 1000px) {
+      .assessment-grid { grid-template-columns: 1fr; }
+    }
+
+    .panel-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      padding: 24px;
       display: flex;
       flex-direction: column;
       gap: 20px;
     }
 
-    .slider-control-card {
+    .panel-header {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-white);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .panel-header .tag {
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      color: var(--teal-300);
+      background: rgba(20, 184, 166, 0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border-teal);
+    }
+
+    /* Sliders List */
+    .sliders-vertical {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .slider-item-card {
       background: var(--bg-input);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-md);
-      padding: 16px 18px;
+      padding: 14px 16px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
       transition: border-color 0.15s ease;
     }
 
-    .slider-control-card:hover {
+    .slider-item-card:hover {
       border-color: var(--border-teal);
     }
 
-    .slider-top-row {
+    .slider-meta-head {
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    .slider-info {
+    .slider-title-group {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
-    .slider-icon-bubble {
-      width: 34px;
-      height: 34px;
+    .slider-icon-avatar {
+      width: 32px;
+      height: 32px;
       border-radius: var(--radius-sm);
       background: rgba(20, 184, 166, 0.1);
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--teal-300);
+      flex-shrink: 0;
     }
 
-    .slider-icon-bubble svg {
-      width: 18px;
-      height: 18px;
+    .slider-icon-avatar svg {
+      width: 17px;
+      height: 17px;
       stroke: currentColor;
       fill: none;
       stroke-width: 2;
     }
 
-    .slider-text-group {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .slider-label-name {
-      font-size: 0.94rem;
+    .slider-name {
+      font-size: 0.9rem;
       font-weight: 700;
       color: var(--text-white);
     }
 
-    .slider-subhint {
-      font-size: 0.72rem;
+    .slider-subtitle {
+      font-size: 0.7rem;
       color: var(--text-muted);
     }
 
-    .slider-badge-val {
+    .slider-val-tag {
       font-family: var(--font-mono);
-      font-size: 1rem;
+      font-size: 0.92rem;
       font-weight: 700;
       color: var(--teal-300);
       background: rgba(20, 184, 166, 0.12);
       border: 1px solid var(--border-teal);
-      padding: 4px 12px;
-      border-radius: var(--radius-sm);
-      min-width: 82px;
+      padding: 3px 10px;
+      border-radius: 4px;
       text-align: right;
+      min-width: 78px;
     }
 
     /* Range Input Customization */
     input[type=range] {
       -webkit-appearance: none;
       width: 100%;
-      height: 7px;
+      height: 6px;
       background: #1e293b;
       border-radius: var(--radius-pill);
       outline: none;
@@ -622,83 +513,48 @@
     input[type=range]::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       border-radius: 50%;
       background: var(--teal-400);
       border: 3px solid #042f2e;
       cursor: pointer;
-      box-shadow: 0 0 12px rgba(45, 212, 191, 0.6);
-      transition: transform 0.1s ease, background 0.15s ease;
+      box-shadow: 0 0 10px rgba(45, 212, 191, 0.5);
+      transition: transform 0.1s ease;
     }
 
     input[type=range]::-webkit-slider-thumb:hover {
       transform: scale(1.2);
-      background: var(--teal-300);
     }
 
-    input[type=range]::-moz-range-thumb {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: var(--teal-400);
-      border: 3px solid #042f2e;
-      cursor: pointer;
-      box-shadow: 0 0 12px rgba(45, 212, 191, 0.6);
-    }
-
-    .range-extremes {
+    .range-limits {
       display: flex;
       justify-content: space-between;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       color: var(--text-dim);
       font-family: var(--font-mono);
     }
 
-    /* Right Card: Diagnostic Dashboard */
-    .diagnostic-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-card);
-      border-radius: var(--radius-xl);
-      padding: 32px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
-      display: flex;
-      flex-direction: column;
-      gap: 22px;
-    }
-
-    .hero-score-box {
-      background: linear-gradient(135deg, rgba(19, 28, 40, 0.85), rgba(9, 14, 21, 0.95));
+    /* Diagnostic Score Display */
+    .score-hero-container {
+      background: linear-gradient(135deg, rgba(19, 29, 43, 0.9), rgba(9, 14, 21, 0.95));
       border: 1px solid var(--border-teal);
-      border-radius: var(--radius-lg);
-      padding: 24px;
+      border-radius: var(--radius-md);
+      padding: 20px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      gap: 20px;
-      position: relative;
-      overflow: hidden;
+      align-items: center;
+      gap: 16px;
     }
 
-    .hero-score-box::after {
-      content: '';
-      position: absolute;
-      top: -50px;
-      right: -50px;
-      width: 140px;
-      height: 140px;
-      background: radial-gradient(circle, rgba(20, 184, 166, 0.2), transparent 70%);
-      pointer-events: none;
-    }
-
-    .score-summary-left {
+    .score-hero-left {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
 
-    .score-eyebrow {
-      font-size: 0.75rem;
+    .score-label-cap {
+      font-size: 0.72rem;
       font-family: var(--font-mono);
       font-weight: 600;
       color: var(--text-muted);
@@ -706,69 +562,55 @@
       letter-spacing: 0.05em;
     }
 
-    .score-number-group {
+    .score-number-row {
       display: flex;
       align-items: baseline;
-      gap: 6px;
+      gap: 4px;
     }
 
-    .score-big-num {
-      font-size: 3.8rem;
+    .score-big {
+      font-size: 3.4rem;
       font-weight: 800;
       font-family: var(--font-mono);
       line-height: 1;
-      letter-spacing: -0.04em;
       color: var(--text-white);
+      letter-spacing: -0.04em;
     }
 
-    .score-denominator {
-      font-size: 1.2rem;
+    .score-scale {
+      font-size: 1.1rem;
       color: var(--text-dim);
       font-weight: 600;
     }
 
-    .risk-badge-pill {
+    .risk-pill {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 6px 16px;
+      gap: 6px;
+      padding: 4px 14px;
       border-radius: var(--radius-pill);
-      font-size: 0.82rem;
+      font-size: 0.78rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.04em;
       width: fit-content;
     }
 
-    .risk-badge-pill.low {
-      background: rgba(16, 185, 129, 0.15);
-      color: #34d399;
-      border: 1px solid rgba(16, 185, 129, 0.35);
-    }
+    .risk-pill.low { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35); }
+    .risk-pill.moderate { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35); }
+    .risk-pill.high { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.35); }
 
-    .risk-badge-pill.moderate {
-      background: rgba(245, 158, 11, 0.15);
-      color: #fbbf24;
-      border: 1px solid rgba(245, 158, 11, 0.35);
-    }
-
-    .risk-badge-pill.high {
-      background: rgba(244, 63, 94, 0.15);
-      color: #fb7185;
-      border: 1px solid rgba(244, 63, 94, 0.35);
-    }
-
-    .status-dot-indicator {
-      width: 8px;
-      height: 8px;
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
       background: currentColor;
     }
 
     /* Circular SVG Gauge */
-    .gauge-wrapper {
-      width: 120px;
-      height: 120px;
+    .gauge-unit {
+      width: 105px;
+      height: 105px;
       position: relative;
       display: flex;
       align-items: center;
@@ -776,279 +618,219 @@
       flex-shrink: 0;
     }
 
-    .gauge-svg {
+    .gauge-unit svg {
       width: 100%;
       height: 100%;
       transform: rotate(-90deg);
     }
 
-    .gauge-bg-ring {
-      fill: none;
-      stroke: #1e293b;
-      stroke-width: 9;
-    }
-
-    .gauge-active-ring {
+    .gauge-bg { fill: none; stroke: #1e293b; stroke-width: 8; }
+    .gauge-prog {
       fill: none;
       stroke: var(--teal-400);
-      stroke-width: 9;
+      stroke-width: 8;
       stroke-linecap: round;
       transition: stroke-dashoffset 0.25s ease, stroke 0.25s ease;
     }
 
     .gauge-caption {
       position: absolute;
-      text-align: center;
       font-family: var(--font-mono);
       font-size: 0.95rem;
       font-weight: 700;
       color: var(--teal-300);
     }
 
-    /* Dynamic Archetype Persona Box */
-    .archetype-box {
+    /* Archetype Card */
+    .archetype-strip {
       background: var(--bg-input);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-md);
-      padding: 16px;
+      padding: 14px 16px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 4px;
     }
 
-    .archetype-header-row {
+    .archetype-head-row {
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
     }
 
-    .archetype-tag {
-      font-size: 0.72rem;
+    .archetype-prefix {
+      font-size: 0.7rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       color: var(--teal-400);
     }
 
-    .archetype-name {
-      font-size: 1.1rem;
+    .archetype-title {
+      font-size: 1.05rem;
       font-weight: 800;
       color: var(--text-white);
     }
 
-    .archetype-desc {
-      font-size: 0.84rem;
+    .archetype-explanation {
+      font-size: 0.82rem;
       color: var(--text-secondary);
       line-height: 1.45;
     }
 
-    /* Lifetime Reality Check Banner */
-    .reality-check-banner {
-      background: rgba(20, 184, 166, 0.08);
-      border: 1px solid var(--border-teal);
-      border-radius: var(--radius-md);
-      padding: 14px 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-    }
-
-    .reality-text-left {
+    /* Drivers List */
+    .drivers-block {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 10px;
     }
 
-    .reality-heading {
+    .drivers-head {
+      display: flex;
+      justify-content: space-between;
       font-size: 0.8rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--teal-300);
-    }
-
-    .reality-sub {
-      font-size: 0.82rem;
-      color: var(--text-secondary);
-    }
-
-    .reality-stat-highlight {
-      font-family: var(--font-mono);
-      font-size: 1.45rem;
-      font-weight: 800;
-      color: var(--teal-200);
-      white-space: nowrap;
-    }
-
-    /* Feature Contributions Chart */
-    .contributions-panel {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .panel-header-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--border-subtle);
-      padding-bottom: 8px;
-      font-size: 0.85rem;
-      color: var(--text-muted);
       font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 6px;
     }
 
-    .contrib-items-list {
+    .driver-item {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 4px;
     }
 
-    .contrib-entry {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .contrib-meta-row {
+    .driver-meta {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      font-size: 0.84rem;
+      font-size: 0.8rem;
     }
 
-    .contrib-label-left {
+    .driver-name {
       font-weight: 600;
       color: var(--text-white);
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
-    .contrib-badge-tag {
-      font-size: 0.68rem;
+    .driver-tag {
+      font-size: 0.65rem;
       font-family: var(--font-mono);
-      padding: 1px 6px;
-      border-radius: var(--radius-sm);
+      padding: 1px 5px;
+      border-radius: 3px;
       font-weight: 700;
     }
 
-    .contrib-badge-tag.lead {
-      background: rgba(20, 184, 166, 0.2);
-      color: var(--teal-300);
-      border: 1px solid var(--border-teal);
-    }
+    .driver-tag.top { background: rgba(20, 184, 166, 0.2); color: var(--teal-300); }
+    .driver-tag.sub { background: rgba(100, 116, 139, 0.15); color: var(--text-dim); }
 
-    .contrib-badge-tag.sub {
-      background: rgba(100, 116, 139, 0.15);
-      color: var(--text-dim);
-    }
+    .driver-val { font-family: var(--font-mono); font-size: 0.78rem; font-weight: 600; }
+    .driver-val.risk-up { color: var(--teal-300); }
+    .driver-val.risk-down { color: var(--text-dim); }
 
-    .contrib-val-right {
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      font-weight: 600;
-    }
+    .driver-bar-track { height: 6px; background: var(--bg-input); border-radius: var(--radius-pill); overflow: hidden; }
+    .driver-bar-fill { height: 100%; border-radius: var(--radius-pill); background: var(--teal); transition: width 0.2s; }
+    .driver-bar-fill.buffer { background: #334155; }
 
-    .contrib-val-right.risk-up { color: var(--teal-300); }
-    .contrib-val-right.risk-down { color: var(--text-dim); }
-
-    .contrib-track {
-      height: 8px;
-      background: var(--bg-input);
-      border-radius: var(--radius-pill);
-      overflow: hidden;
-    }
-
-    .contrib-fill-bar {
-      height: 100%;
-      border-radius: var(--radius-pill);
-      background: linear-gradient(90deg, var(--teal-700), var(--teal-400));
-      transition: width 0.2s ease;
-    }
-
-    .contrib-fill-bar.protective {
-      background: #334155;
-    }
-
-    /* Personalized Recommendations */
-    .recommendations-box {
+    /* Action Strategies */
+    .action-strategies-box {
       border-top: 1px solid var(--border-subtle);
-      padding-top: 18px;
+      padding-top: 16px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
 
-    .recs-title-bar {
-      font-size: 0.85rem;
+    .action-title {
+      font-size: 0.78rem;
       font-weight: 700;
       color: var(--teal-300);
       text-transform: uppercase;
       letter-spacing: 0.05em;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
-    .recs-cards-grid {
+    .action-cards-duo {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 10px;
     }
 
-    @media (max-width: 650px) {
-      .recs-cards-grid { grid-template-columns: 1fr; }
+    @media (max-width: 600px) {
+      .action-cards-duo { grid-template-columns: 1fr; }
     }
 
-    .rec-card-single {
+    .action-single-card {
       background: var(--bg-input);
-      border: 1px solid var(--border-subtle);
       border-left: 3px solid var(--teal-500);
-      border-radius: var(--radius-md);
-      padding: 14px;
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 4px;
     }
 
-    .rec-card-header {
-      font-size: 0.78rem;
+    .action-badge-name {
+      font-size: 0.72rem;
       font-weight: 700;
       color: var(--teal-300);
-      display: flex;
-      align-items: center;
-      gap: 6px;
       text-transform: uppercase;
     }
 
-    .rec-card-body {
-      font-size: 0.83rem;
+    .action-body-text {
+      font-size: 0.78rem;
       color: var(--text-secondary);
-      line-height: 1.45;
+      line-height: 1.4;
     }
 
     /* -------------------------------------------------------------
-       SECTION: 24-HOUR DAY ALLOCATION
+       VIEW 2: LIFETIME & 24H TIME AUDIT
     ------------------------------------------------------------- */
-    section.allocation-section {
-      padding: 70px 0;
-      border-top: 1px solid var(--border-card);
+    .audit-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
     }
 
-    .allocation-box {
+    @media (max-width: 800px) {
+      .audit-grid { grid-template-columns: 1fr; }
+    }
+
+    .big-stat-card {
       background: var(--bg-surface);
       border: 1px solid var(--border-card);
-      border-radius: var(--radius-xl);
-      padding: 32px;
+      border-radius: var(--radius-lg);
+      padding: 28px;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 16px;
     }
 
-    .allocation-bar-track {
-      height: 22px;
+    .stat-hero-number {
+      font-size: 3.2rem;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: var(--teal-300);
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+
+    .breakdown-bar-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .day-progress-bar {
+      height: 20px;
       background: var(--bg-input);
       border-radius: var(--radius-pill);
       display: flex;
@@ -1056,169 +838,170 @@
       border: 1px solid var(--border-subtle);
     }
 
-    .alloc-slice {
+    .slice-segment {
       height: 100%;
       transition: width 0.2s ease;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       font-family: var(--font-mono);
       font-weight: 700;
       color: #042f2e;
     }
 
-    .alloc-slice.sleep { background: #64748b; color: #ffffff; }
-    .alloc-slice.social { background: var(--teal-400); }
-    .alloc-slice.screen-other { background: var(--teal-700); color: #ffffff; }
-    .alloc-slice.life { background: #1e293b; color: var(--teal-300); }
+    .slice-segment.sleep { background: #64748b; color: #fff; }
+    .slice-segment.social { background: var(--teal-400); }
+    .slice-segment.other { background: var(--teal-700); color: #fff; }
+    .slice-segment.life { background: #1e293b; color: var(--teal-300); }
 
-    .alloc-legend-grid {
+    .alloc-summary-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
     }
 
-    @media (max-width: 700px) {
-      .alloc-legend-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-
-    .alloc-legend-item {
+    .alloc-item-box {
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 12px;
       display: flex;
       flex-direction: column;
       gap: 4px;
-      background: var(--bg-input);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 12px 14px;
     }
 
-    .alloc-legend-label {
-      font-size: 0.76rem;
+    .alloc-label {
+      font-size: 0.75rem;
       color: var(--text-muted);
       display: flex;
       align-items: center;
       gap: 6px;
     }
 
-    .legend-color-box {
-      width: 10px;
-      height: 10px;
-      border-radius: 2px;
-    }
+    .alloc-dot { width: 8px; height: 8px; border-radius: 2px; }
 
-    .alloc-legend-val {
+    .alloc-val-display {
       font-family: var(--font-mono);
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       font-weight: 700;
       color: var(--text-white);
     }
 
     /* -------------------------------------------------------------
-       SECTION: 7-DAY DIGITAL RESET PROTOCOL
+       VIEW 3: 7-DAY DETOX CHALLENGE
     ------------------------------------------------------------- */
-    section.protocol-section {
-      padding: 70px 0;
-      border-top: 1px solid var(--border-card);
+    .protocol-cards-wall {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
     }
 
-    .protocol-cards-grid {
+    @media (max-width: 900px) {
+      .protocol-cards-wall { grid-template-columns: 1fr; }
+    }
+
+    .challenge-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+
+    .challenge-card:hover {
+      border-color: var(--border-teal);
+      transform: translateY(-2px);
+    }
+
+    .challenge-card.completed {
+      border-color: var(--teal-500);
+      background: rgba(20, 184, 166, 0.05);
+    }
+
+    .challenge-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .day-tag-badge {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--teal-300);
+      background: rgba(20, 184, 166, 0.12);
+      border: 1px solid var(--border-teal);
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+    }
+
+    .custom-checkbox {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-input);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: transparent;
+      transition: 0.15s;
+    }
+
+    .challenge-card.completed .custom-checkbox {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #042f2e;
+    }
+
+    .challenge-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-white);
+    }
+
+    .challenge-card.completed .challenge-title {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .challenge-text {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+
+    /* -------------------------------------------------------------
+       VIEW 4: NEUROSCIENCE INSIGHTS
+    ------------------------------------------------------------- */
+    .science-insights-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 20px;
     }
 
     @media (max-width: 900px) {
-      .protocol-cards-grid { grid-template-columns: 1fr; }
+      .science-insights-grid { grid-template-columns: 1fr; }
     }
 
-    .protocol-step-card {
+    .science-card {
       background: var(--bg-surface);
       border: 1px solid var(--border-card);
-      border-radius: var(--radius-lg);
-      padding: 22px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      transition: transform 0.2s ease, border-color 0.2s ease;
-    }
-
-    .protocol-step-card:hover {
-      transform: translateY(-2px);
-      border-color: var(--border-teal);
-    }
-
-    .day-badge-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .day-pill {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      font-weight: 700;
-      background: rgba(20, 184, 166, 0.12);
-      border: 1px solid var(--border-teal);
-      color: var(--teal-300);
-      padding: 3px 10px;
-      border-radius: var(--radius-pill);
-    }
-
-    .challenge-tag {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-    }
-
-    .protocol-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--text-white);
-    }
-
-    .protocol-desc {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      line-height: 1.5;
-    }
-
-    /* -------------------------------------------------------------
-       SECTION: THE CLINICAL SCIENCE
-    ------------------------------------------------------------- */
-    section.science-section {
-      padding: 70px 0;
-      border-top: 1px solid var(--border-card);
-    }
-
-    .science-cards-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-    }
-
-    @media (max-width: 900px) {
-      .science-cards-grid { grid-template-columns: 1fr; }
-    }
-
-    .science-item-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-card);
-      border-radius: var(--radius-lg);
+      border-radius: var(--radius-md);
       padding: 24px;
       display: flex;
       flex-direction: column;
       gap: 12px;
-      transition: transform 0.2s ease, border-color 0.2s ease;
     }
 
-    .science-item-card:hover {
-      transform: translateY(-3px);
-      border-color: var(--border-teal);
-    }
-
-    .science-icon-head {
-      width: 42px;
-      height: 42px;
+    .science-card-icon {
+      width: 40px;
+      height: 40px;
       border-radius: var(--radius-sm);
       background: rgba(20, 184, 166, 0.1);
       display: flex;
@@ -1227,606 +1010,437 @@
       color: var(--teal-300);
     }
 
-    .science-icon-head svg {
-      width: 22px;
-      height: 22px;
+    .science-card-icon svg {
+      width: 20px;
+      height: 20px;
       stroke: currentColor;
       fill: none;
       stroke-width: 2;
     }
 
-    .science-card-title {
+    .science-heading {
       font-size: 1.05rem;
       font-weight: 700;
       color: var(--text-white);
     }
 
-    .science-card-text {
+    .science-copy {
       font-size: 0.85rem;
       color: var(--text-secondary);
       line-height: 1.55;
-    }
-
-    /* -------------------------------------------------------------
-       FOOTER
-    ------------------------------------------------------------- */
-    footer.site-footer {
-      border-top: 1px solid var(--border-card);
-      padding: 48px 0 36px;
-      margin-top: 50px;
-      background: #05080c;
-    }
-
-    .footer-top-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 24px;
-      margin-bottom: 28px;
-      padding-bottom: 24px;
-      border-bottom: 1px solid var(--border-subtle);
-    }
-
-    .footer-links {
-      display: flex;
-      gap: 24px;
-      list-style: none;
-    }
-
-    .footer-links a {
-      color: var(--text-muted);
-      text-decoration: none;
-      font-size: 0.86rem;
-      transition: color 0.15s ease;
-    }
-
-    .footer-links a:hover {
-      color: var(--teal-300);
-    }
-
-    .footer-bottom-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 16px;
-      font-size: 0.78rem;
-      color: var(--text-dim);
-    }
-
-    .footer-bottom-row a {
-      color: var(--teal-400);
-      text-decoration: none;
-    }
-
-    .footer-bottom-row a:hover {
-      text-decoration: underline;
     }
   </style>
 </head>
 <body>
 
-  <!-- Top Navigation Bar (User-facing, zero technical developer jargon) -->
-  <nav class="navbar">
-    <div class="container nav-inner">
-      <a href="#" class="nav-brand">
-        <div class="brand-mark">
+  <!-- Left Sidebar Navigation -->
+  <aside class="app-sidebar">
+    <div class="sidebar-top">
+      <a href="#" class="sidebar-brand">
+        <div class="brand-icon-box">
           <svg viewBox="0 0 24 24">
             <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
           </svg>
         </div>
-        <div class="brand-text-wrap">
-          <span class="brand-title">Screen Signal</span>
-          <span class="brand-tagline">Digital Habits &amp; Well-Being Diagnosis</span>
+        <div class="brand-title-wrap">
+          <span class="brand-name">Screen Signal</span>
+          <span class="brand-sub">Behavioral Analytics</span>
         </div>
       </a>
 
-      <ul class="nav-links">
-        <li><a href="#assessment">Live Assessment</a></li>
-        <li><a href="#allocation">24h Day Split</a></li>
-        <li><a href="#protocol">7-Day Detox</a></li>
-        <li><a href="#science">The Science</a></li>
-      </ul>
+      <!-- App Navigation Items -->
+      <nav>
+        <span class="nav-section-title">Navigation</span>
+        <ul class="sidebar-nav">
+          <li>
+            <button class="nav-btn active" data-tab="tab-assessment" type="button">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+              <span>Habit Assessment</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-btn" data-tab="tab-audit" type="button">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              <span>Lifetime &amp; 24h Audit</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-btn" data-tab="tab-protocol" type="button">
+              <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+              <span>7-Day Reset Plan</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-btn" data-tab="tab-science" type="button">
+              <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+              <span>The Neuroscience</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
 
-      <div class="nav-actions">
-        <div class="privacy-pill">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-          </svg>
-          100% Private &amp; Anonymous
+    <!-- Sidebar Bottom Status -->
+    <div class="sidebar-footer">
+      <div class="mini-status-card">
+        <span class="mini-status-title">Current Risk Status</span>
+        <div class="mini-status-row">
+          <span class="mini-score-val" id="sidebar-mini-score">51/100</span>
+          <span class="mini-badge moderate" id="sidebar-mini-badge">Moderate</span>
         </div>
-        <a href="#assessment" class="btn-nav-cta">Test Your Habits</a>
+      </div>
+      <div class="private-tag">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+        <span>100% Private &bull; On-Device</span>
       </div>
     </div>
-  </nav>
+  </aside>
 
-  <!-- Hero Section -->
-  <header class="hero">
-    <div class="container">
-      <div class="hero-badge">
-        ✦ Behavioral Screen Addiction Diagnosis &bull; 3,000 Verified Benchmarks
-      </div>
-      <h1 class="hero-title">
-        How Much of Your Life is<br>
-        <span class="accent">Trapped in Your Screen?</span>
-      </h1>
-      <p class="hero-subtitle">
-        Most people spend between 10 to 18 full years of their waking lives looking down at glass. Test your digital habits, discover your behavioral archetype, and get a customized recovery roadmap.
-      </p>
-
-      <div class="hero-cta-group">
-        <a href="#assessment" class="btn-hero-primary">
-          Calculate My Score
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M5 12h14M12 5l7 7-7 7"></path>
-          </svg>
-        </a>
-        <a href="#protocol" class="btn-hero-secondary">View 7-Day Reset Plan</a>
+  <!-- Main Workspace Area -->
+  <main class="app-main">
+    <!-- Top Header Bar with Presets -->
+    <header class="workspace-header">
+      <div class="workspace-heading-wrap">
+        <h1 class="workspace-title" id="page-heading-title">Habit Assessment &amp; Simulator</h1>
+        <p class="workspace-subtitle" id="page-heading-sub">Adjust your daily parameters to quantify addiction risk and habit drivers.</p>
       </div>
 
-      <!-- Reality Check Fact Cards -->
-      <div class="hero-fact-cards">
-        <div class="fact-card">
-          <span class="fact-title">Average Lifetime on Phone</span>
-          <span class="fact-number">12.4 <span style="font-size: 1rem; color: var(--teal-400);">Years</span></span>
-          <span class="fact-desc">Equivalent to spending 15% of your entire existence staring at mobile feeds.</span>
-        </div>
-        <div class="fact-card">
-          <span class="fact-title">Daily Compulsive Checks</span>
-          <span class="fact-number">96 <span style="font-size: 1rem; color: var(--teal-400);">Times</span></span>
-          <span class="fact-desc">Most people pick up their phone once every 10 waking minutes unconsciously.</span>
-        </div>
-        <div class="fact-card">
-          <span class="fact-title">Pre-Bed Exposure Impact</span>
-          <span class="fact-number">-48% <span style="font-size: 1rem; color: var(--teal-400);">Melatonin</span></span>
-          <span class="fact-desc">Night screen use delays sleep onset by 40 minutes and cuts REM recovery in half.</span>
-        </div>
+      <!-- Quick Preset Selector in Header -->
+      <div class="preset-toolbar">
+        <span class="preset-label-mini">Presets:</span>
+        <button class="preset-chip" id="chip-low" type="button">Mindful</button>
+        <button class="preset-chip active" id="chip-mod" type="button">Typical</button>
+        <button class="preset-chip" id="chip-night" type="button">Night Owl</button>
+        <button class="preset-chip" id="chip-high" type="button">Heavy</button>
       </div>
-    </div>
-  </header>
+    </header>
 
-  <!-- Interactive Analyzer Section (Core Application) -->
-  <section class="analyzer-section" id="assessment">
-    <div class="container">
-      <div class="section-header">
-        <div class="section-eyebrow">Interactive Simulator</div>
-        <h2 class="section-title">Test Your Screen Habits</h2>
-        <p class="section-description">
-          Adjust the sliders or choose a sample persona to see your addiction risk index, your digital archetype, and your lifetime screen footprint.
-        </p>
-      </div>
-
-      <div class="analyzer-layout">
-        <!-- Left Panel: Input Controls -->
-        <div class="app-card">
-          <div class="app-card-header">
-            <span class="app-card-title">
-              <svg viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="3"></circle>
-                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2v-.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2v.09a1.65 1.65 0 0 0-1.51 1z"></path>
-              </svg>
-              Daily Habit Inputs
-            </span>
-            <span class="live-chip">Live Analysis</span>
+    <!-- VIEW 1: HABIT ASSESSMENT (ACTIVE BY DEFAULT) -->
+    <div class="tab-content active" id="tab-assessment">
+      <div class="assessment-grid">
+        <!-- Sliders Studio -->
+        <div class="panel-card">
+          <div class="panel-header">
+            <span>Daily Screen Habits</span>
+            <span class="tag">5 Parameters</span>
           </div>
 
-          <!-- Presets -->
-          <div class="presets-box">
-            <span class="presets-header-title">Quick Persona Presets</span>
-            <div class="preset-grid">
-              <button class="preset-btn" id="btn-preset-low" type="button">
-                <span class="preset-icon">🧘</span>
-                <span>Mindful Minimalist</span>
-              </button>
-              <button class="preset-btn active" id="btn-preset-mod" type="button">
-                <span class="preset-icon">💼</span>
-                <span>Typical User</span>
-              </button>
-              <button class="preset-btn" id="btn-preset-night" type="button">
-                <span class="preset-icon">🌙</span>
-                <span>Night Scroller</span>
-              </button>
-              <button class="preset-btn" id="btn-preset-high" type="button">
-                <span class="preset-icon">🚨</span>
-                <span>Hyper Dependent</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Sliders Collection -->
-          <div class="sliders-collection">
-            <!-- 1. Daily Screen Time -->
-            <div class="slider-control-card">
-              <div class="slider-top-row">
-                <div class="slider-info">
-                  <div class="slider-icon-bubble">
+          <div class="sliders-vertical">
+            <!-- 1. Screen Time -->
+            <div class="slider-item-card">
+              <div class="slider-meta-head">
+                <div class="slider-title-group">
+                  <div class="slider-icon-avatar">
                     <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
                   </div>
-                  <div class="slider-text-group">
-                    <span class="slider-label-name">Daily Screen Time</span>
-                    <span class="slider-subhint" id="subhint-screen">Active screen-on duration</span>
+                  <div>
+                    <div class="slider-name">Daily Screen Time</div>
+                    <div class="slider-subtitle">Total active screen-on hours</div>
                   </div>
                 </div>
-                <span class="slider-badge-val" id="val-screen-time">5.0 hrs</span>
+                <span class="slider-val-tag" id="disp-val-screen">5.0 hrs</span>
               </div>
-              <input type="range" id="slider-screen-time" min="0.5" max="14.0" step="0.1" value="5.0">
-              <div class="range-extremes"><span>0.5 hrs</span><span>14.0 hrs</span></div>
+              <input type="range" id="input-screen" min="0.5" max="14.0" step="0.1" value="5.0">
+              <div class="range-limits"><span>0.5h</span><span>14.0h</span></div>
             </div>
 
             <!-- 2. Phone Unlocks -->
-            <div class="slider-control-card">
-              <div class="slider-top-row">
-                <div class="slider-info">
-                  <div class="slider-icon-bubble">
+            <div class="slider-item-card">
+              <div class="slider-meta-head">
+                <div class="slider-title-group">
+                  <div class="slider-icon-avatar">
                     <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
                   </div>
-                  <div class="slider-text-group">
-                    <span class="slider-label-name">Phone Unlocks &amp; Checks</span>
-                    <span class="slider-subhint" id="subhint-unlocks">Compulsive pickups per day</span>
+                  <div>
+                    <div class="slider-name">Phone Unlocks &amp; Checks</div>
+                    <div class="slider-subtitle">Compulsive pickups per day</div>
                   </div>
                 </div>
-                <span class="slider-badge-val" id="val-unlocks">80 / day</span>
+                <span class="slider-val-tag" id="disp-val-unlocks">80 / day</span>
               </div>
-              <input type="range" id="slider-unlocks" min="5" max="250" step="1" value="80">
-              <div class="range-extremes"><span>5 checks</span><span>250 checks</span></div>
+              <input type="range" id="input-unlocks" min="5" max="250" step="1" value="80">
+              <div class="range-limits"><span>5 checks</span><span>250 checks</span></div>
             </div>
 
-            <!-- 3. Social Media Time -->
-            <div class="slider-control-card">
-              <div class="slider-top-row">
-                <div class="slider-info">
-                  <div class="slider-icon-bubble">
+            <!-- 3. Social Media Hours -->
+            <div class="slider-item-card">
+              <div class="slider-meta-head">
+                <div class="slider-title-group">
+                  <div class="slider-icon-avatar">
                     <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                   </div>
-                  <div class="slider-text-group">
-                    <span class="slider-label-name">Social Media Hours</span>
-                    <span class="slider-subhint">Feeds, reels, short clips, messaging</span>
+                  <div>
+                    <div class="slider-name">Social Media Hours</div>
+                    <div class="slider-subtitle">Feeds, reels, short clips, chat</div>
                   </div>
                 </div>
-                <span class="slider-badge-val" id="val-social-media">2.5 hrs</span>
+                <span class="slider-val-tag" id="disp-val-social">2.5 hrs</span>
               </div>
-              <input type="range" id="slider-social-media" min="0.0" max="10.0" step="0.1" value="2.5">
-              <div class="range-extremes"><span>0.0 hrs</span><span>10.0 hrs</span></div>
+              <input type="range" id="input-social" min="0.0" max="10.0" step="0.1" value="2.5">
+              <div class="range-limits"><span>0.0h</span><span>10.0h</span></div>
             </div>
 
             <!-- 4. Night Usage Share -->
-            <div class="slider-control-card">
-              <div class="slider-top-row">
-                <div class="slider-info">
-                  <div class="slider-icon-bubble">
+            <div class="slider-item-card">
+              <div class="slider-meta-head">
+                <div class="slider-title-group">
+                  <div class="slider-icon-avatar">
                     <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                   </div>
-                  <div class="slider-text-group">
-                    <span class="slider-label-name">Bedtime Usage Share</span>
-                    <span class="slider-subhint">% of screen time in bed before sleep</span>
+                  <div>
+                    <div class="slider-name">Bedtime Usage Share</div>
+                    <div class="slider-subtitle">% of screen time in bed</div>
                   </div>
                 </div>
-                <span class="slider-badge-val" id="val-night-ratio">30%</span>
+                <span class="slider-val-tag" id="disp-val-night">30%</span>
               </div>
-              <input type="range" id="slider-night-ratio" min="0" max="100" step="1" value="30">
-              <div class="range-extremes"><span>0% (no screens in bed)</span><span>100% (all late night)</span></div>
+              <input type="range" id="input-night" min="0" max="100" step="1" value="30">
+              <div class="range-limits"><span>0% (daytime)</span><span>100% (all night)</span></div>
             </div>
 
-            <!-- 5. Sleep Hours -->
-            <div class="slider-control-card">
-              <div class="slider-top-row">
-                <div class="slider-info">
-                  <div class="slider-icon-bubble">
+            <!-- 5. Sleep Duration -->
+            <div class="slider-item-card">
+              <div class="slider-meta-head">
+                <div class="slider-title-group">
+                  <div class="slider-icon-avatar">
                     <svg viewBox="0 0 24 24"><path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"></path></svg>
                   </div>
-                  <div class="slider-text-group">
-                    <span class="slider-label-name">Sleep Duration</span>
-                    <span class="slider-subhint">Nightly restorative rest</span>
+                  <div>
+                    <div class="slider-name">Sleep Duration</div>
+                    <div class="slider-subtitle">Nightly restorative rest</div>
                   </div>
                 </div>
-                <span class="slider-badge-val" id="val-sleep">6.5 hrs</span>
+                <span class="slider-val-tag" id="disp-val-sleep">6.5 hrs</span>
               </div>
-              <input type="range" id="slider-sleep" min="3.0" max="10.0" step="0.1" value="6.5">
-              <div class="range-extremes"><span>3.0 hrs (deprived)</span><span>10.0 hrs (optimal)</span></div>
+              <input type="range" id="input-sleep" min="3.0" max="10.0" step="0.1" value="6.5">
+              <div class="range-limits"><span>3.0h (deprived)</span><span>10.0h (optimal)</span></div>
             </div>
           </div>
         </div>
 
-        <!-- Right Panel: Diagnostic Results -->
-        <div class="diagnostic-card">
-          <div class="app-card-header">
-            <span class="app-card-title">
-              <svg viewBox="0 0 24 24">
-                <line x1="18" y1="20" x2="18" y2="10"></line>
-                <line x1="12" y1="20" x2="12" y2="4"></line>
-                <line x1="6" y1="20" x2="6" y2="14"></line>
-              </svg>
-              Diagnostic Profile
-            </span>
-            <span class="live-chip" id="response-status-badge">Analysis Ready</span>
+        <!-- Diagnostic Score & Analysis -->
+        <div class="panel-card">
+          <div class="panel-header">
+            <span>Diagnostic Assessment</span>
+            <span class="tag" id="status-tag-live">Real-Time</span>
           </div>
 
           <!-- Hero Score Box -->
-          <div class="hero-score-box">
-            <div class="score-summary-left">
-              <span class="score-eyebrow">Addiction Risk Index</span>
-              <div class="score-number-group">
-                <span class="score-big-num" id="display-score">51</span>
-                <span class="score-denominator">/100</span>
+          <div class="score-hero-container">
+            <div class="score-hero-left">
+              <span class="score-label-cap">Addiction Risk Index</span>
+              <div class="score-number-row">
+                <span class="score-big" id="score-number-text">51</span>
+                <span class="score-scale">/100</span>
               </div>
-              <div class="risk-badge-pill moderate" id="display-badge">
-                <span class="status-dot-indicator"></span>
-                <span id="display-badge-label">Moderate Risk</span>
+              <div class="risk-pill moderate" id="badge-pill-main">
+                <span class="pulse-dot"></span>
+                <span id="badge-pill-text">Moderate Risk</span>
               </div>
             </div>
 
-            <!-- Circular SVG Meter -->
-            <div class="gauge-wrapper">
-              <svg class="gauge-svg" viewBox="0 0 100 100">
-                <circle class="gauge-bg-ring" cx="50" cy="50" r="40"></circle>
-                <circle class="gauge-active-ring" id="gauge-circle" cx="50" cy="50" r="40"
+            <div class="gauge-unit">
+              <svg viewBox="0 0 100 100">
+                <circle class="gauge-bg" cx="50" cy="50" r="40"></circle>
+                <circle class="gauge-prog" id="gauge-circle-elem" cx="50" cy="50" r="40"
                   stroke-dasharray="251.2" stroke-dashoffset="123"></circle>
               </svg>
-              <div class="gauge-caption" id="gauge-caption-text">51%</div>
+              <div class="gauge-caption" id="gauge-caption-pct">51%</div>
             </div>
           </div>
 
-          <!-- Dynamic Digital Archetype Box -->
-          <div class="archetype-box" id="archetype-box">
-            <div class="archetype-header-row">
-              <span class="archetype-tag">Your Behavioral Archetype</span>
-              <span id="archetype-emoji" style="font-size: 1.3rem;">⚖️</span>
+          <!-- Behavioral Archetype Strip -->
+          <div class="archetype-strip">
+            <div class="archetype-head-row">
+              <span class="archetype-prefix">Behavioral Persona</span>
+              <span id="archetype-icon" style="font-size: 1.25rem;">💼</span>
             </div>
-            <div class="archetype-name" id="archetype-name">The Casual Nomad</div>
-            <div class="archetype-desc" id="archetype-desc">
-              Your device usage is moderate, but habitual checks and evening scrolling are beginning to siphon off focus hours.
+            <div class="archetype-title" id="archetype-title-text">The Casual Nomad</div>
+            <div class="archetype-explanation" id="archetype-desc-text">
+              Balanced daily utility, though periodic compulsive checking and evening scrolling are beginning to chip away at restorative deep focus.
             </div>
           </div>
 
-          <!-- Lifetime Reality Check Banner -->
-          <div class="reality-check-banner">
-            <div class="reality-text-left">
-              <span class="reality-heading">Your Lifetime on Screens</span>
-              <span class="reality-sub" id="reality-sub-text">At this daily rate, over a 60-year adult lifespan:</span>
-            </div>
-            <div class="reality-stat-highlight" id="reality-stat-val">12.5 Years</div>
-          </div>
-
-          <!-- Feature Contributions Chart -->
-          <div class="contributions-panel">
-            <div class="panel-header-row">
-              <span>Habit Contribution Breakdown</span>
+          <!-- Habit Drivers -->
+          <div class="drivers-block">
+            <div class="drivers-head">
+              <span>Habit Drivers</span>
               <span>Directional Impact</span>
             </div>
-            <div class="contrib-items-list" id="contrib-container">
+            <div class="drivers-list" id="drivers-container">
               <!-- Dynamically populated -->
             </div>
           </div>
 
-          <!-- Personalized Action Plan -->
-          <div class="recommendations-box">
-            <div class="recs-title-bar">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <!-- Action Strategies -->
+          <div class="action-strategies-box">
+            <span class="action-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
               </svg>
-              Tailored Behavioral Strategies
-            </div>
-            <div class="recs-cards-grid" id="recommendations-grid">
+              Targeted Interventions
+            </span>
+            <div class="action-cards-duo" id="action-cards-container">
               <!-- Dynamically populated -->
             </div>
           </div>
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- Section: 24-Hour Day Allocation (Visual & Eye-Opening) -->
-  <section class="allocation-section" id="allocation">
-    <div class="container">
-      <div class="section-header">
-        <div class="section-eyebrow">Time Accounting</div>
-        <h2 class="section-title">Where Does Your 24 Hours Really Go?</h2>
-        <p class="section-description">
-          A visual breakdown of your daily 24 hours based on your sleep and screen metrics.
-        </p>
-      </div>
-
-      <div class="allocation-box">
-        <div class="allocation-bar-track">
-          <div class="alloc-slice sleep" id="slice-sleep" style="width: 27%;">Sleep</div>
-          <div class="alloc-slice social" id="slice-social" style="width: 10%;">Social</div>
-          <div class="alloc-slice screen-other" id="slice-other-screen" style="width: 11%;">Screen</div>
-          <div class="alloc-slice life" id="slice-life" style="width: 52%;">Real Life</div>
+    <!-- VIEW 2: LIFETIME & 24H AUDIT -->
+    <div class="tab-content" id="tab-audit">
+      <div class="audit-grid">
+        <div class="big-stat-card">
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--teal-300); text-transform: uppercase;">Lifetime Screen Footprint</span>
+          <div class="stat-hero-number" id="audit-lifetime-num">12.5 Years</div>
+          <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+            Based on your daily screen time of <strong id="audit-hrs-txt" style="color: #fff;">5.0 hours</strong>, over an average 60-year adult lifespan, you will spend over a decade looking down at a display.
+          </p>
+          <div style="background: var(--bg-input); border-radius: var(--radius-sm); padding: 14px; font-size: 0.85rem; color: var(--text-muted);">
+            💡 <strong>Opportunity Cost:</strong> If you reclaimed just 1.5 hours daily, you could read <strong>54 full books</strong>, complete <strong>360 workouts</strong>, or master a new language every 18 months.
+          </div>
         </div>
 
-        <div class="alloc-legend-grid">
-          <div class="alloc-legend-item">
-            <div class="alloc-legend-label">
-              <span class="legend-color-box" style="background: #64748b;"></span>
-              Sleep Rest
-            </div>
-            <span class="alloc-legend-val" id="alloc-val-sleep">6.5 hrs</span>
+        <div class="breakdown-bar-box">
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--teal-300); text-transform: uppercase;">24-Hour Day Allocation</span>
+          <div class="day-progress-bar">
+            <div class="slice-segment sleep" id="bar-sleep" style="width: 27%;">Sleep</div>
+            <div class="slice-segment social" id="bar-social" style="width: 10%;">Social</div>
+            <div class="slice-segment other" id="bar-other" style="width: 11%;">Screen</div>
+            <div class="slice-segment life" id="bar-life" style="width: 52%;">Real Life</div>
           </div>
 
-          <div class="alloc-legend-item">
-            <div class="alloc-legend-label">
-              <span class="legend-color-box" style="background: var(--teal-400);"></span>
-              Social Media
+          <div class="alloc-summary-grid">
+            <div class="alloc-item-box">
+              <span class="alloc-label"><span class="alloc-dot" style="background:#64748b;"></span> Sleep Rest</span>
+              <span class="alloc-val-display" id="alloc-disp-sleep">6.5 hrs</span>
             </div>
-            <span class="alloc-legend-val" id="alloc-val-social">2.5 hrs</span>
-          </div>
-
-          <div class="alloc-legend-item">
-            <div class="alloc-legend-label">
-              <span class="legend-color-box" style="background: var(--teal-700);"></span>
-              Other Screen Time
+            <div class="alloc-item-box">
+              <span class="alloc-label"><span class="alloc-dot" style="background:var(--teal-400);"></span> Social Media</span>
+              <span class="alloc-val-display" id="alloc-disp-social">2.5 hrs</span>
             </div>
-            <span class="alloc-legend-val" id="alloc-val-other-screen">2.5 hrs</span>
-          </div>
-
-          <div class="alloc-legend-item">
-            <div class="alloc-legend-label">
-              <span class="legend-color-box" style="background: #1e293b; border: 1px solid var(--teal-500);"></span>
-              Remaining Real Life
+            <div class="alloc-item-box">
+              <span class="alloc-label"><span class="alloc-dot" style="background:var(--teal-700);"></span> Other Screen Time</span>
+              <span class="alloc-val-display" id="alloc-disp-other">2.5 hrs</span>
             </div>
-            <span class="alloc-legend-val" id="alloc-val-life">12.5 hrs</span>
+            <div class="alloc-item-box">
+              <span class="alloc-label"><span class="alloc-dot" style="background:#1e293b; border: 1px solid var(--teal);"></span> Real Life Time</span>
+              <span class="alloc-val-display" id="alloc-disp-life">12.5 hrs</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- Section: 7-Day Digital Reset Protocol -->
-  <section class="protocol-section" id="protocol">
-    <div class="container">
-      <div class="section-header">
-        <div class="section-eyebrow">Recovery Roadmap</div>
-        <h2 class="section-title">The 7-Day Digital Reset Challenge</h2>
-        <p class="section-description">
-          A progressive, science-backed protocol to rewire dopamine sensitivity and build sustainable screen habits.
-        </p>
+    <!-- VIEW 3: 7-DAY RESET PLAN -->
+    <div class="tab-content" id="tab-protocol">
+      <div style="margin-bottom: 16px; color: var(--text-secondary); font-size: 0.95rem;">
+        Click any challenge card to mark your daily milestone complete:
       </div>
-
-      <div class="protocol-cards-grid">
-        <div class="protocol-step-card">
-          <div class="day-badge-row">
-            <span class="day-pill">Day 01</span>
-            <span class="challenge-tag">Dopamine Fast</span>
+      <div class="protocol-cards-wall">
+        <div class="challenge-card" onclick="this.classList.toggle('completed')">
+          <div class="challenge-top">
+            <span class="day-tag-badge">Day 01</span>
+            <span class="custom-checkbox">✓</span>
           </div>
-          <h4 class="protocol-title">Grayscale Display Mode</h4>
-          <p class="protocol-desc">Turn your phone screen to black &amp; white. Stripping vibrant app colors immediately drops compulsive check impulses by up to 35%.</p>
+          <h4 class="challenge-title">Grayscale Mode</h4>
+          <p class="challenge-text">Switch your phone display to black &amp; white. Stripping colorful badges drops check impulses by up to 35%.</p>
         </div>
 
-        <div class="protocol-step-card">
-          <div class="day-badge-row">
-            <span class="day-pill">Day 02</span>
-            <span class="challenge-tag">Morning Routine</span>
+        <div class="challenge-card" onclick="this.classList.toggle('completed')">
+          <div class="challenge-top">
+            <span class="day-tag-badge">Day 02</span>
+            <span class="custom-checkbox">✓</span>
           </div>
-          <h4 class="protocol-title">30-Minute Phone-Free Dawn</h4>
-          <p class="protocol-desc">Do not touch your device for the first 30 minutes after waking. Let cortisol naturally peak before flooding your mind with feeds.</p>
+          <h4 class="challenge-title">30-Min Phone-Free Dawn</h4>
+          <p class="challenge-text">Do not touch your phone for the first 30 minutes after waking. Let cortisol naturally peak without algorithmic stimulation.</p>
         </div>
 
-        <div class="protocol-step-card">
-          <div class="day-badge-row">
-            <span class="day-pill">Day 03</span>
-            <span class="challenge-tag">Attention Shield</span>
+        <div class="challenge-card" onclick="this.classList.toggle('completed')">
+          <div class="challenge-top">
+            <span class="day-tag-badge">Day 03</span>
+            <span class="custom-checkbox">✓</span>
           </div>
-          <h4 class="protocol-title">Notification Purge</h4>
-          <p class="protocol-desc">Disable all badges and push alerts except direct personal phone calls. Batch check message apps 3 times daily at fixed windows.</p>
+          <h4 class="challenge-title">Notification Purge</h4>
+          <p class="challenge-text">Turn off all banners, sounds, and red badges except direct phone calls. Batch check messages only at 3 fixed daily windows.</p>
         </div>
 
-        <div class="protocol-step-card">
-          <div class="day-badge-row">
-            <span class="day-pill">Day 04</span>
-            <span class="challenge-tag">Sleep Hygiene</span>
+        <div class="challenge-card" onclick="this.classList.toggle('completed')">
+          <div class="challenge-top">
+            <span class="day-tag-badge">Day 04</span>
+            <span class="custom-checkbox">✓</span>
           </div>
-          <h4 class="protocol-title">Bedroom Device Curfew</h4>
-          <p class="protocol-desc">Charge your phone in the kitchen or hallway overnight. Buy an inexpensive alarm clock and read an analogue book before bed.</p>
+          <h4 class="challenge-title">Bedroom Device Curfew</h4>
+          <p class="challenge-text">Charge your phone in the kitchen or hallway overnight. Keep screens completely out of the sleeping environment.</p>
         </div>
 
-        <div class="protocol-step-card">
-          <div class="day-badge-row">
-            <span class="day-pill">Day 05</span>
-            <span class="challenge-tag">Intentional Friction</span>
+        <div class="challenge-card" onclick="this.classList.toggle('completed')">
+          <div class="challenge-top">
+            <span class="day-tag-badge">Day 05</span>
+            <span class="custom-checkbox">✓</span>
           </div>
-          <h4 class="protocol-title">Dock &amp; Home Screen Reset</h4>
-          <p class="protocol-desc">Remove all social and infinite-scroll apps from your home screen dock. Hide them inside deeply nested folders or delete native apps.</p>
+          <h4 class="challenge-title">Home Screen Cleanse</h4>
+          <p class="challenge-text">Remove all social media icons from your dock and main screen. Force intentional search bar typing to access feeds.</p>
         </div>
 
-        <div class="protocol-step-card">
-          <div class="day-badge-row">
-            <span class="day-pill">Day 06–07</span>
-            <span class="challenge-tag">Deep Restoration</span>
+        <div class="challenge-card" onclick="this.classList.toggle('completed')">
+          <div class="challenge-top">
+            <span class="day-tag-badge">Day 06–07</span>
+            <span class="custom-checkbox">✓</span>
           </div>
-          <h4 class="protocol-title">Weekend Digital Sabbath</h4>
-          <p class="protocol-desc">Put your phone into a drawer for a continuous 8-hour stretch on Saturday or Sunday. Reconnect with physical presence, nature, and focus.</p>
+          <h4 class="challenge-title">Weekend Digital Sabbath</h4>
+          <p class="challenge-text">Place your device into a drawer for an uninterrupted 8-hour stretch on Saturday or Sunday. Reconnect with deep presence.</p>
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- Section: The Science -->
-  <section class="science-section" id="science">
-    <div class="container">
-      <div class="section-header">
-        <div class="section-eyebrow">Behavioral Neuroscience</div>
-        <h2 class="section-title">The Science Behind Screen Signal</h2>
-        <p class="section-description">
-          Understanding the neurological mechanisms that make smartphones so addicting.
-        </p>
-      </div>
-
-      <div class="science-cards-grid">
-        <div class="science-item-card">
-          <div class="science-icon-head">
+    <!-- VIEW 4: THE NEUROSCIENCE -->
+    <div class="tab-content" id="tab-science">
+      <div class="science-insights-grid">
+        <div class="science-card">
+          <div class="science-card-icon">
             <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
           </div>
-          <h4 class="science-card-title">Variable Reward Loops</h4>
-          <p class="science-card-text">
-            Each unlock acts like pulling a casino slot machine lever. You never know if an email, like, or breaking news story awaits, conditioning compulsive checks.
+          <h4 class="science-heading">Variable Reward Schedules</h4>
+          <p class="science-copy">
+            Every unlock functions like a slot machine lever. You never know if an alert, like, or message awaits, creating powerful Pavlovian conditioning that triggers micro-checks.
           </p>
         </div>
 
-        <div class="science-item-card">
-          <div class="science-icon-head">
+        <div class="science-card">
+          <div class="science-card-icon">
             <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
           </div>
-          <h4 class="science-card-title">Circadian Melatonin Block</h4>
-          <p class="science-card-text">
-            Short-wavelength blue light directly stimulates melanopsin retinal ganglion cells, shutting down melatonin production and shifting sleep latency by 1–2 hours.
+          <h4 class="science-heading">Circadian Melatonin Blunting</h4>
+          <p class="science-copy">
+            Short-wavelength 450nm blue light stimulates melanopsin receptors in your retina, tricking the pineal gland into halting melatonin production and delaying deep REM sleep.
           </p>
         </div>
 
-        <div class="science-item-card">
-          <div class="science-icon-head">
+        <div class="science-card">
+          <div class="science-card-icon">
             <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
           </div>
-          <h4 class="science-card-title">Prefrontal Cortex Fatigue</h4>
-          <p class="science-card-text">
-            Sleep debt impairs executive inhibitory control. When tired, your brain naturally seeks rapid, low-effort dopamine hits from endless vertical feeds.
+          <h4 class="science-heading">Prefrontal Executive Fatigue</h4>
+          <p class="science-copy">
+            Accumulated sleep debt impairs the prefrontal cortex's self-regulatory control. A tired brain naturally defaults to passive, low-effort infinite-scrolling feeds.
           </p>
         </div>
       </div>
     </div>
-  </section>
+  </main>
 
-  <!-- Footer -->
-  <footer class="site-footer">
-    <div class="container">
-      <div class="footer-top-row">
-        <div class="nav-brand">
-          <div class="brand-mark">
-            <svg viewBox="0 0 24 24">
-              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-            </svg>
-          </div>
-          <span class="brand-title">Screen Signal</span>
-        </div>
-
-        <ul class="footer-links">
-          <li><a href="#assessment">Simulator</a></li>
-          <li><a href="#allocation">24h Day Allocation</a></li>
-          <li><a href="#protocol">7-Day Reset</a></li>
-          <li><a href="#science">The Science</a></li>
-          <li><a href="https://github.com/kit2824bad054/Smartphone-Addiction-Prediction" target="_blank">GitHub</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-bottom-row">
-        <span>&copy; 2026 Screen Signal Project. Open-source under MIT License.</span>
-        <span>Your data remains 100% private &bull; <a href="https://github.com/kit2824bad054/Smartphone-Addiction-Prediction" target="_blank">Explore Source Code</a></span>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Seamless Unified Inference Engine (Runs backend if available, client fallback if not) -->
   <script>
     /**
-     * SCREEN SIGNAL UNIFIED ENGINE
-     * Communicates with local API if running, or executes instant on-device inference seamlessly.
-     * All developer backend/frontend mentions removed from UI.
+     * SCREEN SIGNAL DASHBOARD CONTROLLER
+     * Manages tab switching, preset updates, real-time ML scoring, and visual feedback.
      */
 
-    const API_ENDPOINT = 'http://localhost:8000/predict';
-
-    const MODEL_WEIGHTS = {
+    const MODEL = {
       mean: [5.020458, 82.850417, 2.512917, 0.246377, 6.512917],
       scale: [1.95197, 37.745989, 0.995414, 0.196459, 1.485679],
       coef: [
@@ -1836,356 +1450,320 @@
       ],
       intercept: [-1.423745, 2.957644, -1.533899],
       features: ['screen_time_hours', 'unlocks_per_day', 'social_media_hours', 'night_usage_ratio', 'sleep_hours'],
-      labels: {
-        'screen_time_hours': 'Daily Screen Time',
-        'unlocks_per_day': 'Phone Unlocks / Checks',
-        'social_media_hours': 'Social Media Hours',
-        'night_usage_ratio': 'Bedtime Usage Share',
-        'sleep_hours': 'Sleep Duration'
-      }
+      labels: ['Screen Time', 'Phone Unlocks', 'Social Media', 'Bedtime Share', 'Sleep Deficit']
     };
 
     const PRESETS = {
-      low:   { screen: 1.5, unlocks: 20, social: 0.5, night: 5, sleep: 8.5 },
-      mod:   { screen: 5.0, unlocks: 80, social: 2.5, night: 30, sleep: 6.5 },
-      night: { screen: 7.5, unlocks: 110, social: 4.0, night: 80, sleep: 5.0 },
-      high:  { screen: 11.0, unlocks: 200, social: 7.0, night: 70, sleep: 4.0 }
+      low:   [1.5, 20, 0.5, 5, 8.5],
+      mod:   [5.0, 80, 2.5, 30, 6.5],
+      night: [7.5, 110, 4.0, 80, 5.0],
+      high:  [11.0, 200, 7.0, 70, 4.0]
     };
 
     const ARCHETYPES = {
       monk: {
         emoji: '🧘',
-        name: 'The Mindful Monk',
-        desc: 'Exceptional digital discipline. Your screen habits are deliberate, bedtime is protected, and your attention span remains intact.'
+        title: 'The Mindful Monk',
+        desc: 'Exceptional digital discipline. Your screen habits are intentional, bedtime is protected, and attention remains sharp.'
       },
       nomad: {
         emoji: '💼',
-        name: 'The Casual Nomad',
-        desc: 'Balanced daily utility, though periodic compulsive checking and evening scrolling are beginning to chip away at restorative deep focus.'
+        title: 'The Casual Nomad',
+        desc: 'Balanced daily utility, though periodic compulsive checking and evening scrolling are beginning to chip away at deep focus.'
       },
       scroller: {
         emoji: '🌙',
-        name: 'The Midnight Scroller',
+        title: 'The Midnight Scroller',
         desc: 'Your biggest vulnerability is nighttime blue-light exposure in bed, triggering chronic REM sleep suppression and next-day fatigue.'
       },
       compulsive: {
         emoji: '⚡',
-        name: 'The Notification Addict',
-        desc: 'High unlock frequency indicates an ingrained dopamine reflex. Every ping breaks your workflow and triggers compulsive micro-checks.'
+        title: 'The Notification Addict',
+        desc: 'High unlock frequency indicates an ingrained dopamine reflex. Every alert breaks your workflow and triggers compulsive micro-checks.'
       },
       captive: {
         emoji: '🚨',
-        name: 'The Algorithmic Captive',
-        desc: 'Severe digital dependency. Infinite vertical feeds and sleep deprivation are actively draining your energy, mood, and cognitive bandwidth.'
+        title: 'The Algorithmic Captive',
+        desc: 'Severe digital dependency. Infinite vertical feeds and sleep deprivation are actively draining cognitive bandwidth and energy.'
       }
     };
 
-    const STRATEGY_TIPS = {
-      'screen_time_hours': 'Your total screen duration is significantly elevated. Establish strict 45-minute offline work blocks and keep your device in another room during meals.',
-      'social_media_hours': 'Infinite feeds are heavily siphoning your day. Place a strict 45-minute daily cap on TikTok/Instagram and remove infinite-scroll icons from your home dock.',
-      'unlocks_per_day': 'Habituated micro-checks fragment your attention. Disable non-essential push notifications and batch message replies to 3 fixed times per day.',
-      'night_usage_ratio': 'Late-night blue light suppresses melatonin synthesis. Establish a device curfew 60 minutes before sleep and charge your phone away from the bed.',
-      'sleep_hours': 'Sleep deficits erode prefrontal executive control, intensifying compulsive device cravings. Aim for 7.5+ hours of consistent sleep nightly.',
-      'healthy': 'Your current screen and sleep patterns are well-calibrated. Keep protecting your deep work blocks and device-free morning routine.',
-      'preventative': 'Enable grayscale display mode occasionally to reduce the hyper-stimulating dopamine loop of colorful app icons and banners.'
+    const STRATEGIES = {
+      0: 'Your total screen duration is significantly elevated. Establish strict 45-minute offline work blocks and keep the phone in another room during meals.',
+      1: 'Habituated micro-checks fragment your attention. Disable non-essential push notifications and batch message replies to 3 fixed times per day.',
+      2: 'Infinite feeds are heavily siphoning your day. Place a strict 45-minute daily cap on TikTok/Instagram and remove infinite-scroll icons from your home dock.',
+      3: 'Late-night blue light suppresses melatonin synthesis. Establish a device curfew 60 minutes before sleep and charge your phone away from the bed.',
+      4: 'Sleep deficits erode prefrontal executive control, intensifying compulsive device cravings. Aim for 7.5+ hours of consistent sleep nightly.'
     };
 
     const dom = {
-      screenSlider: document.getElementById('slider-screen-time'),
-      unlocksSlider: document.getElementById('slider-unlocks'),
-      socialSlider: document.getElementById('slider-social-media'),
-      nightSlider: document.getElementById('slider-night-ratio'),
-      sleepSlider: document.getElementById('slider-sleep'),
+      sScreen: document.getElementById('input-screen'),
+      sUnlocks: document.getElementById('input-unlocks'),
+      sSocial: document.getElementById('input-social'),
+      sNight: document.getElementById('input-night'),
+      sSleep: document.getElementById('input-sleep'),
 
-      screenVal: document.getElementById('val-screen-time'),
-      unlocksVal: document.getElementById('val-unlocks'),
-      socialVal: document.getElementById('val-social-media'),
-      nightVal: document.getElementById('val-night-ratio'),
-      sleepVal: document.getElementById('val-sleep'),
+      vScreen: document.getElementById('disp-val-screen'),
+      vUnlocks: document.getElementById('disp-val-unlocks'),
+      vSocial: document.getElementById('disp-val-social'),
+      vNight: document.getElementById('disp-val-night'),
+      vSleep: document.getElementById('disp-val-sleep'),
 
-      scoreDisplay: document.getElementById('display-score'),
-      badgeDisplay: document.getElementById('display-badge'),
-      badgeLabel: document.getElementById('display-badge-label'),
-      gaugeCircle: document.getElementById('gauge-circle'),
-      gaugeCaption: document.getElementById('gauge-caption-text'),
+      scoreNum: document.getElementById('score-number-text'),
+      badgePill: document.getElementById('badge-pill-main'),
+      badgeText: document.getElementById('badge-pill-text'),
+      gaugeProg: document.getElementById('gauge-circle-elem'),
+      gaugePct: document.getElementById('gauge-caption-pct'),
 
-      archetypeEmoji: document.getElementById('archetype-emoji'),
-      archetypeName: document.getElementById('archetype-name'),
-      archetypeDesc: document.getElementById('archetype-desc'),
-      realityStatVal: document.getElementById('reality-stat-val'),
+      archIcon: document.getElementById('archetype-icon'),
+      archTitle: document.getElementById('archetype-title-text'),
+      archDesc: document.getElementById('archetype-desc-text'),
 
-      contribContainer: document.getElementById('contrib-container'),
-      recsGrid: document.getElementById('recommendations-grid'),
+      driversList: document.getElementById('drivers-container'),
+      actionCards: document.getElementById('action-cards-container'),
 
-      // Day allocation
-      sliceSleep: document.getElementById('slice-sleep'),
-      sliceSocial: document.getElementById('slice-social'),
-      sliceOtherScreen: document.getElementById('slice-other-screen'),
-      sliceLife: document.getElementById('slice-life'),
-      allocValSleep: document.getElementById('alloc-val-sleep'),
-      allocValSocial: document.getElementById('alloc-val-social'),
-      allocValOtherScreen: document.getElementById('alloc-val-other-screen'),
-      allocValLife: document.getElementById('alloc-val-life')
+      // Sidebar mini status
+      sideScore: document.getElementById('sidebar-mini-score'),
+      sideBadge: document.getElementById('sidebar-mini-badge'),
+
+      // Audit tab
+      auditLifetime: document.getElementById('audit-lifetime-num'),
+      auditHrsTxt: document.getElementById('audit-hrs-txt'),
+      barSleep: document.getElementById('bar-sleep'),
+      barSocial: document.getElementById('bar-social'),
+      barOther: document.getElementById('bar-other'),
+      barLife: document.getElementById('bar-life'),
+      allocSleep: document.getElementById('alloc-disp-sleep'),
+      allocSocial: document.getElementById('alloc-disp-social'),
+      allocOther: document.getElementById('alloc-disp-other'),
+      allocLife: document.getElementById('alloc-disp-life'),
+
+      headingTitle: document.getElementById('page-heading-title'),
+      headingSub: document.getElementById('page-heading-sub')
     };
 
-    let debounceTimer = null;
+    function calculate() {
+      const screen = parseFloat(dom.sScreen.value);
+      const unlocks = parseFloat(dom.sUnlocks.value);
+      const social = parseFloat(dom.sSocial.value);
+      const night = parseFloat(dom.sNight.value);
+      const sleep = parseFloat(dom.sSleep.value);
 
-    function runLocalMath(inputs) {
-      const scaled = inputs.map((v, i) => (v - MODEL_WEIGHTS.mean[i]) / MODEL_WEIGHTS.scale[i]);
-      const z = MODEL_WEIGHTS.intercept.map((inter, c) => {
-        let sum = inter;
-        for (let i = 0; i < inputs.length; i++) {
-          sum += MODEL_WEIGHTS.coef[c][i] * scaled[i];
-        }
+      // Value label updates
+      dom.vScreen.textContent = `${screen.toFixed(1)} hrs`;
+      dom.vUnlocks.textContent = `${unlocks} / day`;
+      dom.vSocial.textContent = `${social.toFixed(1)} hrs`;
+      dom.vNight.textContent = `${night}%`;
+      dom.vSleep.textContent = `${sleep.toFixed(1)} hrs`;
+
+      // Input vector: night ratio converted to fraction
+      const inputs = [screen, unlocks, social, night / 100.0, sleep];
+
+      // Standardization
+      const scaled = inputs.map((v, i) => (v - MODEL.mean[i]) / MODEL.scale[i]);
+
+      // Softmax
+      const logits = MODEL.intercept.map((b, c) => {
+        let sum = b;
+        for (let i = 0; i < inputs.length; i++) sum += MODEL.coef[c][i] * scaled[i];
         return sum;
       });
 
-      const maxZ = Math.max(...z);
-      const expZ = z.map(v => Math.exp(v - maxZ));
-      const sumExp = expZ.reduce((a, b) => a + b, 0);
-      const probs = expZ.map(v => v / sumExp);
+      const maxL = Math.max(...logits);
+      const exps = logits.map(v => Math.exp(v - maxL));
+      const sumExp = exps.reduce((a, b) => a + b, 0);
+      const probs = exps.map(v => v / sumExp);
 
-      let riskScore = Math.round(probs[1] * 50 + probs[2] * 100);
-      riskScore = Math.max(0, Math.min(100, riskScore));
+      // 0-100 Score
+      const score = Math.max(0, Math.min(100, Math.round(probs[1] * 50 + probs[2] * 100)));
+      dom.scoreNum.textContent = score;
 
+      // Risk level
       let riskLevel = 'Low';
-      if (riskScore >= 65 || probs[2] > 0.45) riskLevel = 'High';
-      else if (riskScore >= 35 || probs[1] > 0.45) riskLevel = 'Moderate';
-
-      const contribs = inputs.map((raw, i) => {
-        const impact = MODEL_WEIGHTS.coef[2][i] * scaled[i];
-        return {
-          feature: MODEL_WEIGHTS.features[i],
-          label: MODEL_WEIGHTS.labels[MODEL_WEIGHTS.features[i]],
-          impact: Math.round(impact * 100) / 100,
-          direction: impact > 0 ? 'risk_elevator' : 'protective'
-        };
-      });
-
-      const pos = contribs.filter(c => c.impact > 0).sort((a, b) => b.impact - a.impact);
-      const recs = [];
-      if (pos.length >= 2) {
-        recs.push(STRATEGY_TIPS[pos[0].feature]);
-        recs.push(STRATEGY_TIPS[pos[1].feature]);
-      } else if (pos.length === 1) {
-        recs.push(STRATEGY_TIPS[pos[0].feature]);
-        recs.push(STRATEGY_TIPS.preventative);
+      let badgeClass = 'low';
+      if (score >= 65 || probs[2] > 0.45) {
+        riskLevel = 'High Risk';
+        badgeClass = 'high';
+      } else if (score >= 35 || probs[1] > 0.45) {
+        riskLevel = 'Moderate Risk';
+        badgeClass = 'moderate';
       } else {
-        recs.push(STRATEGY_TIPS.healthy);
-        recs.push(STRATEGY_TIPS.preventative);
+        riskLevel = 'Low Risk';
+        badgeClass = 'low';
       }
 
-      return {
-        risk_level: riskLevel,
-        risk_score: riskScore,
-        probabilities: { Low: probs[0], Moderate: probs[1], High: probs[2] },
-        feature_contributions: contribs,
-        recommendations: recs
-      };
-    }
+      dom.badgePill.className = `risk-pill ${badgeClass}`;
+      dom.badgeText.textContent = riskLevel;
 
-    async function evaluate() {
-      const screen = parseFloat(dom.screenSlider.value);
-      const unlocks = parseFloat(dom.unlocksSlider.value);
-      const social = parseFloat(dom.socialSlider.value);
-      const night = parseFloat(dom.nightSlider.value);
-      const sleep = parseFloat(dom.sleepSlider.value);
+      // Sidebar mini status sync
+      dom.sideScore.textContent = `${score}/100`;
+      dom.sideBadge.className = `mini-badge ${badgeClass}`;
+      dom.sideBadge.textContent = badgeClass.toUpperCase();
 
-      dom.screenVal.textContent = `${screen.toFixed(1)} hrs`;
-      dom.unlocksVal.textContent = `${unlocks} / day`;
-      dom.socialVal.textContent = `${social.toFixed(1)} hrs`;
-      dom.nightVal.textContent = `${night}%`;
-      dom.sleepVal.textContent = `${sleep.toFixed(1)} hrs`;
+      // Gauge animation
+      const circumference = 251.2;
+      const offset = circumference - (score / 100) * circumference;
+      dom.gaugeProg.style.strokeDashoffset = offset;
+      dom.gaugePct.textContent = `${score}%`;
 
-      // Update 24h day allocation visuals
-      updateDayAllocation(screen, social, sleep);
+      if (badgeClass === 'high') dom.gaugeProg.style.stroke = 'var(--risk-high)';
+      else if (badgeClass === 'moderate') dom.gaugeProg.style.stroke = 'var(--risk-mod)';
+      else dom.gaugeProg.style.stroke = 'var(--risk-low)';
 
-      // Lifetime reality calculation: 60 adult years
-      // fraction of day on screen = screen / 24
-      const lifetimeYears = ((screen / 24) * 60).toFixed(1);
-      dom.realityStatVal.textContent = `${lifetimeYears} Years`;
+      // Archetype persona
+      let persona = ARCHETYPES.nomad;
+      if (score < 30) persona = ARCHETYPES.monk;
+      else if (score >= 70) persona = ARCHETYPES.captive;
+      else if (night >= 60) persona = ARCHETYPES.scroller;
+      else if (unlocks >= 120) persona = ARCHETYPES.compulsive;
 
-      const payload = {
-        screen_time_hours: screen,
-        unlocks_per_day: unlocks,
-        social_media_hours: social,
-        night_usage_ratio: night / 100.0,
-        sleep_hours: sleep
-      };
+      dom.archIcon.textContent = persona.emoji;
+      dom.archTitle.textContent = persona.title;
+      dom.archDesc.textContent = persona.desc;
 
-      try {
-        const res = await fetch(API_ENDPOINT, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        if (!res.ok) throw new Error();
-        const data = await res.json();
-        renderResults(data, { screen, unlocks, social, night, sleep });
-      } catch (e) {
-        const localData = runLocalMath([screen, unlocks, social, night / 100.0, sleep]);
-        renderResults(localData, { screen, unlocks, social, night, sleep });
+      // Driver bars
+      const impacts = inputs.map((_, i) => ({
+        idx: i,
+        label: MODEL.labels[i],
+        impact: MODEL.coef[2][i] * scaled[i]
+      }));
+
+      const maxAbs = Math.max(...impacts.map(im => Math.abs(im.impact)), 1.0);
+      impacts.sort((a, b) => b.impact - a.impact);
+
+      dom.driversList.innerHTML = impacts.map((im, idx) => {
+        const isUp = im.impact > 0;
+        const widthPct = Math.min(100, Math.max(8, (Math.abs(im.impact) / maxAbs) * 100));
+        const badgeTag = isUp && idx < 2
+          ? `<span class="driver-tag top">#${idx + 1} Habit Driver</span>`
+          : `<span class="driver-tag sub">${isUp ? 'Risk Elevator' : 'Protective'}</span>`;
+        const valTxt = isUp ? `+${im.impact.toFixed(1)} impact` : `-${Math.abs(im.impact).toFixed(1)} buffer`;
+        const valClass = isUp ? 'risk-up' : 'risk-down';
+        const fillClass = isUp ? '' : 'buffer';
+
+        return `
+          <div class="driver-item">
+            <div class="driver-meta">
+              <span class="driver-name">${badgeTag} ${im.label}</span>
+              <span class="driver-val ${valClass}">${valTxt}</span>
+            </div>
+            <div class="driver-bar-track">
+              <div class="driver-bar-fill ${fillClass}" style="width: ${widthPct}%;"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Top 2 Action Items
+      const positiveDrivers = impacts.filter(im => im.impact > 0);
+      const actionItems = [];
+      if (positiveDrivers.length >= 2) {
+        actionItems.push(STRATEGIES[positiveDrivers[0].idx]);
+        actionItems.push(STRATEGIES[positiveDrivers[1].idx]);
+      } else if (positiveDrivers.length === 1) {
+        actionItems.push(STRATEGIES[positiveDrivers[0].idx]);
+        actionItems.push('Set an intentional 30-minute phone-free window right after waking up.');
+      } else {
+        actionItems.push('Your screen habits are well-calibrated. Keep protecting your morning deep work blocks.');
+        actionItems.push('Enable grayscale mode periodically to keep app icons low-dopamine.');
       }
+
+      dom.actionCards.innerHTML = actionItems.slice(0, 2).map((item, i) => `
+        <div class="action-single-card">
+          <span class="action-badge-name">Strategy #${i + 1}</span>
+          <p class="action-body-text">${item}</p>
+        </div>
+      `).join('');
+
+      // Update Audit Tab calculations
+      updateAuditTab(screen, social, sleep);
     }
 
-    function updateDayAllocation(screen, social, sleep) {
+    function updateAuditTab(screen, social, sleep) {
+      const lifetimeYrs = ((screen / 24) * 60).toFixed(1);
+      dom.auditLifetime.textContent = `${lifetimeYrs} Years`;
+      dom.auditHrsTxt.textContent = `${screen.toFixed(1)} hours`;
+
       const otherScreen = Math.max(0, screen - social);
       const realLife = Math.max(0, 24 - sleep - screen);
 
       const pSleep = (sleep / 24) * 100;
       const pSocial = (social / 24) * 100;
-      const pOtherScreen = (otherScreen / 24) * 100;
+      const pOther = (otherScreen / 24) * 100;
       const pLife = (realLife / 24) * 100;
 
-      dom.sliceSleep.style.width = `${pSleep.toFixed(1)}%`;
-      dom.sliceSocial.style.width = `${pSocial.toFixed(1)}%`;
-      dom.sliceOtherScreen.style.width = `${pOtherScreen.toFixed(1)}%`;
-      dom.sliceLife.style.width = `${pLife.toFixed(1)}%`;
+      dom.barSleep.style.width = `${pSleep.toFixed(1)}%`;
+      dom.barSocial.style.width = `${pSocial.toFixed(1)}%`;
+      dom.barOther.style.width = `${pOther.toFixed(1)}%`;
+      dom.barLife.style.width = `${pLife.toFixed(1)}%`;
 
-      dom.allocValSleep.textContent = `${sleep.toFixed(1)} hrs (${pSleep.toFixed(0)}%)`;
-      dom.allocValSocial.textContent = `${social.toFixed(1)} hrs (${pSocial.toFixed(0)}%)`;
-      dom.allocValOtherScreen.textContent = `${otherScreen.toFixed(1)} hrs (${pOtherScreen.toFixed(0)}%)`;
-      dom.allocValLife.textContent = `${realLife.toFixed(1)} hrs (${pLife.toFixed(0)}%)`;
+      dom.allocSleep.textContent = `${sleep.toFixed(1)} hrs (${pSleep.toFixed(0)}%)`;
+      dom.allocSocial.textContent = `${social.toFixed(1)} hrs (${pSocial.toFixed(0)}%)`;
+      dom.allocOther.textContent = `${otherScreen.toFixed(1)} hrs (${pOther.toFixed(0)}%)`;
+      dom.allocLife.textContent = `${realLife.toFixed(1)} hrs (${pLife.toFixed(0)}%)`;
     }
 
-    function renderResults(data, inputs) {
-      const score = data.risk_score;
-      dom.scoreDisplay.textContent = score;
-
-      const badgeKey = data.risk_level.toLowerCase();
-      dom.badgeDisplay.className = `risk-badge-pill ${badgeKey}`;
-      dom.badgeLabel.textContent = `${data.risk_level} Risk`;
-
-      // Gauge animation
-      const circumference = 251.2;
-      const offset = circumference - (score / 100) * circumference;
-      dom.gaugeCircle.style.strokeDashoffset = offset;
-      dom.gaugeCaption.textContent = `${score}%`;
-
-      if (badgeKey === 'high') {
-        dom.gaugeCircle.style.stroke = 'var(--risk-high)';
-      } else if (badgeKey === 'moderate') {
-        dom.gaugeCircle.style.stroke = 'var(--risk-mod)';
-      } else {
-        dom.gaugeCircle.style.stroke = 'var(--risk-low)';
-      }
-
-      // Determine digital archetype persona
-      let persona = ARCHETYPES.nomad;
-      if (score < 30) {
-        persona = ARCHETYPES.monk;
-      } else if (score >= 70) {
-        persona = ARCHETYPES.captive;
-      } else if (inputs.night >= 60) {
-        persona = ARCHETYPES.scroller;
-      } else if (inputs.unlocks >= 120) {
-        persona = ARCHETYPES.compulsive;
-      }
-
-      dom.archetypeEmoji.textContent = persona.emoji;
-      dom.archetypeName.textContent = persona.name;
-      dom.archetypeDesc.textContent = persona.desc;
-
-      // Render feature contribution bars
-      renderContributions(data.feature_contributions);
-
-      // Render recommendations
-      renderRecs(data.recommendations);
-    }
-
-    function renderContributions(contribs) {
-      if (!contribs || !contribs.length) return;
-      const maxAbs = Math.max(...contribs.map(c => Math.abs(c.impact)), 1.0);
-      const sorted = [...contribs].sort((a, b) => b.impact - a.impact);
-
-      let html = '';
-      sorted.forEach((item, idx) => {
-        const isPos = item.impact > 0;
-        const absVal = Math.abs(item.impact);
-        const barW = Math.min(100, Math.max(8, (absVal / maxAbs) * 100));
-
-        const isLead = isPos && idx < 2;
-        const badgeTag = isLead
-          ? `<span class="contrib-badge-tag lead">#${idx + 1} Habit Driver</span>`
-          : `<span class="contrib-badge-tag sub">${isPos ? 'Risk Elevator' : 'Protective Factor'}</span>`;
-
-        const valTxt = isPos ? `+${absVal.toFixed(1)} impact` : `-${absVal.toFixed(1)} buffer`;
-        const valClass = isPos ? 'risk-up' : 'risk-down';
-        const fillClass = isPos ? '' : 'protective';
-
-        html += `
-          <div class="contrib-entry">
-            <div class="contrib-meta-row">
-              <span class="contrib-label-left">${badgeTag} ${item.label}</span>
-              <span class="contrib-val-right ${valClass}">${valTxt}</span>
-            </div>
-            <div class="contrib-track">
-              <div class="contrib-fill-bar ${fillClass}" style="width: ${barW}%;"></div>
-            </div>
-          </div>
-        `;
-      });
-      dom.contribContainer.innerHTML = html;
-    }
-
-    function renderRecs(recs) {
-      if (!recs || !recs.length) return;
-      let html = '';
-      recs.slice(0, 2).forEach((txt, i) => {
-        html += `
-          <div class="rec-card-single">
-            <div class="rec-card-header">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              Tactic #${i + 1}
-            </div>
-            <div class="rec-card-body">${txt}</div>
-          </div>
-        `;
-      });
-      dom.recsGrid.innerHTML = html;
-    }
-
-    function setPreset(key) {
+    function applyPreset(key) {
       const p = PRESETS[key];
       if (!p) return;
-      dom.screenSlider.value = p.screen;
-      dom.unlocksSlider.value = p.unlocks;
-      dom.socialSlider.value = p.social;
-      dom.nightSlider.value = p.night;
-      dom.sleepSlider.value = p.sleep;
+      dom.sScreen.value = p[0];
+      dom.sUnlocks.value = p[1];
+      dom.sSocial.value = p[2];
+      dom.sNight.value = p[3];
+      dom.sSleep.value = p[4];
 
-      document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
-      const activeBtn = document.getElementById(`btn-preset-${key}`);
-      if (activeBtn) activeBtn.classList.add('active');
+      document.querySelectorAll('.preset-chip').forEach(c => c.classList.remove('active'));
+      const chip = document.getElementById(`chip-${key}`);
+      if (chip) chip.classList.add('active');
 
-      evaluate();
+      calculate();
+    }
+
+    // Tab Switching
+    const TAB_HEADERS = {
+      'tab-assessment': { title: 'Habit Assessment & Simulator', sub: 'Adjust your daily parameters to quantify addiction risk and habit drivers.' },
+      'tab-audit': { title: 'Lifetime & 24h Time Audit', sub: 'Understand where your daily hours go and project lifetime screen exposure.' },
+      'tab-protocol': { title: '7-Day Digital Reset Plan', sub: 'A structured, progressive checklist to rebuild attention span and dopamine balance.' },
+      'tab-science': { title: 'Behavioral Neuroscience', sub: 'The clinical mechanisms behind dopamine reward loops and circadian sleep loss.' }
+    };
+
+    function initNavigation() {
+      const navButtons = document.querySelectorAll('.nav-btn');
+      navButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          navButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          const tabId = btn.getAttribute('data-tab');
+          document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+          const targetTab = document.getElementById(tabId);
+          if (targetTab) targetTab.classList.add('active');
+
+          const meta = TAB_HEADERS[tabId];
+          if (meta) {
+            dom.headingTitle.textContent = meta.title;
+            dom.headingSub.textContent = meta.sub;
+          }
+        });
+      });
     }
 
     function init() {
-      const sliders = [
-        dom.screenSlider,
-        dom.unlocksSlider,
-        dom.socialSlider,
-        dom.nightSlider,
-        dom.sleepSlider
-      ];
+      initNavigation();
 
-      sliders.forEach(s => {
-        s.addEventListener('input', () => {
-          document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
-          clearTimeout(debounceTimer);
-          debounceTimer = setTimeout(evaluate, 30);
+      [dom.sScreen, dom.sUnlocks, dom.sSocial, dom.sNight, dom.sSleep].forEach(slider => {
+        slider.addEventListener('input', () => {
+          document.querySelectorAll('.preset-chip').forEach(c => c.classList.remove('active'));
+          calculate();
         });
       });
 
-      document.getElementById('btn-preset-low').addEventListener('click', () => setPreset('low'));
-      document.getElementById('btn-preset-mod').addEventListener('click', () => setPreset('mod'));
-      document.getElementById('btn-preset-night').addEventListener('click', () => setPreset('night'));
-      document.getElementById('btn-preset-high').addEventListener('click', () => setPreset('high'));
+      document.getElementById('chip-low').addEventListener('click', () => applyPreset('low'));
+      document.getElementById('chip-mod').addEventListener('click', () => applyPreset('mod'));
+      document.getElementById('chip-night').addEventListener('click', () => applyPreset('night'));
+      document.getElementById('chip-high').addEventListener('click', () => applyPreset('high'));
 
-      evaluate();
+      calculate();
     }
 
     document.addEventListener('DOMContentLoaded', init);
