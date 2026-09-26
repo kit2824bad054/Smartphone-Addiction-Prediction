@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Screen Signal — Smartphone Addiction Risk Predictor</title>
+  <meta name="description" content="Screen Signal assesses smartphone addiction risk in real time using a FastAPI backend with scikit-learn Logistic Regression inference.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Teal Accent Palette */
+      --teal-50: #f0fdfa;
+      --teal-100: #ccfbf1;
+      --teal-200: #99f6e4;
+      --teal-300: #5eead4;
+      --teal-400: #2dd4bf;
+      --teal-500: #14b8a6;
+      --teal-600: #0d9488;
+      --teal-700: #0f766e;
+      --teal-800: #115e59;
+      --teal-900: #134e4a;
+      --teal-950: #042f2e;
+
+      /* Dark Slate Backgrounds */
+      --bg-base: #090d12;
+      --bg-surface: #0f1620;
+      --bg-card: #15202c;
+      --bg-card-hover: #1a2837;
+      --bg-input: #0b1118;
+
+      /* Text Grays */
+      --text-white: #f8fafc;
+      --text-main: #e2e8f0;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      /* Borders */
+      --border-subtle: #1e293b;
+      --border-teal: rgba(20, 184, 166, 0.3);
+      --border-teal-active: rgba(45, 212, 191, 0.6);
+
+      /* Risk Semantic Colors */
+      --risk-low: #10b981;
+      --risk-mod: #f59e0b;
+      --risk-high: #f43f5e;
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-full: 9999px;
+
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+      padding: 24px 16px;
+    }
+
+    .container {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      flex: 1;
+    }
+
+    /* Header */
+    header {
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--teal-600), var(--teal-400));
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #042f2e;
+      box-shadow: 0 0 15px rgba(20, 184, 166, 0.35);
+    }
+
+    .brand-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: #042f2e;
+      stroke-width: 2.5;
+      fill: none;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-white);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .backend-badge {
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      background: rgba(20, 184, 166, 0.12);
+      border: 1px solid var(--border-teal);
+      color: var(--teal-300);
+      padding: 3px 10px;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .backend-badge .status-ping {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--teal-400);
+    }
+
+    .header-subtitle {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      max-width: 760px;
+    }
+
+    /* Layout Grid */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text-white);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      letter-spacing: -0.01em;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 12px;
+    }
+
+    .card-title .title-tag {
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      color: var(--teal-400);
+      font-weight: 500;
+    }
+
+    /* Presets */
+    .presets-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: var(--bg-input);
+      padding: 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .presets-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+    }
+
+    .presets-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .preset-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .preset-btn:hover {
+      background: var(--teal-950);
+      color: var(--teal-300);
+      border-color: var(--teal-700);
+    }
+
+    .preset-btn.active {
+      background: var(--teal-900);
+      color: var(--teal-200);
+      border-color: var(--teal-500);
+    }
+
+    /* Sliders Group */
+    .sliders-group {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .slider-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .slider-label {
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .slider-hint {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    .slider-value-display {
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--teal-300);
+      background: var(--bg-input);
+      border: 1px solid var(--border-teal);
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* Range Input Custom Styling */
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      background: #1e293b;
+      border-radius: var(--radius-full);
+      outline: none;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--teal-400);
+      border: 2px solid var(--teal-950);
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(45, 212, 191, 0.5);
+      transition: transform 0.1s ease, background-color 0.15s;
+    }
+
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+      background: var(--teal-300);
+    }
+
+    input[type=range]::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--teal-400);
+      border: 2px solid var(--teal-950);
+      cursor: pointer;
+    }
+
+    .slider-minmax {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+    }
+
+    /* Output Card / Overview */
+    .overview-hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      gap: 16px;
+    }
+
+    .score-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .score-tagline {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .score-number-wrap {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .score-number {
+      font-size: 3.2rem;
+      font-weight: 800;
+      line-height: 1;
+      font-family: var(--font-sans);
+      letter-spacing: -0.04em;
+      color: var(--text-white);
+    }
+
+    .score-max {
+      font-size: 1.1rem;
+      color: var(--text-dim);
+      font-weight: 500;
+    }
+
+    .risk-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      width: fit-content;
+      margin-top: 4px;
+    }
+
+    .risk-badge.low {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+
+    .risk-badge.moderate {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+
+    .risk-badge.high {
+      background: rgba(244, 63, 94, 0.15);
+      color: #fb7185;
+      border: 1px solid rgba(244, 63, 94, 0.35);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .meter-gauge-container {
+      width: 110px;
+      height: 110px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .meter-gauge-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .gauge-circle-bg {
+      fill: none;
+      stroke: #1e293b;
+      stroke-width: 8;
+    }
+
+    .gauge-circle-progress {
+      fill: none;
+      stroke: var(--teal-400);
+      stroke-width: 8;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.25s ease, stroke 0.25s ease;
+    }
+
+    .gauge-inner-text {
+      position: absolute;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--teal-300);
+    }
+
+    /* Class Probabilities Bar */
+    .prob-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .prob-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .prob-stacked-bar {
+      height: 10px;
+      background: var(--bg-input);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      display: flex;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .prob-seg {
+      height: 100%;
+      transition: width 0.2s ease;
+    }
+
+    .prob-seg.low {
+      background: var(--risk-low);
+    }
+
+    .prob-seg.moderate {
+      background: var(--risk-mod);
+    }
+
+    .prob-seg.high {
+      background: var(--risk-high);
+    }
+
+    .prob-legend {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      color: var(--text-dim);
+    }
+
+    .prob-legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .legend-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    /* Feature Contribution Bar Chart */
+    .chart-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .chart-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 6px;
+    }
+
+    .contrib-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .contrib-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .contrib-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      align-items: center;
+    }
+
+    .contrib-name {
+      font-weight: 500;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .contrib-rank-badge {
+      font-size: 0.68rem;
+      font-family: var(--font-mono);
+      padding: 1px 5px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+    }
+
+    .contrib-rank-badge.top {
+      background: rgba(20, 184, 166, 0.2);
+      color: var(--teal-300);
+      border: 1px solid var(--border-teal);
+    }
+
+    .contrib-rank-badge.neutral {
+      background: rgba(100, 116, 139, 0.15);
+      color: var(--text-dim);
+    }
+
+    .contrib-impact-val {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .contrib-impact-val.risk-up {
+      color: var(--teal-300);
+    }
+
+    .contrib-impact-val.risk-down {
+      color: var(--text-dim);
+    }
+
+    .contrib-bar-track {
+      height: 8px;
+      background: var(--bg-input);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .contrib-bar-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+      background: linear-gradient(90deg, var(--teal-700), var(--teal-400));
+      transition: width 0.2s ease, background 0.2s ease;
+    }
+
+    .contrib-bar-fill.protective {
+      background: #334155;
+    }
+
+    /* Tips & Action Items */
+    .tips-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 16px;
+    }
+
+    .tips-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--teal-300);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .tips-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .tips-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .tip-box {
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-left: 3px solid var(--teal-500);
+      padding: 12px;
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .tip-factor {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--teal-300);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .tip-text {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 32px;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="header-top">
+        <div class="brand-group">
+          <div class="brand-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+          </div>
+          <div>
+            <h1>Screen Signal</h1>
+          </div>
+        </div>
+        <div class="backend-badge" id="backend-status-badge">
+          <span class="status-ping" id="backend-ping"></span>
+          <span id="backend-status-text">POST http://localhost:8000/predict</span>
+        </div>
+      </div>
+      <p class="header-subtitle">
+        Assess behavioral smartphone addiction risk in real time. Features are dispatched via asynchronous REST calls to the FastAPI backend at <code>http://localhost:8000/predict</code> with full CORS support.
+      </p>
+    </header>
+
+    <!-- Main Dashboard Grid -->
+    <main class="dashboard-grid">
+      <!-- Left Column: Inputs & Scenarios -->
+      <section class="card" aria-labelledby="inputs-title">
+        <div class="card-title">
+          <span id="inputs-title">Behavioral Usage Inputs</span>
+          <span class="title-tag">POST /predict</span>
+        </div>
+
+        <!-- Presets matching the 3 official test cases -->
+        <div class="presets-container">
+          <div class="presets-label">Test Scenarios</div>
+          <div class="presets-chips">
+            <button class="preset-btn" id="preset-low" type="button">1. Low-Risk Case</button>
+            <button class="preset-btn active" id="preset-mod" type="button">2. Moderate-Risk Case</button>
+            <button class="preset-btn" id="preset-high" type="button">3. High-Risk Case</button>
+            <button class="preset-btn" id="preset-reset" type="button" style="margin-left: auto;">Reset</button>
+          </div>
+        </div>
+
+        <!-- Sliders -->
+        <form class="sliders-group" id="prediction-form" onsubmit="event.preventDefault(); triggerPrediction();">
+          <!-- 1. Daily Screen Time -->
+          <div class="slider-item">
+            <div class="slider-header">
+              <label class="slider-label" for="slider-screen-time">
+                Daily Screen Time
+                <span class="slider-hint">(screen_time_hours)</span>
+              </label>
+              <span class="slider-value-display" id="val-screen-time">5.0 hrs</span>
+            </div>
+            <input type="range" id="slider-screen-time" min="0.5" max="14.0" step="0.1" value="5.0">
+            <div class="slider-minmax">
+              <span>0.5 hrs</span>
+              <span>14.0 hrs</span>
+            </div>
+          </div>
+
+          <!-- 2. Phone Unlocks Per Day -->
+          <div class="slider-item">
+            <div class="slider-header">
+              <label class="slider-label" for="slider-unlocks">
+                Phone Unlocks / Checks
+                <span class="slider-hint">(unlocks_per_day)</span>
+              </label>
+              <span class="slider-value-display" id="val-unlocks">80 / day</span>
+            </div>
+            <input type="range" id="slider-unlocks" min="5" max="250" step="1" value="80">
+            <div class="slider-minmax">
+              <span>5 checks</span>
+              <span>250 checks</span>
+            </div>
+          </div>
+
+          <!-- 3. Social Media Time -->
+          <div class="slider-item">
+            <div class="slider-header">
+              <label class="slider-label" for="slider-social-media">
+                Social Media Time
+                <span class="slider-hint">(social_media_hours)</span>
+              </label>
+              <span class="slider-value-display" id="val-social-media">2.5 hrs</span>
+            </div>
+            <input type="range" id="slider-social-media" min="0.0" max="10.0" step="0.1" value="2.5">
+            <div class="slider-minmax">
+              <span>0.0 hrs</span>
+              <span>10.0 hrs</span>
+            </div>
+          </div>
+
+          <!-- 4. Night Usage Share -->
+          <div class="slider-item">
+            <div class="slider-header">
+              <label class="slider-label" for="slider-night-ratio">
+                Night Usage Share
+                <span class="slider-hint">(night_usage_ratio)</span>
+              </label>
+              <span class="slider-value-display" id="val-night-ratio">30%</span>
+            </div>
+            <input type="range" id="slider-night-ratio" min="0" max="100" step="1" value="30">
+            <div class="slider-minmax">
+              <span>0% (no night screens)</span>
+              <span>100% (all night usage)</span>
+            </div>
+          </div>
+
+          <!-- 5. Sleep Hours -->
+          <div class="slider-item">
+            <div class="slider-header">
+              <label class="slider-label" for="slider-sleep">
+                Sleep Duration
+                <span class="slider-hint">(sleep_hours)</span>
+              </label>
+              <span class="slider-value-display" id="val-sleep">6.5 hrs</span>
+            </div>
+            <input type="range" id="slider-sleep" min="3.0" max="10.0" step="0.1" value="6.5">
+            <div class="slider-minmax">
+              <span>3.0 hrs (deprived)</span>
+              <span>10.0 hrs (optimal)</span>
+            </div>
+          </div>
+        </form>
+      </section>
+
+      <!-- Right Column: Results from Backend -->
+      <section class="card" aria-labelledby="results-title">
+        <div class="card-title">
+          <span id="results-title">FastAPI Prediction Result</span>
+          <span class="title-tag" id="api-status-tag">Connected &bull; 200 OK</span>
+        </div>
+
+        <!-- Overview Hero: Score + Gauge + Risk Badge -->
+        <div class="overview-hero">
+          <div class="score-block">
+            <span class="score-tagline">Addiction Risk Index</span>
+            <div class="score-number-wrap">
+              <span class="score-number" id="risk-score-num">51</span>
+              <span class="score-max">/100</span>
+            </div>
+            <div class="risk-badge moderate" id="risk-badge">
+              <span class="status-dot"></span>
+              <span id="risk-badge-text">Moderate Risk</span>
+            </div>
+          </div>
+
+          <!-- Circular SVG Gauge -->
+          <div class="meter-gauge-container">
+            <svg class="meter-gauge-svg" viewBox="0 0 100 100">
+              <circle class="gauge-circle-bg" cx="50" cy="50" r="40"></circle>
+              <circle class="gauge-circle-progress" id="gauge-progress-circle" cx="50" cy="50" r="40"
+                stroke-dasharray="251.2" stroke-dashoffset="123"></circle>
+            </svg>
+            <div class="gauge-inner-text" id="gauge-pct">51%</div>
+          </div>
+        </div>
+
+        <!-- Probabilities -->
+        <div class="prob-breakdown">
+          <div class="prob-header">
+            <span>Softmax Probabilities (Backend)</span>
+            <span id="highest-class-prob">Moderate: 97.5%</span>
+          </div>
+          <div class="prob-stacked-bar">
+            <div class="prob-seg low" id="prob-seg-low" style="width: 1%;"></div>
+            <div class="prob-seg moderate" id="prob-seg-mod" style="width: 97%;"></div>
+            <div class="prob-seg high" id="prob-seg-high" style="width: 2%;"></div>
+          </div>
+          <div class="prob-legend">
+            <span><span class="legend-dot" style="background: var(--risk-low);"></span> Low: <strong id="prob-val-low">1%</strong></span>
+            <span><span class="legend-dot" style="background: var(--risk-mod);"></span> Mod: <strong id="prob-val-mod">97%</strong></span>
+            <span><span class="legend-dot" style="background: var(--risk-high);"></span> High: <strong id="prob-val-high">2%</strong></span>
+          </div>
+        </div>
+
+        <!-- Feature Contribution Bar Chart -->
+        <div class="chart-container">
+          <div class="chart-header-row">
+            <span>Feature Contribution to Risk</span>
+            <span>Log-Odds Impact</span>
+          </div>
+          <div class="contrib-list" id="contrib-list-container">
+            <!-- Dynamic Contribution Bars injected by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Personalized Recommendations -->
+        <div class="tips-container">
+          <div class="tips-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+            </svg>
+            Personalized Action Plan (Top Drivers)
+          </div>
+          <div class="tips-grid" id="tips-grid-container">
+            <!-- Dynamic 2 Personalized Tips injected by JavaScript -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <div>Screen Signal &bull; Connected to FastAPI at <code>http://localhost:8000/predict</code></div>
+      <div>Backend Status: <span id="footer-status" style="color: var(--teal-300);">Operational</span></div>
+    </footer>
+  </div>
+
+  <script>
+    /**
+     * SCREEN SIGNAL FRONTEND CLIENT
+     * Connects to FastAPI endpoint POST http://localhost:8000/predict
+     * with live sliders, presets, and real-time visualization updates.
+     */
+
+    const API_URL = 'http://localhost:8000/predict';
+
+    // Test cases specification
+    const TEST_CASES = {
+      low:  { screen: 1.5, unlocks: 20, social: 0.5, night: 5, sleep: 8.5 },
+      mod:  { screen: 5.0, unlocks: 80, social: 2.5, night: 30, sleep: 6.5 },
+      high: { screen: 11.0, unlocks: 200, social: 7.0, night: 70, sleep: 4.0 },
+      reset: { screen: 5.0, unlocks: 80, social: 2.5, night: 30, sleep: 6.5 }
+    };
+
+    const elements = {
+      sliderScreenTime: document.getElementById('slider-screen-time'),
+      sliderUnlocks: document.getElementById('slider-unlocks'),
+      sliderSocialMedia: document.getElementById('slider-social-media'),
+      sliderNightRatio: document.getElementById('slider-night-ratio'),
+      sliderSleep: document.getElementById('slider-sleep'),
+
+      valScreenTime: document.getElementById('val-screen-time'),
+      valUnlocks: document.getElementById('val-unlocks'),
+      valSocialMedia: document.getElementById('val-social-media'),
+      valNightRatio: document.getElementById('val-night-ratio'),
+      valSleep: document.getElementById('val-sleep'),
+
+      riskScoreNum: document.getElementById('risk-score-num'),
+      riskBadge: document.getElementById('risk-badge'),
+      riskBadgeText: document.getElementById('risk-badge-text'),
+      gaugeProgressCircle: document.getElementById('gauge-progress-circle'),
+      gaugePct: document.getElementById('gauge-pct'),
+
+      probSegLow: document.getElementById('prob-seg-low'),
+      probSegMod: document.getElementById('prob-seg-mod'),
+      probSegHigh: document.getElementById('prob-seg-high'),
+      probValLow: document.getElementById('prob-val-low'),
+      probValMod: document.getElementById('prob-val-mod'),
+      probValHigh: document.getElementById('prob-val-high'),
+      highestClassProb: document.getElementById('highest-class-prob'),
+
+      contribListContainer: document.getElementById('contrib-list-container'),
+      tipsGridContainer: document.getElementById('tips-grid-container'),
+      apiStatusTag: document.getElementById('api-status-tag'),
+      backendStatusText: document.getElementById('backend-status-text'),
+      backendPing: document.getElementById('backend-ping'),
+      footerStatus: document.getElementById('footer-status')
+    };
+
+    let debounceTimer = null;
+
+    async function triggerPrediction() {
+      const screenTime = parseFloat(elements.sliderScreenTime.value);
+      const unlocks = parseFloat(elements.sliderUnlocks.value);
+      const socialMedia = parseFloat(elements.sliderSocialMedia.value);
+      const nightRatioPercent = parseFloat(elements.sliderNightRatio.value);
+      const sleepHours = parseFloat(elements.sliderSleep.value);
+
+      // Update text displays
+      elements.valScreenTime.textContent = `${screenTime.toFixed(1)} hrs`;
+      elements.valUnlocks.textContent = `${unlocks} / day`;
+      elements.valSocialMedia.textContent = `${socialMedia.toFixed(1)} hrs`;
+      elements.valNightRatio.textContent = `${nightRatioPercent}%`;
+      elements.valSleep.textContent = `${sleepHours.toFixed(1)} hrs`;
+
+      // Payload for POST /predict
+      const payload = {
+        screen_time_hours: screenTime,
+        unlocks_per_day: unlocks,
+        social_media_hours: socialMedia,
+        night_usage_ratio: nightRatioPercent / 100.0,
+        sleep_hours: sleepHours
+      };
+
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        renderPrediction(data);
+        elements.apiStatusTag.textContent = 'Connected • 200 OK';
+        elements.backendPing.style.background = 'var(--teal-400)';
+        elements.footerStatus.textContent = 'Operational (FastAPI Connected)';
+        elements.footerStatus.style.color = 'var(--teal-300)';
+      } catch (err) {
+        console.warn('Backend fetch failed or CORS error, error details:', err);
+        elements.apiStatusTag.textContent = 'Backend Offline';
+        elements.backendPing.style.background = 'var(--risk-high)';
+        elements.footerStatus.textContent = 'Backend Offline (Check uvicorn)';
+        elements.footerStatus.style.color = 'var(--risk-high)';
+      }
+    }
+
+    function renderPrediction(data) {
+      // 1. Numeric Score
+      const score = data.risk_score;
+      elements.riskScoreNum.textContent = score;
+
+      // 2. Risk Badge
+      const badgeClass = data.risk_level.toLowerCase();
+      elements.riskBadge.className = `risk-badge ${badgeClass}`;
+      elements.riskBadgeText.textContent = `${data.risk_level} Risk`;
+
+      // 3. Circular Gauge
+      const circumference = 251.2;
+      const progressOffset = circumference - (score / 100) * circumference;
+      elements.gaugeProgressCircle.style.strokeDashoffset = progressOffset;
+      elements.gaugePct.textContent = `${score}%`;
+
+      if (badgeClass === 'high') {
+        elements.gaugeProgressCircle.style.stroke = 'var(--risk-high)';
+      } else if (badgeClass === 'moderate') {
+        elements.gaugeProgressCircle.style.stroke = 'var(--risk-mod)';
+      } else {
+        elements.gaugeProgressCircle.style.stroke = 'var(--risk-low)';
+      }
+
+      // 4. Probabilities
+      const pLow = (data.probabilities.Low || 0) * 100;
+      const pMod = (data.probabilities.Moderate || 0) * 100;
+      const pHigh = (data.probabilities.High || 0) * 100;
+
+      elements.probSegLow.style.width = `${pLow.toFixed(1)}%`;
+      elements.probSegMod.style.width = `${pMod.toFixed(1)}%`;
+      elements.probSegHigh.style.width = `${pHigh.toFixed(1)}%`;
+
+      elements.probValLow.textContent = `${pLow.toFixed(0)}%`;
+      elements.probValMod.textContent = `${pMod.toFixed(0)}%`;
+      elements.probValHigh.textContent = `${pHigh.toFixed(0)}%`;
+
+      let maxClass = 'Low';
+      let maxVal = pLow;
+      if (pMod > maxVal) { maxClass = 'Moderate'; maxVal = pMod; }
+      if (pHigh > maxVal) { maxClass = 'High'; maxVal = pHigh; }
+      elements.highestClassProb.textContent = `${maxClass}: ${maxVal.toFixed(1)}%`;
+
+      // 5. Feature Contribution Bar Chart
+      renderContributions(data.feature_contributions);
+
+      // 6. Recommendations
+      renderRecommendations(data.recommendations);
+    }
+
+    function renderContributions(contributions) {
+      if (!contributions || !contributions.length) return;
+
+      const maxAbs = Math.max(...contributions.map(c => Math.abs(c.impact)), 1.0);
+      const sorted = [...contributions].sort((a, b) => b.impact - a.impact);
+
+      let html = '';
+      sorted.forEach((item, index) => {
+        const isPositive = item.impact > 0;
+        const absVal = Math.abs(item.impact);
+        const barPct = Math.min(100, Math.max(8, (absVal / maxAbs) * 100));
+
+        const isTop = isPositive && index < 2;
+        const rankBadge = isTop
+          ? `<span class="contrib-rank-badge top">#${index + 1} Driver</span>`
+          : `<span class="contrib-rank-badge neutral">${isPositive ? 'Driver' : 'Protective'}</span>`;
+
+        const impactText = isPositive
+          ? `+${absVal.toFixed(1)} risk elev.`
+          : `-${absVal.toFixed(1)} protective`;
+
+        const impactClass = isPositive ? 'risk-up' : 'risk-down';
+        const barFillClass = isPositive ? '' : 'protective';
+
+        html += `
+          <div class="contrib-row">
+            <div class="contrib-meta">
+              <span class="contrib-name">
+                ${rankBadge} ${item.label}
+              </span>
+              <span class="contrib-impact-val ${impactClass}">${impactText}</span>
+            </div>
+            <div class="contrib-bar-track">
+              <div class="contrib-bar-fill ${barFillClass}" style="width: ${barPct}%;"></div>
+            </div>
+          </div>
+        `;
+      });
+
+      elements.contribListContainer.innerHTML = html;
+    }
+
+    function renderRecommendations(recommendations) {
+      if (!recommendations || !recommendations.length) return;
+
+      let html = '';
+      recommendations.slice(0, 2).forEach((rec, idx) => {
+        html += `
+          <div class="tip-box">
+            <div class="tip-factor">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Recommendation #${idx + 1}
+            </div>
+            <div class="tip-text">${rec}</div>
+          </div>
+        `;
+      });
+
+      elements.tipsGridContainer.innerHTML = html;
+    }
+
+    function applyPreset(key) {
+      const cfg = TEST_CASES[key];
+      if (!cfg) return;
+
+      elements.sliderScreenTime.value = cfg.screen;
+      elements.sliderUnlocks.value = cfg.unlocks;
+      elements.sliderSocialMedia.value = cfg.social;
+      elements.sliderNightRatio.value = cfg.night;
+      elements.sliderSleep.value = cfg.sleep;
+
+      document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(`preset-${key}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      triggerPrediction();
+    }
+
+    function init() {
+      const sliders = [
+        elements.sliderScreenTime,
+        elements.sliderUnlocks,
+        elements.sliderSocialMedia,
+        elements.sliderNightRatio,
+        elements.sliderSleep
+      ];
+
+      sliders.forEach(s => {
+        s.addEventListener('input', () => {
+          document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+          clearTimeout(debounceTimer);
+          debounceTimer = setTimeout(triggerPrediction, 50);
+        });
+      });
+
+      document.getElementById('preset-low').addEventListener('click', () => applyPreset('low'));
+      document.getElementById('preset-mod').addEventListener('click', () => applyPreset('mod'));
+      document.getElementById('preset-high').addEventListener('click', () => applyPreset('high'));
+      document.getElementById('preset-reset').addEventListener('click', () => applyPreset('reset'));
+
+      triggerPrediction();
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

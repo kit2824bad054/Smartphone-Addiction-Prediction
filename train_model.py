@@ -1,6 +1,7 @@
 """
 Train Model: Smartphone Addiction Risk Predictor
-Dataset loader, feature preprocessor, model trainer, and JavaScript constant exporter.
+Dataset loader, feature preprocessor, model trainer, joblib model persistence,
+and JavaScript constant exporter.
 """
 
 import os
@@ -11,7 +12,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, f1_score, classification_report, confusion_matrix
+from sklearn.metrics import accuracy_score, f1_score, classification_report
+import joblib
 
 def locate_data_file():
     """Find the dataset file in either local or parent data/ directories."""
@@ -21,6 +23,7 @@ def locate_data_file():
         os.path.join("data", "cleaned_smartphone_addiction.csv"),
         os.path.join("data", "teen_phone_addiction_raw.csv"),
         os.path.join("..", "data", "cleaned_smartphone_addiction.csv"),
+        os.path.join(os.path.dirname(__file__), "..", "data", "cleaned_smartphone_addiction.csv"),
     ]
     for p in possible_paths:
         if os.path.exists(p):
@@ -33,7 +36,7 @@ def load_and_clean_data(file_path):
     - screen_time_hours
     - unlocks_per_day
     - social_media_hours
-    - night_usage_ratio
+    - night_usage_ratio (ratio 0.0 - 1.0)
     - sleep_hours
     """
     print(f"[1/5] Loading dataset from: {file_path}")
@@ -47,17 +50,19 @@ def load_and_clean_data(file_path):
         df["screen_time_hours"] = pd.to_numeric(raw_df["screen_time_hours"], errors="coerce")
         df["unlocks_per_day"] = pd.to_numeric(raw_df["unlocks_per_day"], errors="coerce")
         df["social_media_hours"] = pd.to_numeric(raw_df["social_media_hours"], errors="coerce")
-        df["night_usage_ratio"] = pd.to_numeric(raw_df["night_usage_ratio"], errors="coerce")
+        night_val = pd.to_numeric(raw_df["night_usage_ratio"], errors="coerce")
+        # Standardize night_usage_ratio as a 0.0 - 1.0 fraction
+        df["night_usage_ratio"] = np.where(night_val > 1.0, night_val / 100.0, night_val)
+        df["night_usage_ratio"] = np.clip(df["night_usage_ratio"], 0.0, 1.0)
         df["sleep_hours"] = pd.to_numeric(raw_df["sleep_hours"], errors="coerce")
     else:
         # Map raw Kaggle dataset columns
         df["screen_time_hours"] = pd.to_numeric(raw_df["Daily_Usage_Hours"], errors="coerce")
         df["unlocks_per_day"] = pd.to_numeric(raw_df["Phone_Checks_Per_Day"], errors="coerce")
         df["social_media_hours"] = pd.to_numeric(raw_df["Time_on_Social_Media"], errors="coerce")
-        # Night usage ratio: (bedtime screen hours / total daily screen hours) * 100
         safe_daily = np.maximum(df["screen_time_hours"].fillna(0.5), 0.5)
         bedtime_hrs = pd.to_numeric(raw_df.get("Screen_Time_Before_Bed", 1.0), errors="coerce").fillna(1.0)
-        df["night_usage_ratio"] = np.clip((bedtime_hrs / safe_daily) * 100, 0, 100)
+        df["night_usage_ratio"] = np.clip(bedtime_hrs / safe_daily, 0.0, 1.0)
         df["sleep_hours"] = pd.to_numeric(raw_df["Sleep_Hours"], errors="coerce")
 
     # Clean missing values
@@ -76,11 +81,11 @@ def create_target_label(df):
     """
     Creates target label (Low/Moderate/High risk) by binning a composite usage score
     grounded in behavioral smartphone addiction criteria:
-    - Higher screen time increases risk
-    - Higher phone unlocks increases risk
-    - Higher social media hours increases risk
-    - Higher night usage share increases risk
-    - Fewer sleep hours increases risk (negative weight)
+    - Higher screen time increases risk (+0.30)
+    - Higher phone unlocks increases risk (+0.20)
+    - Higher social media hours increases risk (+0.20)
+    - Higher night usage share increases risk (+0.15)
+    - Fewer sleep hours increases risk (-0.15)
     """
     print("[2/5] Creating target labels (Low / Moderate / High Risk)...")
     z_screen = (df["screen_time_hours"] - df["screen_time_hours"].mean()) / df["screen_time_hours"].std()
@@ -97,10 +102,8 @@ def create_target_label(df):
         0.15 * z_sleep
     )
 
-    # Bin composite score into balanced tertiles (Low, Moderate, High)
     labels = ["Low", "Moderate", "High"]
     risk_categorical = pd.qcut(composite_score, q=3, labels=labels)
-    # Map to numeric classes [0: Low, 1: Moderate, 2: High] for consistent matrix indexing
     class_mapping = {"Low": 0, "Moderate": 1, "High": 2}
     y = risk_categorical.map(class_mapping).astype(int)
 
@@ -158,16 +161,45 @@ def train_and_evaluate(X, y, class_names):
 
     return scaler, lr, rf, (acc_lr, f1_lr, acc_rf, f1_rf)
 
+def save_joblib_model(scaler, lr, feature_names, class_names):
+    """
+    Saves trained model and scaler package to model.joblib in both local and backend/ paths.
+    """
+    payload = {
+        "model": lr,
+        "scaler": scaler,
+        "features": feature_names,
+        "classes": class_names,
+        "class_mapping": {0: "Low", 1: "Moderate", 2: "High"},
+        "feature_labels": {
+            "screen_time_hours": "Daily Screen Time",
+            "unlocks_per_day": "Phone Unlocks / Checks",
+            "social_media_hours": "Social Media Hours",
+            "night_usage_ratio": "Night Usage Share",
+            "sleep_hours": "Sleep Duration",
+        },
+    }
+
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    save_paths = [
+        os.path.join(base_dir, "model.joblib"),
+        os.path.join(base_dir, "backend", "model.joblib"),
+        os.path.join(base_dir, "..", "backend", "model.joblib"),
+    ]
+
+    for p in save_paths:
+        target_dir = os.path.dirname(p)
+        if os.path.exists(target_dir):
+            joblib.dump(payload, p)
+            print(f"[5/5] Saved model artifact to: {os.path.abspath(p)}")
+
 def export_js_constants(scaler, lr, feature_names, class_names):
     """
-    Prints JavaScript array constants formatted for direct copy-paste into index.html.
+    Prints JavaScript array constants formatted for index.html.
     """
     print("\n" + "=" * 65)
-    print("      JAVASCRIPT CONSTANTS (COPY-PASTE INTO INDEX.HTML)")
+    print("      JAVASCRIPT CONSTANTS (FOR INDEX.HTML)")
     print("=" * 65)
-    print("// Feature Order:")
-    print(f"// {feature_names}\n")
-
     mean_list = [round(float(v), 6) for v in scaler.mean_]
     scale_list = [round(float(v), 6) for v in scaler.scale_]
     intercept_list = [round(float(v), 6) for v in lr.intercept_]
@@ -200,6 +232,7 @@ def main():
     y, class_names = create_target_label(df)
 
     scaler, lr, rf, metrics = train_and_evaluate(X, y, class_names)
+    save_joblib_model(scaler, lr, features, class_names)
     export_js_constants(scaler, lr, features, class_names)
 
 if __name__ == "__main__":
