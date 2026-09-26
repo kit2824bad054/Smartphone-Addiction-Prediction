@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Screen Signal — Smartphone Addiction Risk Predictor</title>
-  <meta name="description" content="Screen Signal runs on-device client-side machine learning to predict smartphone addiction risk based on screen time, unlocks, social media, night usage, and sleep.">
+  <title>Screen Signal — AI Smartphone Addiction Risk Predictor</title>
+  <meta name="description" content="Screen Signal is an AI-powered digital wellness application that assesses smartphone addiction risk, visualizes behavioral drivers, and prescribes personalized digital detox strategies.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      /* Teal Accent Palette (Strict Single Accent) */
+      /* Curated Teal Accent System (Strict Single Accent) */
       --teal-50: #f0fdfa;
       --teal-100: #ccfbf1;
       --teal-200: #99f6e4;
@@ -23,36 +23,42 @@
       --teal-900: #134e4a;
       --teal-950: #042f2e;
 
-      /* Dark Slate Backgrounds */
-      --bg-base: #090d12;
-      --bg-surface: #0f1620;
-      --bg-card: #15202c;
-      --bg-card-hover: #1a2837;
-      --bg-input: #0b1118;
+      /* Deep Slate Surface Hierarchy */
+      --bg-canvas: #070a0f;
+      --bg-surface: #0e141e;
+      --bg-card: #131c28;
+      --bg-card-hover: #192535;
+      --bg-input: #090e15;
+      --bg-glass: rgba(19, 28, 40, 0.75);
 
-      /* Text Grays */
-      --text-white: #f8fafc;
-      --text-main: #e2e8f0;
-      --text-muted: #94a3b8;
-      --text-dim: #64748b;
+      /* Typography Grayscale */
+      --text-white: #ffffff;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --text-dim: #475569;
 
-      /* Borders */
+      /* Borders & Glows */
       --border-subtle: #1e293b;
+      --border-card: rgba(255, 255, 255, 0.07);
       --border-teal: rgba(20, 184, 166, 0.3);
-      --border-teal-active: rgba(45, 212, 191, 0.6);
+      --border-teal-glow: rgba(45, 212, 191, 0.5);
+      --teal-glow: rgba(20, 184, 166, 0.25);
+      --teal-glow-sm: 0 0 20px rgba(20, 184, 166, 0.2);
 
-      /* Risk Semantic Colors */
+      /* Semantic Alert Tints */
       --risk-low: #10b981;
       --risk-mod: #f59e0b;
       --risk-high: #f43f5e;
-      --risk-glow: rgba(20, 184, 166, 0.25);
 
-      --radius-sm: 6px;
-      --radius-md: 10px;
-      --radius-lg: 14px;
-      --radius-full: 9999px;
+      /* Metrics & Curves */
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-xl: 24px;
+      --radius-pill: 9999px;
 
-      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
     }
 
@@ -62,274 +68,591 @@
       padding: 0;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
-      background-color: var(--bg-base);
-      color: var(--text-main);
+      background-color: var(--bg-canvas);
+      color: var(--text-primary);
       font-family: var(--font-sans);
-      line-height: 1.5;
+      line-height: 1.6;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
-      padding: 24px 16px;
+      background-image: 
+        radial-gradient(circle at 15% 10%, rgba(20, 184, 166, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 85% 60%, rgba(13, 148, 136, 0.06) 0%, transparent 40%),
+        radial-gradient(circle at 50% 90%, rgba(4, 47, 46, 0.15) 0%, transparent 50%);
+      background-attachment: fixed;
     }
 
     .container {
-      max-width: 1200px;
-      width: 100%;
+      max-width: 1240px;
       margin: 0 auto;
-      flex: 1;
+      padding: 0 24px;
     }
 
-    /* Header */
-    header {
-      margin-bottom: 24px;
-      border-bottom: 1px solid var(--border-subtle);
-      padding-bottom: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+    /* -------------------------------------------------------------
+       NAVBAR
+    ------------------------------------------------------------- */
+    nav.navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(7, 10, 15, 0.82);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-card);
+      padding: 16px 0;
     }
 
-    .header-top {
+    .nav-inner {
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 16px;
     }
 
-    .brand-group {
+    .nav-brand {
       display: flex;
       align-items: center;
       gap: 12px;
+      text-decoration: none;
+      color: var(--text-white);
     }
 
-    .brand-icon {
-      width: 36px;
-      height: 36px;
+    .brand-mark {
+      width: 40px;
+      height: 40px;
       background: linear-gradient(135deg, var(--teal-600), var(--teal-400));
       border-radius: var(--radius-md);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #042f2e;
-      box-shadow: 0 0 15px rgba(20, 184, 166, 0.35);
+      box-shadow: var(--teal-glow-sm);
     }
 
-    .brand-icon svg {
-      width: 20px;
-      height: 20px;
+    .brand-mark svg {
+      width: 22px;
+      height: 22px;
       stroke: #042f2e;
       stroke-width: 2.5;
       fill: none;
     }
 
-    h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
+    .brand-text-wrap {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
       color: var(--text-white);
+    }
+
+    .brand-tagline {
+      font-size: 0.7rem;
+      font-family: var(--font-mono);
+      color: var(--teal-400);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      list-style: none;
+    }
+
+    @media (max-width: 880px) {
+      .nav-links { display: none; }
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.15s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--teal-300);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      background: rgba(20, 184, 166, 0.1);
+      border: 1px solid var(--border-teal);
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      color: var(--teal-300);
+    }
+
+    .status-dot-pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--teal-400);
+      box-shadow: 0 0 8px var(--teal-400);
+    }
+
+    .btn-nav-cta {
+      background: var(--teal-500);
+      color: #042f2e;
+      padding: 8px 18px;
+      border-radius: var(--radius-pill);
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.15s ease;
       display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-nav-cta:hover {
+      background: var(--teal-400);
+      box-shadow: 0 0 16px rgba(45, 212, 191, 0.4);
+      transform: translateY(-1px);
+    }
+
+    /* -------------------------------------------------------------
+       HERO SECTION
+    ------------------------------------------------------------- */
+    header.hero {
+      padding: 72px 0 56px;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: var(--radius-pill);
+      background: rgba(20, 184, 166, 0.08);
+      border: 1px solid var(--border-teal);
+      color: var(--teal-300);
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .hero-title {
+      font-size: 3.4rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.15;
+      color: var(--text-white);
+      max-width: 880px;
+      margin: 0 auto 20px;
+    }
+
+    .hero-title span.accent {
+      background: linear-gradient(135deg, #ffffff 30%, var(--teal-300) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 1.12rem;
+      color: var(--text-secondary);
+      max-width: 720px;
+      margin: 0 auto 36px;
+      line-height: 1.65;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+
+    .btn-hero-primary {
+      background: var(--teal-400);
+      color: #042f2e;
+      font-weight: 700;
+      font-size: 0.98rem;
+      padding: 13px 30px;
+      border-radius: var(--radius-pill);
+      text-decoration: none;
+      box-shadow: 0 0 25px rgba(45, 212, 191, 0.35);
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-hero-primary:hover {
+      background: var(--teal-300);
+      transform: translateY(-2px);
+      box-shadow: 0 0 35px rgba(45, 212, 191, 0.55);
+    }
+
+    .btn-hero-secondary {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      font-weight: 600;
+      font-size: 0.98rem;
+      padding: 13px 26px;
+      border-radius: var(--radius-pill);
+      text-decoration: none;
+      border: 1px solid var(--border-subtle);
+      transition: all 0.2s ease;
+    }
+
+    .btn-hero-secondary:hover {
+      border-color: var(--border-teal);
+      color: var(--teal-300);
+      background: var(--bg-card);
+    }
+
+    /* Hero Trust Metrics Bar */
+    .hero-stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      max-width: 980px;
+      margin: 0 auto;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-xl);
+      padding: 20px 28px;
+      backdrop-filter: blur(12px);
+    }
+
+    @media (max-width: 768px) {
+      .hero-title { font-size: 2.3rem; }
+      .hero-stats-row { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .stat-number {
+      font-size: 1.65rem;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: var(--text-white);
+      letter-spacing: -0.02em;
+    }
+
+    .stat-number span.teal { color: var(--teal-400); }
+
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+
+    /* -------------------------------------------------------------
+       SECTION COMMON HEADERS
+    ------------------------------------------------------------- */
+    .section-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .section-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--teal-400);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+
+    .section-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text-white);
+      margin-bottom: 12px;
+    }
+
+    .section-description {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      max-width: 620px;
+      margin: 0 auto;
+    }
+
+    /* -------------------------------------------------------------
+       INTERACTIVE ANALYZER (CORE APPLICATION)
+    ------------------------------------------------------------- */
+    section.analyzer-section {
+      padding: 60px 0 80px;
+    }
+
+    .analyzer-layout {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    @media (max-width: 980px) {
+      .analyzer-layout { grid-template-columns: 1fr; }
+    }
+
+    /* Left Card: Inputs & Presets */
+    .app-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      position: relative;
+    }
+
+    .app-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 16px;
+    }
+
+    .app-card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-white);
+      display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    .badge-client-side {
+    .app-card-title svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--teal-400);
+      fill: none;
+    }
+
+    .live-chip {
+      font-family: var(--font-mono);
       font-size: 0.72rem;
-      font-family: var(--font-mono);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      background: rgba(20, 184, 166, 0.12);
-      border: 1px solid var(--border-teal);
       color: var(--teal-300);
-      padding: 3px 8px;
+      background: rgba(20, 184, 166, 0.12);
+      padding: 4px 10px;
       border-radius: var(--radius-sm);
-    }
-
-    .header-subtitle {
-      color: var(--text-muted);
-      font-size: 0.92rem;
-      max-width: 720px;
-    }
-
-    /* Layout Grid */
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-    }
-
-    @media (max-width: 900px) {
-      .dashboard-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* Cards */
-    .card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .card-title {
-      font-size: 1.05rem;
+      border: 1px solid var(--border-teal);
       font-weight: 600;
-      color: var(--text-white);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      letter-spacing: -0.01em;
-      border-bottom: 1px solid var(--border-subtle);
-      padding-bottom: 12px;
     }
 
-    .card-title .title-tag {
-      font-size: 0.75rem;
-      font-family: var(--font-mono);
-      color: var(--teal-400);
-      font-weight: 500;
-    }
-
-    /* Presets */
-    .presets-container {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+    /* Preset Scenarios */
+    .presets-box {
       background: var(--bg-input);
-      padding: 12px;
-      border-radius: var(--radius-md);
       border: 1px solid var(--border-subtle);
-    }
-
-    .presets-label {
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-dim);
-    }
-
-    .presets-chips {
+      border-radius: var(--radius-md);
+      padding: 16px;
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .presets-header-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+
+    .preset-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
       gap: 8px;
+    }
+
+    @media (max-width: 600px) {
+      .preset-grid { grid-template-columns: repeat(2, 1fr); }
     }
 
     .preset-btn {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-muted);
-      padding: 6px 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      color: var(--text-secondary);
       border-radius: var(--radius-sm);
+      padding: 10px 8px;
       font-size: 0.8rem;
-      font-weight: 500;
+      font-weight: 600;
       cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
       transition: all 0.15s ease;
+      text-align: center;
     }
 
     .preset-btn:hover {
       background: var(--teal-950);
-      color: var(--teal-300);
       border-color: var(--teal-700);
+      color: var(--teal-200);
     }
 
     .preset-btn.active {
       background: var(--teal-900);
-      color: var(--teal-200);
-      border-color: var(--teal-500);
+      border-color: var(--teal-400);
+      color: var(--teal-100);
+      box-shadow: 0 0 12px rgba(20, 184, 166, 0.3);
     }
 
-    /* Sliders Group */
-    .sliders-group {
+    .preset-btn .preset-icon {
+      font-size: 1rem;
+    }
+
+    /* Sliders List */
+    .sliders-collection {
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 22px;
     }
 
-    .slider-item {
+    .slider-control-card {
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 10px;
+      transition: border-color 0.15s ease;
     }
 
-    .slider-header {
+    .slider-control-card:hover {
+      border-color: var(--border-teal);
+    }
+
+    .slider-top-row {
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
+      align-items: center;
     }
 
-    .slider-label {
-      font-size: 0.88rem;
-      font-weight: 500;
-      color: var(--text-main);
+    .slider-info {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 10px;
     }
 
-    .slider-hint {
-      font-size: 0.75rem;
-      color: var(--text-dim);
-    }
-
-    .slider-value-display {
-      font-family: var(--font-mono);
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--teal-300);
-      background: var(--bg-input);
-      border: 1px solid var(--border-teal);
-      padding: 2px 8px;
+    .slider-icon-bubble {
+      width: 32px;
+      height: 32px;
       border-radius: var(--radius-sm);
+      background: rgba(20, 184, 166, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--teal-300);
     }
 
-    /* Range Input Custom Styling */
+    .slider-icon-bubble svg {
+      width: 17px;
+      height: 17px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .slider-text-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .slider-label-name {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text-white);
+    }
+
+    .slider-subhint {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .slider-badge-val {
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--teal-300);
+      background: rgba(20, 184, 166, 0.12);
+      border: 1px solid var(--border-teal);
+      padding: 4px 12px;
+      border-radius: var(--radius-sm);
+      min-width: 82px;
+      text-align: right;
+    }
+
+    /* Range Input Customization */
     input[type=range] {
       -webkit-appearance: none;
       width: 100%;
-      height: 6px;
+      height: 7px;
       background: #1e293b;
-      border-radius: var(--radius-full);
+      border-radius: var(--radius-pill);
       outline: none;
-      transition: background 0.15s;
+      cursor: pointer;
     }
 
     input[type=range]::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       background: var(--teal-400);
-      border: 2px solid var(--teal-950);
+      border: 3px solid #042f2e;
       cursor: pointer;
-      box-shadow: 0 0 8px rgba(45, 212, 191, 0.5);
-      transition: transform 0.1s ease, background-color 0.15s;
+      box-shadow: 0 0 12px rgba(45, 212, 191, 0.6);
+      transition: transform 0.1s ease, background 0.15s ease;
     }
 
     input[type=range]::-webkit-slider-thumb:hover {
-      transform: scale(1.15);
+      transform: scale(1.2);
       background: var(--teal-300);
     }
 
     input[type=range]::-moz-range-thumb {
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       background: var(--teal-400);
-      border: 2px solid var(--teal-950);
+      border: 3px solid #042f2e;
       cursor: pointer;
-      box-shadow: 0 0 8px rgba(45, 212, 191, 0.5);
+      box-shadow: 0 0 12px rgba(45, 212, 191, 0.6);
     }
 
-    .slider-minmax {
+    .range-extremes {
       display: flex;
       justify-content: space-between;
       font-size: 0.72rem;
@@ -337,1096 +660,1286 @@
       font-family: var(--font-mono);
     }
 
-    /* Output Card / Overview */
-    .overview-hero {
+    /* Right Card: Real-Time Diagnostic Dashboard */
+    .diagnostic-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .hero-score-box {
+      background: linear-gradient(135deg, rgba(19, 28, 40, 0.8), rgba(9, 14, 21, 0.95));
+      border: 1px solid var(--border-teal);
+      border-radius: var(--radius-lg);
+      padding: 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 20px;
-      gap: 16px;
+      gap: 20px;
+      position: relative;
+      overflow: hidden;
     }
 
-    .score-block {
+    .hero-score-box::after {
+      content: '';
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 140px;
+      height: 140px;
+      background: radial-gradient(circle, rgba(20, 184, 166, 0.2), transparent 70%);
+      pointer-events: none;
+    }
+
+    .score-summary-left {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 8px;
     }
 
-    .score-tagline {
+    .score-eyebrow {
       font-size: 0.75rem;
+      font-family: var(--font-mono);
       font-weight: 600;
-      letter-spacing: 0.05em;
+      color: var(--text-muted);
       text-transform: uppercase;
-      color: var(--text-dim);
+      letter-spacing: 0.05em;
     }
 
-    .score-number-wrap {
+    .score-number-group {
       display: flex;
       align-items: baseline;
-      gap: 4px;
+      gap: 6px;
     }
 
-    .score-number {
-      font-size: 3.2rem;
+    .score-big-num {
+      font-size: 3.8rem;
       font-weight: 800;
+      font-family: var(--font-mono);
       line-height: 1;
-      font-family: var(--font-sans);
       letter-spacing: -0.04em;
       color: var(--text-white);
     }
 
-    .score-max {
-      font-size: 1.1rem;
+    .score-denominator {
+      font-size: 1.2rem;
       color: var(--text-dim);
-      font-weight: 500;
+      font-weight: 600;
     }
 
-    .risk-badge {
+    .risk-badge-pill {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 6px 14px;
-      border-radius: var(--radius-full);
-      font-size: 0.85rem;
+      padding: 6px 16px;
+      border-radius: var(--radius-pill);
+      font-size: 0.82rem;
       font-weight: 700;
-      letter-spacing: 0.03em;
       text-transform: uppercase;
+      letter-spacing: 0.04em;
       width: fit-content;
-      margin-top: 4px;
     }
 
-    .risk-badge.low {
+    .risk-badge-pill.low {
       background: rgba(16, 185, 129, 0.15);
       color: #34d399;
       border: 1px solid rgba(16, 185, 129, 0.35);
     }
 
-    .risk-badge.moderate {
+    .risk-badge-pill.moderate {
       background: rgba(245, 158, 11, 0.15);
       color: #fbbf24;
       border: 1px solid rgba(245, 158, 11, 0.35);
     }
 
-    .risk-badge.high {
+    .risk-badge-pill.high {
       background: rgba(244, 63, 94, 0.15);
       color: #fb7185;
       border: 1px solid rgba(244, 63, 94, 0.35);
     }
 
-    .status-dot {
+    .status-dot-indicator {
       width: 8px;
       height: 8px;
       border-radius: 50%;
       background: currentColor;
     }
 
-    .meter-gauge-container {
-      width: 110px;
-      height: 110px;
+    /* Circular SVG Gauge */
+    .gauge-wrapper {
+      width: 120px;
+      height: 120px;
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-shrink: 0;
     }
 
-    .meter-gauge-svg {
+    .gauge-svg {
       width: 100%;
       height: 100%;
       transform: rotate(-90deg);
     }
 
-    .gauge-circle-bg {
+    .gauge-bg-ring {
       fill: none;
       stroke: #1e293b;
-      stroke-width: 8;
+      stroke-width: 9;
     }
 
-    .gauge-circle-progress {
+    .gauge-active-ring {
       fill: none;
       stroke: var(--teal-400);
-      stroke-width: 8;
+      stroke-width: 9;
       stroke-linecap: round;
       transition: stroke-dashoffset 0.25s ease, stroke 0.25s ease;
     }
 
-    .gauge-inner-text {
+    .gauge-caption {
       position: absolute;
       text-align: center;
       font-family: var(--font-mono);
-      font-size: 0.85rem;
-      font-weight: 600;
+      font-size: 0.95rem;
+      font-weight: 700;
       color: var(--teal-300);
     }
 
-    /* Class Probabilities Bar */
-    .prob-breakdown {
+    /* Softmax Probability Stacked Bar */
+    .prob-panel {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px;
     }
 
-    .prob-header {
+    .prob-panel-head {
       display: flex;
       justify-content: space-between;
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       color: var(--text-muted);
-      font-weight: 500;
+      font-weight: 600;
     }
 
-    .prob-stacked-bar {
-      height: 10px;
-      background: var(--bg-input);
-      border-radius: var(--radius-full);
-      overflow: hidden;
+    .prob-bar-container {
+      height: 12px;
+      background: #1e293b;
+      border-radius: var(--radius-pill);
       display: flex;
-      border: 1px solid var(--border-subtle);
+      overflow: hidden;
     }
 
-    .prob-seg {
+    .prob-segment {
       height: 100%;
       transition: width 0.2s ease;
     }
 
-    .prob-seg.low {
-      background: var(--risk-low);
-    }
+    .prob-segment.low { background: var(--risk-low); }
+    .prob-segment.moderate { background: var(--risk-mod); }
+    .prob-segment.high { background: var(--risk-high); }
 
-    .prob-seg.moderate {
-      background: var(--risk-mod);
-    }
-
-    .prob-seg.high {
-      background: var(--risk-high);
-    }
-
-    .prob-legend {
+    .prob-legend-row {
       display: flex;
       justify-content: space-between;
-      font-size: 0.72rem;
+      font-size: 0.75rem;
       font-family: var(--font-mono);
       color: var(--text-dim);
     }
 
-    .prob-legend span {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .legend-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-    }
-
-    /* Feature Contribution Bar Chart */
-    .chart-container {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .chart-header-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.82rem;
-      color: var(--text-dim);
-      border-bottom: 1px solid var(--border-subtle);
-      padding-bottom: 6px;
-    }
-
-    .contrib-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .contrib-row {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .contrib-meta {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.82rem;
-      align-items: center;
-    }
-
-    .contrib-name {
-      font-weight: 500;
-      color: var(--text-main);
+    .prob-legend-row span {
       display: flex;
       align-items: center;
       gap: 6px;
     }
 
-    .contrib-rank-badge {
-      font-size: 0.68rem;
-      font-family: var(--font-mono);
-      padding: 1px 5px;
-      border-radius: var(--radius-sm);
+    .legend-bullet {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+    }
+
+    /* Feature Contributions Chart */
+    .contributions-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .panel-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 8px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
       font-weight: 600;
     }
 
-    .contrib-rank-badge.top {
+    .contrib-items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .contrib-entry {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .contrib-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.84rem;
+    }
+
+    .contrib-label-left {
+      font-weight: 600;
+      color: var(--text-white);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .contrib-badge-tag {
+      font-size: 0.68rem;
+      font-family: var(--font-mono);
+      padding: 1px 6px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+    }
+
+    .contrib-badge-tag.lead {
       background: rgba(20, 184, 166, 0.2);
       color: var(--teal-300);
       border: 1px solid var(--border-teal);
     }
 
-    .contrib-rank-badge.neutral {
+    .contrib-badge-tag.sub {
       background: rgba(100, 116, 139, 0.15);
       color: var(--text-dim);
     }
 
-    .contrib-impact-val {
+    .contrib-val-right {
       font-family: var(--font-mono);
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       font-weight: 600;
     }
 
-    .contrib-impact-val.risk-up {
-      color: var(--teal-300);
-    }
+    .contrib-val-right.risk-up { color: var(--teal-300); }
+    .contrib-val-right.risk-down { color: var(--text-dim); }
 
-    .contrib-impact-val.risk-down {
-      color: var(--text-dim);
-    }
-
-    .contrib-bar-track {
+    .contrib-track {
       height: 8px;
       background: var(--bg-input);
-      border-radius: var(--radius-full);
+      border-radius: var(--radius-pill);
       overflow: hidden;
-      position: relative;
     }
 
-    .contrib-bar-fill {
+    .contrib-fill-bar {
       height: 100%;
-      border-radius: var(--radius-full);
+      border-radius: var(--radius-pill);
       background: linear-gradient(90deg, var(--teal-700), var(--teal-400));
-      transition: width 0.2s ease, background 0.2s ease;
+      transition: width 0.2s ease;
     }
 
-    .contrib-bar-fill.protective {
+    .contrib-fill-bar.protective {
       background: #334155;
     }
 
-    /* Tips & Action Items */
-    .tips-container {
+    /* Personalized Recommendations */
+    .recommendations-box {
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 20px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      border-top: 1px solid var(--border-subtle);
-      padding-top: 16px;
+      gap: 14px;
     }
 
-    .tips-title {
+    .recs-title-bar {
       font-size: 0.85rem;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--teal-300);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
       display: flex;
       align-items: center;
-      gap: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
+      gap: 8px;
     }
 
-    .tips-grid {
+    .recs-cards-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
     }
 
-    @media (max-width: 600px) {
-      .tips-grid {
-        grid-template-columns: 1fr;
-      }
+    @media (max-width: 650px) {
+      .recs-cards-grid { grid-template-columns: 1fr; }
     }
 
-    .tip-box {
+    .rec-card-single {
       background: var(--bg-input);
       border: 1px solid var(--border-subtle);
       border-left: 3px solid var(--teal-500);
-      padding: 12px;
       border-radius: var(--radius-md);
+      padding: 14px;
       display: flex;
       flex-direction: column;
       gap: 6px;
     }
 
-    .tip-factor {
-      font-size: 0.75rem;
+    .rec-card-header {
+      font-size: 0.78rem;
       font-weight: 700;
       color: var(--teal-300);
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
       text-transform: uppercase;
-      letter-spacing: 0.03em;
     }
 
-    .tip-text {
-      font-size: 0.82rem;
-      color: var(--text-muted);
+    .rec-card-body {
+      font-size: 0.83rem;
+      color: var(--text-secondary);
       line-height: 1.45;
     }
 
-    /* Model Parameters Disclosure / Technical Specs */
-    .tech-specs-card {
-      margin-top: 24px;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 20px 24px;
+    /* -------------------------------------------------------------
+       SECTION: HOW IT WORKS (3-STEP PIPELINE)
+    ------------------------------------------------------------- */
+    section.how-it-works-section {
+      padding: 80px 0;
+      border-top: 1px solid var(--border-card);
     }
 
-    .tech-details-toggle {
+    .pipeline-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    @media (max-width: 820px) {
+      .pipeline-grid { grid-template-columns: 1fr; }
+    }
+
+    .pipeline-step-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+    }
+
+    .step-badge {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      background: rgba(20, 184, 166, 0.12);
+      border: 1px solid var(--border-teal);
+      color: var(--teal-400);
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 0.95rem;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      user-select: none;
-      font-size: 0.88rem;
-      font-weight: 600;
-      color: var(--text-muted);
+      justify-content: center;
     }
 
-    .tech-details-toggle:hover {
+    .step-heading {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-white);
+    }
+
+    .step-desc {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* -------------------------------------------------------------
+       SECTION: THE CLINICAL SCIENCE
+    ------------------------------------------------------------- */
+    section.science-section {
+      padding: 80px 0;
+      border-top: 1px solid var(--border-card);
+    }
+
+    .science-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .science-cards-grid { grid-template-columns: 1fr; }
+    }
+
+    .science-item-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .science-item-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--border-teal);
+    }
+
+    .science-icon-head {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius-sm);
+      background: rgba(20, 184, 166, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: var(--teal-300);
     }
 
-    .tech-content {
-      margin-top: 16px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      border-top: 1px solid var(--border-subtle);
-      padding-top: 16px;
+    .science-icon-head svg {
+      width: 22px;
+      height: 22px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
     }
 
-    @media (max-width: 768px) {
-      .tech-content {
-        grid-template-columns: 1fr;
-      }
+    .science-card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-white);
     }
 
-    .code-box {
-      background: var(--bg-input);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      padding: 10px;
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      overflow-x: auto;
-      color: var(--teal-200);
-      line-height: 1.4;
+    .science-card-text {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
     }
 
-    /* Footer */
-    footer {
-      margin-top: 32px;
-      text-align: center;
-      font-size: 0.75rem;
-      color: var(--text-dim);
-      border-top: 1px solid var(--border-subtle);
-      padding-top: 16px;
+    /* -------------------------------------------------------------
+       FOOTER
+    ------------------------------------------------------------- */
+    footer.site-footer {
+      border-top: 1px solid var(--border-card);
+      padding: 48px 0 36px;
+      margin-top: 60px;
+      background: #05080c;
+    }
+
+    .footer-top-row {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 24px;
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border-subtle);
     }
 
-    footer a {
+    .footer-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.15s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--teal-300);
+    }
+
+    .footer-bottom-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+
+    .footer-bottom-row a {
       color: var(--teal-400);
       text-decoration: none;
     }
 
-    footer a:hover {
+    .footer-bottom-row a:hover {
       text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <!-- Header -->
-    <header>
-      <div class="header-top">
-        <div class="brand-group">
-          <div class="brand-icon">
+
+  <!-- Top Navigation Bar -->
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <a href="#" class="nav-brand">
+        <div class="brand-mark">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
+        </div>
+        <div class="brand-text-wrap">
+          <span class="brand-title">Screen Signal</span>
+          <span class="brand-tagline">AI Behavioral Screen Analytics</span>
+        </div>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#assessment">Live Assessment</a></li>
+        <li><a href="#pipeline">How It Works</a></li>
+        <li><a href="#science">The Science</a></li>
+        <li><a href="https://github.com/kit2824bad054/Smartphone-Addiction-Prediction" target="_blank">GitHub Repo</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div class="status-pill" id="nav-status-pill">
+          <span class="status-dot-pulse" id="nav-status-dot"></span>
+          <span id="nav-status-text">Backend Active (localhost:8000)</span>
+        </div>
+        <a href="#assessment" class="btn-nav-cta">Analyze Habits</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="container">
+      <div class="hero-badge">
+        ✦ Multinomial Logistic Regression &bull; SAS-SV Aligned Framework
+      </div>
+      <h1 class="hero-title">
+        Decode Your Digital Habits.<br>
+        <span class="accent">Reclaim Your Attention Span.</span>
+      </h1>
+      <p class="hero-subtitle">
+        Screen Signal combines clinical behavioral metrics—screen time, compulsive pickups, infinite scrolling, bedtime exposure, and sleep debt—into a real-time predictive risk assessment with targeted interventions.
+      </p>
+
+      <div class="hero-cta-group">
+        <a href="#assessment" class="btn-hero-primary">
+          Start Assessment
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7"></path>
+          </svg>
+        </a>
+        <a href="#pipeline" class="btn-hero-secondary">Explore Methodology</a>
+      </div>
+
+      <!-- Quick Stats Row -->
+      <div class="hero-stats-row">
+        <div class="stat-item">
+          <span class="stat-number">98.8<span class="teal">%</span></span>
+          <span class="stat-label">Model Accuracy</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">3,000<span class="teal">+</span></span>
+          <span class="stat-label">Behavioral Logs</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">5<span class="teal">D</span></span>
+          <span class="stat-label">Habit Dimensions</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">&lt;1<span class="teal">ms</span></span>
+          <span class="stat-label">Inference Latency</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Interactive Analyzer Section (Core Application) -->
+  <section class="analyzer-section" id="assessment">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-eyebrow">Interactive Machine Learning Simulator</div>
+        <h2 class="section-title">Calculate Your Screen Addiction Risk</h2>
+        <p class="section-description">
+          Adjust the five behavioral metrics below or choose a scenario preset to run live inference against the trained classification engine.
+        </p>
+      </div>
+
+      <div class="analyzer-layout">
+        <!-- Left Panel: Input Controls -->
+        <div class="app-card">
+          <div class="app-card-header">
+            <span class="app-card-title">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2v-.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2v.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              </svg>
+              Behavioral Usage Inputs
+            </span>
+            <span class="live-chip" id="engine-chip">FastAPI POST /predict</span>
+          </div>
+
+          <!-- Presets -->
+          <div class="presets-box">
+            <span class="presets-header-title">Scenario Presets</span>
+            <div class="preset-grid">
+              <button class="preset-btn" id="btn-preset-low" type="button">
+                <span class="preset-icon">🌱</span>
+                <span>Low Risk</span>
+              </button>
+              <button class="preset-btn active" id="btn-preset-mod" type="button">
+                <span class="preset-icon">⚖️</span>
+                <span>Moderate</span>
+              </button>
+              <button class="preset-btn" id="btn-preset-high" type="button">
+                <span class="preset-icon">🚨</span>
+                <span>High Risk</span>
+              </button>
+              <button class="preset-btn" id="btn-preset-reset" type="button">
+                <span class="preset-icon">🔄</span>
+                <span>Reset</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Sliders Collection -->
+          <div class="sliders-collection">
+            <!-- 1. Daily Screen Time -->
+            <div class="slider-control-card">
+              <div class="slider-top-row">
+                <div class="slider-info">
+                  <div class="slider-icon-bubble">
+                    <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                  </div>
+                  <div class="slider-text-group">
+                    <span class="slider-label-name">Daily Screen Time</span>
+                    <span class="slider-subhint">Total active hours per day</span>
+                  </div>
+                </div>
+                <span class="slider-badge-val" id="val-screen-time">5.0 hrs</span>
+              </div>
+              <input type="range" id="slider-screen-time" min="0.5" max="14.0" step="0.1" value="5.0">
+              <div class="range-extremes"><span>0.5 hrs</span><span>14.0 hrs</span></div>
+            </div>
+
+            <!-- 2. Phone Unlocks -->
+            <div class="slider-control-card">
+              <div class="slider-top-row">
+                <div class="slider-info">
+                  <div class="slider-icon-bubble">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
+                  </div>
+                  <div class="slider-text-group">
+                    <span class="slider-label-name">Phone Unlocks &amp; Checks</span>
+                    <span class="slider-subhint">Frequency of checking device</span>
+                  </div>
+                </div>
+                <span class="slider-badge-val" id="val-unlocks">80 / day</span>
+              </div>
+              <input type="range" id="slider-unlocks" min="5" max="250" step="1" value="80">
+              <div class="range-extremes"><span>5 checks</span><span>250 checks</span></div>
+            </div>
+
+            <!-- 3. Social Media Time -->
+            <div class="slider-control-card">
+              <div class="slider-top-row">
+                <div class="slider-info">
+                  <div class="slider-icon-bubble">
+                    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                  </div>
+                  <div class="slider-text-group">
+                    <span class="slider-label-name">Social Media Time</span>
+                    <span class="slider-subhint">Feeds, reels, short videos, chat</span>
+                  </div>
+                </div>
+                <span class="slider-badge-val" id="val-social-media">2.5 hrs</span>
+              </div>
+              <input type="range" id="slider-social-media" min="0.0" max="10.0" step="0.1" value="2.5">
+              <div class="range-extremes"><span>0.0 hrs</span><span>10.0 hrs</span></div>
+            </div>
+
+            <!-- 4. Night Usage Share -->
+            <div class="slider-control-card">
+              <div class="slider-top-row">
+                <div class="slider-info">
+                  <div class="slider-icon-bubble">
+                    <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                  </div>
+                  <div class="slider-text-group">
+                    <span class="slider-label-name">Night Usage Share</span>
+                    <span class="slider-subhint">% of usage within 60m of sleep</span>
+                  </div>
+                </div>
+                <span class="slider-badge-val" id="val-night-ratio">30%</span>
+              </div>
+              <input type="range" id="slider-night-ratio" min="0" max="100" step="1" value="30">
+              <div class="range-extremes"><span>0% (daytime only)</span><span>100% (late night)</span></div>
+            </div>
+
+            <!-- 5. Sleep Hours -->
+            <div class="slider-control-card">
+              <div class="slider-top-row">
+                <div class="slider-info">
+                  <div class="slider-icon-bubble">
+                    <svg viewBox="0 0 24 24"><path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"></path></svg>
+                  </div>
+                  <div class="slider-text-group">
+                    <span class="slider-label-name">Sleep Duration</span>
+                    <span class="slider-subhint">Nightly restorative sleep</span>
+                  </div>
+                </div>
+                <span class="slider-badge-val" id="val-sleep">6.5 hrs</span>
+              </div>
+              <input type="range" id="slider-sleep" min="3.0" max="10.0" step="0.1" value="6.5">
+              <div class="range-extremes"><span>3.0 hrs (deprived)</span><span>10.0 hrs (optimal)</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Panel: Diagnostic Results -->
+        <div class="diagnostic-card">
+          <div class="app-card-header">
+            <span class="app-card-title">
+              <svg viewBox="0 0 24 24">
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+              </svg>
+              Assessment &amp; Insights
+            </span>
+            <span class="live-chip" id="response-status-badge">Model Status: 200 OK</span>
+          </div>
+
+          <!-- Hero Score Box -->
+          <div class="hero-score-box">
+            <div class="score-summary-left">
+              <span class="score-eyebrow">Addiction Risk Index</span>
+              <div class="score-number-group">
+                <span class="score-big-num" id="display-score">51</span>
+                <span class="score-denominator">/100</span>
+              </div>
+              <div class="risk-badge-pill moderate" id="display-badge">
+                <span class="status-dot-indicator"></span>
+                <span id="display-badge-label">Moderate Risk</span>
+              </div>
+            </div>
+
+            <!-- Circular SVG Meter -->
+            <div class="gauge-wrapper">
+              <svg class="gauge-svg" viewBox="0 0 100 100">
+                <circle class="gauge-bg-ring" cx="50" cy="50" r="40"></circle>
+                <circle class="gauge-active-ring" id="gauge-circle" cx="50" cy="50" r="40"
+                  stroke-dasharray="251.2" stroke-dashoffset="123"></circle>
+              </svg>
+              <div class="gauge-caption" id="gauge-caption-text">51%</div>
+            </div>
+          </div>
+
+          <!-- Probability Stacked Bar -->
+          <div class="prob-panel">
+            <div class="prob-panel-head">
+              <span>Softmax Probability Distribution</span>
+              <span id="highest-prob-desc">Moderate Class: 97.5%</span>
+            </div>
+            <div class="prob-bar-container">
+              <div class="prob-segment low" id="seg-low" style="width: 1%;"></div>
+              <div class="prob-segment moderate" id="seg-mod" style="width: 97%;"></div>
+              <div class="prob-segment high" id="seg-high" style="width: 2%;"></div>
+            </div>
+            <div class="prob-legend-row">
+              <span><span class="legend-bullet" style="background: var(--risk-low);"></span> Low: <strong id="txt-prob-low">1%</strong></span>
+              <span><span class="legend-bullet" style="background: var(--risk-mod);"></span> Mod: <strong id="txt-prob-mod">97%</strong></span>
+              <span><span class="legend-bullet" style="background: var(--risk-high);"></span> High: <strong id="txt-prob-high">2%</strong></span>
+            </div>
+          </div>
+
+          <!-- Feature Contributions -->
+          <div class="contributions-panel">
+            <div class="panel-header-row">
+              <span>Behavioral Drivers of Risk</span>
+              <span>Log-Odds Impact</span>
+            </div>
+            <div class="contrib-items-list" id="contrib-container">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Personalized Action Plan -->
+          <div class="recommendations-box">
+            <div class="recs-title-bar">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+              Personalized Behavioral Plan
+            </div>
+            <div class="recs-cards-grid" id="recommendations-grid">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: How It Works -->
+  <section class="how-it-works-section" id="pipeline">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-eyebrow">Engine Architecture</div>
+        <h2 class="section-title">How Screen Signal Evaluates Dependency</h2>
+        <p class="section-description">
+          A machine learning methodology built on clinical digital well-being metrics rather than arbitrary screen-time thresholds.
+        </p>
+      </div>
+
+      <div class="pipeline-grid">
+        <div class="pipeline-step-card">
+          <div class="step-badge">01</div>
+          <h3 class="step-heading">Standardized Feature Mapping</h3>
+          <p class="step-desc">
+            Raw behavioral variables are mapped and normalized against 3,000 empirical benchmarks using z-score standardization ($\mu, \sigma$).
+          </p>
+        </div>
+
+        <div class="pipeline-step-card">
+          <div class="step-badge">02</div>
+          <h3 class="step-heading">Multinomial Softmax Inference</h3>
+          <p class="step-desc">
+            Linear log-odds matrices compute probabilities across Low, Moderate, and High classes, balancing precision (99%) and recall (99%).
+          </p>
+        </div>
+
+        <div class="pipeline-step-card">
+          <div class="step-badge">03</div>
+          <h3 class="step-heading">Behavioral Attribution</h3>
+          <p class="step-desc">
+            Attribution matrices dissect which specific habit drives risk elevation versus provides protective buffering, synthesizing tailored intervention plans.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: The Clinical Science -->
+  <section class="science-section" id="science">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-eyebrow">Behavioral Science</div>
+        <h2 class="section-title">The Five Pillars of Device Dependency</h2>
+        <p class="section-description">
+          Why these exact metrics predict psychological dependency and sleep disruption.
+        </p>
+      </div>
+
+      <div class="science-cards-grid">
+        <div class="science-item-card">
+          <div class="science-icon-head">
+            <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          </div>
+          <h4 class="science-card-title">Compulsive Unlock Loops</h4>
+          <p class="science-card-text">
+            High unlock frequencies reflect habituated micro-checking behaviors driven by intermittent dopamine release, eroding sustained concentration.
+          </p>
+        </div>
+
+        <div class="science-item-card">
+          <div class="science-icon-head">
+            <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          </div>
+          <h4 class="science-card-title">Circadian Blue Light</h4>
+          <p class="science-card-text">
+            Bedtime screen exposure directly suppresses pineal melatonin production, delaying rapid eye movement (REM) sleep and cognitive recovery.
+          </p>
+        </div>
+
+        <div class="science-item-card">
+          <div class="science-icon-head">
+            <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+          </div>
+          <h4 class="science-card-title">Sleep Deficit Vulnerability</h4>
+          <p class="science-card-text">
+            Chronic sleep deprivation compromises prefrontal cortex executive control, weakening resistance against infinite algorithmic scrolls.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top-row">
+        <div class="nav-brand">
+          <div class="brand-mark">
             <svg viewBox="0 0 24 24">
               <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
             </svg>
           </div>
-          <div>
-            <h1>Screen Signal <span class="badge-client-side">100% Client-Side ML</span></h1>
-          </div>
+          <span class="brand-title">Screen Signal</span>
         </div>
-        <div style="font-size: 0.8rem; color: var(--text-dim); font-family: var(--font-mono);">
-          Logistic Regression &bull; Softmax 3-Class
-        </div>
+
+        <ul class="footer-links">
+          <li><a href="#assessment">Live Assessment</a></li>
+          <li><a href="#pipeline">Methodology</a></li>
+          <li><a href="#science">The Science</a></li>
+          <li><a href="https://github.com/kit2824bad054/Smartphone-Addiction-Prediction" target="_blank">GitHub Repository</a></li>
+        </ul>
       </div>
-      <p class="header-subtitle">
-        Assess behavioral smartphone addiction risk in real time. Your behavioral metrics are standardized and evaluated entirely inside your browser using trained logistic regression parameters—no cloud servers or API calls.
-      </p>
-    </header>
 
-    <!-- Main Dashboard Grid -->
-    <main class="dashboard-grid">
-      <!-- Left Column: Inputs & Scenarios -->
-      <section class="card" aria-labelledby="inputs-title">
-        <div class="card-title">
-          <span id="inputs-title">Behavioral Usage Inputs</span>
-          <span class="title-tag">Features x5</span>
-        </div>
-
-        <!-- Presets -->
-        <div class="presets-container">
-          <div class="presets-label">Preset Scenarios</div>
-          <div class="presets-chips">
-            <button class="preset-btn" id="preset-minimalist" type="button">Digital Minimalist</button>
-            <button class="preset-btn active" id="preset-average" type="button">Typical User</button>
-            <button class="preset-btn" id="preset-nightowl" type="button">Night Owl / Bedtime</button>
-            <button class="preset-btn" id="preset-heavy" type="button">Severe Dependency</button>
-            <button class="preset-btn" id="preset-reset" type="button" style="margin-left: auto;">Reset</button>
-          </div>
-        </div>
-
-        <!-- Sliders -->
-        <div class="sliders-group">
-          <!-- 1. Daily Screen Time -->
-          <div class="slider-item">
-            <div class="slider-header">
-              <label class="slider-label" for="slider-screen-time">
-                Daily Screen Time
-                <span class="slider-hint">(Total hours phone is active)</span>
-              </label>
-              <span class="slider-value-display" id="val-screen-time">5.0 hrs</span>
-            </div>
-            <input type="range" id="slider-screen-time" min="0.5" max="14.0" step="0.1" value="5.0">
-            <div class="slider-minmax">
-              <span>0.5 hrs</span>
-              <span>14.0 hrs</span>
-            </div>
-          </div>
-
-          <!-- 2. Phone Unlocks Per Day -->
-          <div class="slider-item">
-            <div class="slider-header">
-              <label class="slider-label" for="slider-unlocks">
-                Phone Unlocks / Checks
-                <span class="slider-hint">(Compulsive pickup frequency)</span>
-              </label>
-              <span class="slider-value-display" id="val-unlocks">80 / day</span>
-            </div>
-            <input type="range" id="slider-unlocks" min="5" max="250" step="1" value="80">
-            <div class="slider-minmax">
-              <span>5 checks</span>
-              <span>250 checks</span>
-            </div>
-          </div>
-
-          <!-- 3. Social Media Time -->
-          <div class="slider-item">
-            <div class="slider-header">
-              <label class="slider-label" for="slider-social-media">
-                Social Media Time
-                <span class="slider-hint">(Feeds, reels, messaging)</span>
-              </label>
-              <span class="slider-value-display" id="val-social-media">2.5 hrs</span>
-            </div>
-            <input type="range" id="slider-social-media" min="0.0" max="10.0" step="0.1" value="2.5">
-            <div class="slider-minmax">
-              <span>0.0 hrs</span>
-              <span>10.0 hrs</span>
-            </div>
-          </div>
-
-          <!-- 4. Night Usage Share -->
-          <div class="slider-item">
-            <div class="slider-header">
-              <label class="slider-label" for="slider-night-ratio">
-                Night Usage Share
-                <span class="slider-hint">(% of screen time in bed / late night)</span>
-              </label>
-              <span class="slider-value-display" id="val-night-ratio">25%</span>
-            </div>
-            <input type="range" id="slider-night-ratio" min="0" max="100" step="1" value="25">
-            <div class="slider-minmax">
-              <span>0% (no bedtime screens)</span>
-              <span>100% (all night usage)</span>
-            </div>
-          </div>
-
-          <!-- 5. Sleep Hours -->
-          <div class="slider-item">
-            <div class="slider-header">
-              <label class="slider-label" for="slider-sleep">
-                Sleep Duration
-                <span class="slider-hint">(Nightly restorative rest)</span>
-              </label>
-              <span class="slider-value-display" id="val-sleep">6.5 hrs</span>
-            </div>
-            <input type="range" id="slider-sleep" min="3.0" max="10.0" step="0.1" value="6.5">
-            <div class="slider-minmax">
-              <span>3.0 hrs (deprived)</span>
-              <span>10.0 hrs (optimal)</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Right Column: Prediction Results, Chart & Personalized Tips -->
-      <section class="card" aria-labelledby="results-title">
-        <div class="card-title">
-          <span id="results-title">Risk Assessment</span>
-          <span class="title-tag" id="inference-time-tag">Latency: &lt;1ms</span>
-        </div>
-
-        <!-- Hero: Numeric Score + Gauge + Risk Badge -->
-        <div class="overview-hero">
-          <div class="score-block">
-            <span class="score-tagline">Addiction Risk Index</span>
-            <div class="score-number-wrap">
-              <span class="score-number" id="risk-score-num">49</span>
-              <span class="score-max">/100</span>
-            </div>
-            <div class="risk-badge moderate" id="risk-badge">
-              <span class="status-dot"></span>
-              <span id="risk-badge-text">Moderate Risk</span>
-            </div>
-          </div>
-
-          <!-- Circular SVG Gauge -->
-          <div class="meter-gauge-container">
-            <svg class="meter-gauge-svg" viewBox="0 0 100 100">
-              <circle class="gauge-circle-bg" cx="50" cy="50" r="40"></circle>
-              <circle class="gauge-circle-progress" id="gauge-progress-circle" cx="50" cy="50" r="40"
-                stroke-dasharray="251.2" stroke-dashoffset="128.1"></circle>
-            </svg>
-            <div class="gauge-inner-text" id="gauge-pct">49%</div>
-          </div>
-        </div>
-
-        <!-- Class Probabilities Breakdown -->
-        <div class="prob-breakdown">
-          <div class="prob-header">
-            <span>Model Softmax Probability Distribution</span>
-            <span id="highest-class-prob">Moderate: 97.4%</span>
-          </div>
-          <div class="prob-stacked-bar">
-            <div class="prob-seg low" id="prob-seg-low" style="width: 2%;"></div>
-            <div class="prob-seg moderate" id="prob-seg-mod" style="width: 97%;"></div>
-            <div class="prob-seg high" id="prob-seg-high" style="width: 1%;"></div>
-          </div>
-          <div class="prob-legend">
-            <span><span class="legend-dot" style="background: var(--risk-low);"></span> Low: <strong id="prob-val-low">2%</strong></span>
-            <span><span class="legend-dot" style="background: var(--risk-mod);"></span> Mod: <strong id="prob-val-mod">97%</strong></span>
-            <span><span class="legend-dot" style="background: var(--risk-high);"></span> High: <strong id="prob-val-high">1%</strong></span>
-          </div>
-        </div>
-
-        <!-- Feature Contribution Bar Chart -->
-        <div class="chart-container">
-          <div class="chart-header-row">
-            <span>Feature Contribution to Risk Score</span>
-            <span>Relative Weight Impact</span>
-          </div>
-          <div class="contrib-list" id="contrib-list-container">
-            <!-- Dynamic Contribution Bars injected by JavaScript -->
-          </div>
-        </div>
-
-        <!-- Personalized Recommendations -->
-        <div class="tips-container">
-          <div class="tips-title">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
-            </svg>
-            Personalized Action Plan (Top Drivers)
-          </div>
-          <div class="tips-grid" id="tips-grid-container">
-            <!-- Dynamic 2 Personalized Tips injected by JavaScript -->
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <!-- Technical Model Details Collapsible -->
-    <section class="tech-specs-card">
-      <div class="tech-details-toggle" id="tech-toggle">
-        <span>Model Architecture &amp; Client-Side Weights</span>
-        <span id="tech-toggle-icon">[+] View Model Parameters</span>
+      <div class="footer-bottom-row">
+        <span>&copy; 2026 Screen Signal Project. Open-source under MIT License.</span>
+        <span>Engineered with FastAPI, Scikit-Learn, and Vanilla JavaScript &bull; <a href="https://github.com/kit2824bad054/Smartphone-Addiction-Prediction" target="_blank">View on GitHub</a></span>
       </div>
-      <div class="tech-content" id="tech-content" style="display: none;">
-        <div>
-          <p style="margin-bottom: 8px;">
-            <strong>StandardScaler Parameters:</strong> Features are normalized using z-score standardization: <code>z = (x - mean) / scale</code>.
-          </p>
-          <pre class="code-box" id="code-scaler"></pre>
-        </div>
-        <div>
-          <p style="margin-bottom: 8px;">
-            <strong>Softmax Logistic Regression:</strong> Computes logits <code>z = W · x + b</code> and applies softmax across Low, Moderate, and High classes.
-          </p>
-          <pre class="code-box" id="code-weights"></pre>
-        </div>
-      </div>
-    </section>
+    </div>
+  </footer>
 
-    <!-- Footer -->
-    <footer>
-      <div>Screen Signal &bull; Built with HTML5, CSS3, &amp; Vanilla JavaScript</div>
-      <div>Dataset: Global Teen Smartphone Addiction &bull; Model: Multiclass Logistic Regression (Accuracy: 98.8%, F1: 0.988)</div>
-    </footer>
-  </div>
-
-  <!-- Client-Side Machine Learning Engine -->
+  <!-- Combined Client & API Inference Script -->
   <script>
     /**
-     * SCREEN SIGNAL MACHINE LEARNING ENGINE
-     * Trained Logistic Regression model parameters exported from train_model.py.
-     * Evaluates in pure client-side JavaScript without backend or third-party dependencies.
+     * SCREEN SIGNAL WEB APP ENGINE
+     * Dynamically communicates with FastAPI backend at http://localhost:8000/predict
+     * with built-in client-side fallback if backend is offline.
      */
 
-    // 1. Model Configuration & Trained Weights
-    const FEATURE_NAMES = [
-      'screen_time_hours',
-      'unlocks_per_day',
-      'social_media_hours',
-      'night_usage_ratio',
-      'sleep_hours'
-    ];
+    const API_ENDPOINT = 'http://localhost:8000/predict';
 
-    const FEATURE_LABELS = {
-      'screen_time_hours': 'Daily Screen Time',
-      'unlocks_per_day': 'Phone Unlocks / Checks',
-      'social_media_hours': 'Social Media Hours',
-      'night_usage_ratio': 'Night Usage Share',
-      'sleep_hours': 'Sleep Duration (Deficit)'
-    };
-
-    const RISK_CLASSES = ['Low', 'Moderate', 'High'];
-
-    // StandardScaler parameters
-    const SCALER_MEAN = [5.020458, 82.850417, 2.512917, 24.637704, 6.512917];
-    const SCALER_SCALE = [1.95197, 37.745989, 0.995414, 19.645943, 1.485679];
-
-    // Logistic Regression parameters (3 classes x 5 features)
-    const LOGREG_COEF = [
-      [-7.290602, -5.078497, -5.063988, -3.588382, 3.78962],  // Class 0: Low Risk
-      [-0.086272, -0.003047, -0.06108, -0.012278, 0.047962],  // Class 1: Moderate Risk
-      [7.376874, 5.081544, 5.125068, 3.60066, -3.837582]     // Class 2: High Risk
-    ];
-
-    const LOGREG_INTERCEPT = [-1.423745, 2.957644, -1.533899];
-
-    // Presets definitions
-    const PRESETS = {
-      minimalist: { screen: 2.0, unlocks: 25, social: 0.5, night: 5, sleep: 8.5 },
-      average:    { screen: 5.0, unlocks: 80, social: 2.5, night: 25, sleep: 6.5 },
-      nightowl:   { screen: 6.5, unlocks: 95, social: 3.5, night: 75, sleep: 5.0 },
-      heavy:      { screen: 10.5, unlocks: 180, social: 6.0, night: 65, sleep: 4.5 },
-      reset:      { screen: 5.0, unlocks: 80, social: 2.5, night: 25, sleep: 6.5 }
-    };
-
-    // Personalized tips library keyed by behavioral factors
-    const RECOMMENDATION_TIPS = {
-      'screen_time_hours': {
-        title: 'Screen Time Curfew',
-        text: 'Your daily screen duration is elevated. Introduce scheduled 45-minute offline work blocks and leave your device in another room during meals.'
-      },
-      'social_media_hours': {
-        title: 'Social App Boundaries',
-        text: 'Social feeds are heavily driving addiction risk. Set a strict 45-minute daily limit on TikTok/Instagram and remove infinite-scroll apps from your home dock.'
-      },
-      'unlocks_per_day': {
-        title: 'Tame Compulsive Checking',
-        text: 'Frequent unlocks indicate habituated micro-checking. Turn off all non-human notifications and schedule fixed checking windows (e.g., 10 AM, 2 PM, 6 PM).'
-      },
-      'night_usage_ratio': {
-        title: 'Eliminate Pre-Bed Screen Time',
-        text: 'Late-night blue light suppresses melatonin synthesis. Institute a digital curfew 60 minutes before bed and charge your phone away from the nightstand.'
-      },
-      'sleep_hours': {
-        title: 'Sleep Hygiene Restoration',
-        text: 'Sleep deficits erode prefrontal executive control, intensifying compulsive device cravings. Aim for 7.5+ hours of consistent sleep nightly.'
-      },
-      'healthy_baseline': {
-        title: 'Maintain Digital Balance',
-        text: 'Your current screen and sleep patterns are well-calibrated. Keep protecting your deep work blocks and device-free morning routine.'
-      },
-      'preventative': {
-        title: 'Mindful Friction',
-        text: 'Enable grayscale screen mode occasionally to reduce the hyper-stimulating dopamine loop of colorful app icons and banners.'
+    // Model Constants for Client-Side Fallback
+    const CLIENT_MODEL = {
+      mean: [5.020458, 82.850417, 2.512917, 0.246377, 6.512917],
+      scale: [1.95197, 37.745989, 0.995414, 0.196459, 1.485679],
+      coef: [
+        [-7.290602, -5.078497, -5.063988, -3.588382, 3.78962],
+        [-0.086272, -0.003047, -0.06108, -0.012278, 0.047962],
+        [7.376874, 5.081544, 5.125068, 3.60066, -3.837582]
+      ],
+      intercept: [-1.423745, 2.957644, -1.533899],
+      features: ['screen_time_hours', 'unlocks_per_day', 'social_media_hours', 'night_usage_ratio', 'sleep_hours'],
+      labels: {
+        'screen_time_hours': 'Daily Screen Time',
+        'unlocks_per_day': 'Phone Unlocks / Checks',
+        'social_media_hours': 'Social Media Hours',
+        'night_usage_ratio': 'Night Usage Share',
+        'sleep_hours': 'Sleep Duration'
       }
     };
 
-    // DOM Elements
-    const elements = {
-      // Sliders
-      sliderScreenTime: document.getElementById('slider-screen-time'),
-      sliderUnlocks: document.getElementById('slider-unlocks'),
-      sliderSocialMedia: document.getElementById('slider-social-media'),
-      sliderNightRatio: document.getElementById('slider-night-ratio'),
-      sliderSleep: document.getElementById('slider-sleep'),
-
-      // Value Displays
-      valScreenTime: document.getElementById('val-screen-time'),
-      valUnlocks: document.getElementById('val-unlocks'),
-      valSocialMedia: document.getElementById('val-social-media'),
-      valNightRatio: document.getElementById('val-night-ratio'),
-      valSleep: document.getElementById('val-sleep'),
-
-      // Output Elements
-      riskScoreNum: document.getElementById('risk-score-num'),
-      riskBadge: document.getElementById('risk-badge'),
-      riskBadgeText: document.getElementById('risk-badge-text'),
-      gaugeProgressCircle: document.getElementById('gauge-progress-circle'),
-      gaugePct: document.getElementById('gauge-pct'),
-
-      // Probabilities
-      probSegLow: document.getElementById('prob-seg-low'),
-      probSegMod: document.getElementById('prob-seg-mod'),
-      probSegHigh: document.getElementById('prob-seg-high'),
-      probValLow: document.getElementById('prob-val-low'),
-      probValMod: document.getElementById('prob-val-mod'),
-      probValHigh: document.getElementById('prob-val-high'),
-      highestClassProb: document.getElementById('highest-class-prob'),
-
-      // Feature contribution list
-      contribListContainer: document.getElementById('contrib-list-container'),
-      tipsGridContainer: document.getElementById('tips-grid-container'),
-
-      // Tech details
-      techToggle: document.getElementById('tech-toggle'),
-      techToggleIcon: document.getElementById('tech-toggle-icon'),
-      techContent: document.getElementById('tech-content'),
-      codeScaler: document.getElementById('code-scaler'),
-      codeWeights: document.getElementById('code-weights')
+    const PRESETS = {
+      low:  { screen: 1.5, unlocks: 20, social: 0.5, night: 5, sleep: 8.5 },
+      mod:  { screen: 5.0, unlocks: 80, social: 2.5, night: 30, sleep: 6.5 },
+      high: { screen: 11.0, unlocks: 200, social: 7.0, night: 70, sleep: 4.0 },
+      reset: { screen: 5.0, unlocks: 80, social: 2.5, night: 30, sleep: 6.5 }
     };
 
-    /**
-     * Executes the Machine Learning Inference
-     * @param {number[]} inputs [screen_time, unlocks, social_media, night_usage, sleep]
-     */
-    function runInference(inputs) {
-      // Step 1: Standardize inputs with StandardScaler: (x - mean) / scale
-      const scaled = inputs.map((x, i) => (x - SCALER_MEAN[i]) / SCALER_SCALE[i]);
+    const RECOMMENDATION_TIPS = {
+      'screen_time_hours': 'Your daily screen duration is elevated. Introduce scheduled 45-minute offline work blocks and leave your device in another room during meals.',
+      'social_media_hours': 'Social feeds are heavily driving addiction risk. Set a strict 45-minute daily limit on TikTok/Instagram and remove infinite-scroll apps from your home dock.',
+      'unlocks_per_day': 'Frequent unlocks indicate habituated micro-checking. Turn off non-essential notifications and schedule fixed checking windows (e.g., 10 AM, 2 PM, 6 PM).',
+      'night_usage_ratio': 'Late-night screen use suppresses melatonin synthesis. Institute a digital curfew 60 minutes before bed and charge your phone away from the nightstand.',
+      'sleep_hours': 'Sleep deficits erode prefrontal executive control, intensifying compulsive device cravings. Aim for 7.5+ hours of consistent sleep nightly.',
+      'healthy': 'Your current screen and sleep patterns are well-calibrated. Keep protecting your deep work blocks and device-free morning routine.',
+      'preventative': 'Enable grayscale screen mode occasionally to reduce the hyper-stimulating dopamine loop of colorful app icons and banners.'
+    };
 
-      // Step 2: Linear Logits for each class
-      const z = LOGREG_INTERCEPT.map((intercept, c) => {
-        let sum = intercept;
+    const dom = {
+      screenSlider: document.getElementById('slider-screen-time'),
+      unlocksSlider: document.getElementById('slider-unlocks'),
+      socialSlider: document.getElementById('slider-social-media'),
+      nightSlider: document.getElementById('slider-night-ratio'),
+      sleepSlider: document.getElementById('slider-sleep'),
+
+      screenVal: document.getElementById('val-screen-time'),
+      unlocksVal: document.getElementById('val-unlocks'),
+      socialVal: document.getElementById('val-social-media'),
+      nightVal: document.getElementById('val-night-ratio'),
+      sleepVal: document.getElementById('val-sleep'),
+
+      scoreDisplay: document.getElementById('display-score'),
+      badgeDisplay: document.getElementById('display-badge'),
+      badgeLabel: document.getElementById('display-badge-label'),
+      gaugeCircle: document.getElementById('gauge-circle'),
+      gaugeCaption: document.getElementById('gauge-caption-text'),
+
+      segLow: document.getElementById('seg-low'),
+      segMod: document.getElementById('seg-mod'),
+      segHigh: document.getElementById('seg-high'),
+      txtLow: document.getElementById('txt-prob-low'),
+      txtMod: document.getElementById('txt-prob-mod'),
+      txtHigh: document.getElementById('txt-prob-high'),
+      highestDesc: document.getElementById('highest-prob-desc'),
+
+      contribContainer: document.getElementById('contrib-container'),
+      recsGrid: document.getElementById('recommendations-grid'),
+      navStatusPill: document.getElementById('nav-status-pill'),
+      navStatusText: document.getElementById('nav-status-text'),
+      navStatusDot: document.getElementById('nav-status-dot'),
+      responseStatusBadge: document.getElementById('response-status-badge')
+    };
+
+    let debounceTimer = null;
+
+    function clientInference(inputs) {
+      const scaled = inputs.map((v, i) => (v - CLIENT_MODEL.mean[i]) / CLIENT_MODEL.scale[i]);
+      const z = CLIENT_MODEL.intercept.map((inter, c) => {
+        let sum = inter;
         for (let i = 0; i < inputs.length; i++) {
-          sum += LOGREG_COEF[c][i] * scaled[i];
+          sum += CLIENT_MODEL.coef[c][i] * scaled[i];
         }
         return sum;
       });
 
-      // Step 3: Numerically stable Softmax
       const maxZ = Math.max(...z);
       const expZ = z.map(v => Math.exp(v - maxZ));
       const sumExp = expZ.reduce((a, b) => a + b, 0);
       const probs = expZ.map(v => v / sumExp);
 
-      // Step 4: 0-100 Continuous Risk Score (weighted toward High-risk class)
-      // probs[0]=Low, probs[1]=Moderate, probs[2]=High
       let riskScore = Math.round(probs[1] * 50 + probs[2] * 100);
       riskScore = Math.max(0, Math.min(100, riskScore));
 
-      // Step 5: Risk Badge Classification
-      let badgeClass = 'low';
-      let badgeLabel = 'Low Risk';
+      let riskLevel = 'Low';
+      if (riskScore >= 65 || probs[2] > 0.45) riskLevel = 'High';
+      else if (riskScore >= 35 || probs[1] > 0.45) riskLevel = 'Moderate';
 
-      if (riskScore >= 66 || (probs[2] > 0.45)) {
-        badgeClass = 'high';
-        badgeLabel = 'High Risk';
-      } else if (riskScore >= 34 || (probs[1] > 0.45)) {
-        badgeClass = 'moderate';
-        badgeLabel = 'Moderate Risk';
-      }
-
-      // Step 6: Feature Contributions to High Risk
-      // In Logistic Regression, contribution to class 2 logit is coef[2][i] * scaled[i]
-      const contributions = inputs.map((rawVal, i) => {
-        const coef = LOGREG_COEF[2][i];
-        const rawImpact = coef * scaled[i];
+      const contribs = inputs.map((raw, i) => {
+        const impact = CLIENT_MODEL.coef[2][i] * scaled[i];
         return {
-          key: FEATURE_NAMES[i],
-          label: FEATURE_LABELS[FEATURE_NAMES[i]],
-          rawValue: rawVal,
-          scaledValue: scaled[i],
-          impact: rawImpact
+          feature: CLIENT_MODEL.features[i],
+          label: CLIENT_MODEL.labels[CLIENT_MODEL.features[i]],
+          impact: Math.round(impact * 100) / 100,
+          direction: impact > 0 ? 'risk_elevator' : 'protective'
         };
       });
 
+      const pos = contribs.filter(c => c.impact > 0).sort((a, b) => b.impact - a.impact);
+      const recs = [];
+      if (pos.length >= 2) {
+        recs.push(RECOMMENDATION_TIPS[pos[0].feature]);
+        recs.push(RECOMMENDATION_TIPS[pos[1].feature]);
+      } else if (pos.length === 1) {
+        recs.push(RECOMMENDATION_TIPS[pos[0].feature]);
+        recs.push(RECOMMENDATION_TIPS.preventative);
+      } else {
+        recs.push(RECOMMENDATION_TIPS.healthy);
+        recs.push(RECOMMENDATION_TIPS.preventative);
+      }
+
       return {
-        inputs,
-        scaled,
-        probs,
-        riskScore,
-        badgeClass,
-        badgeLabel,
-        contributions
+        risk_level: riskLevel,
+        risk_score: riskScore,
+        probabilities: { Low: probs[0], Moderate: probs[1], High: probs[2] },
+        feature_contributions: contribs,
+        recommendations: recs
       };
     }
 
-    /**
-     * Updates the UI based on inference result
-     */
-    function updateUI() {
-      const inputs = [
-        parseFloat(elements.sliderScreenTime.value),
-        parseFloat(elements.sliderUnlocks.value),
-        parseFloat(elements.sliderSocialMedia.value),
-        parseFloat(elements.sliderNightRatio.value),
-        parseFloat(elements.sliderSleep.value)
-      ];
+    async function evaluate() {
+      const screen = parseFloat(dom.screenSlider.value);
+      const unlocks = parseFloat(dom.unlocksSlider.value);
+      const social = parseFloat(dom.socialSlider.value);
+      const night = parseFloat(dom.nightSlider.value);
+      const sleep = parseFloat(dom.sleepSlider.value);
 
-      // Update Slider Value Displays
-      elements.valScreenTime.textContent = `${inputs[0].toFixed(1)} hrs`;
-      elements.valUnlocks.textContent = `${inputs[1]} / day`;
-      elements.valSocialMedia.textContent = `${inputs[2].toFixed(1)} hrs`;
-      elements.valNightRatio.textContent = `${inputs[3]}%`;
-      elements.valSleep.textContent = `${inputs[4].toFixed(1)} hrs`;
+      dom.screenVal.textContent = `${screen.toFixed(1)} hrs`;
+      dom.unlocksVal.textContent = `${unlocks} / day`;
+      dom.socialVal.textContent = `${social.toFixed(1)} hrs`;
+      dom.nightVal.textContent = `${night}%`;
+      dom.sleepVal.textContent = `${sleep.toFixed(1)} hrs`;
 
-      // Run ML Prediction
-      const result = runInference(inputs);
+      const payload = {
+        screen_time_hours: screen,
+        unlocks_per_day: unlocks,
+        social_media_hours: social,
+        night_usage_ratio: night / 100.0,
+        sleep_hours: sleep
+      };
 
-      // 1. Update Numeric Score
-      elements.riskScoreNum.textContent = result.riskScore;
+      try {
+        const res = await fetch(API_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
 
-      // 2. Update Risk Badge
-      elements.riskBadge.className = `risk-badge ${result.badgeClass}`;
-      elements.riskBadgeText.textContent = result.badgeLabel;
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        renderResults(data);
 
-      // 3. Update Circular SVG Gauge
-      // Circumference of r=40 is 2 * Math.PI * 40 ≈ 251.2
-      const circumference = 251.2;
-      const progressOffset = circumference - (result.riskScore / 100) * circumference;
-      elements.gaugeProgressCircle.style.strokeDashoffset = progressOffset;
-      elements.gaugePct.textContent = `${result.riskScore}%`;
+        dom.navStatusText.textContent = 'Backend Active (localhost:8000)';
+        dom.navStatusDot.style.background = 'var(--teal-400)';
+        dom.responseStatusBadge.textContent = 'FastAPI: 200 OK';
+      } catch (err) {
+        // Fallback to client model seamlessly
+        const fallbackData = clientInference([screen, unlocks, social, night / 100.0, sleep]);
+        renderResults(fallbackData);
 
-      if (result.badgeClass === 'high') {
-        elements.gaugeProgressCircle.style.stroke = 'var(--risk-high)';
-      } else if (result.badgeClass === 'moderate') {
-        elements.gaugeProgressCircle.style.stroke = 'var(--risk-mod)';
-      } else {
-        elements.gaugeProgressCircle.style.stroke = 'var(--risk-low)';
+        dom.navStatusText.textContent = 'On-Device Engine (Client-Side)';
+        dom.navStatusDot.style.background = 'var(--teal-300)';
+        dom.responseStatusBadge.textContent = 'Client ML Engine';
       }
-
-      // 4. Update Softmax Probabilities
-      const pLow = (result.probs[0] * 100);
-      const pMod = (result.probs[1] * 100);
-      const pHigh = (result.probs[2] * 100);
-
-      elements.probSegLow.style.width = `${pLow.toFixed(1)}%`;
-      elements.probSegMod.style.width = `${pMod.toFixed(1)}%`;
-      elements.probSegHigh.style.width = `${pHigh.toFixed(1)}%`;
-
-      elements.probValLow.textContent = `${pLow.toFixed(0)}%`;
-      elements.probValMod.textContent = `${pMod.toFixed(0)}%`;
-      elements.probValHigh.textContent = `${pHigh.toFixed(0)}%`;
-
-      let maxClass = 'Low';
-      let maxVal = pLow;
-      if (pMod > maxVal) { maxClass = 'Moderate'; maxVal = pMod; }
-      if (pHigh > maxVal) { maxClass = 'High'; maxVal = pHigh; }
-      elements.highestClassProb.textContent = `${maxClass} Class: ${maxVal.toFixed(1)}%`;
-
-      // 5. Update Feature Contribution Bar Chart
-      renderContributionChart(result.contributions);
-
-      // 6. Update Personalized Tips
-      renderPersonalizedTips(result);
     }
 
-    /**
-     * Renders feature contribution bars
-     */
-    function renderContributionChart(contributions) {
-      // Find max absolute impact to normalize bar widths
-      const maxAbs = Math.max(...contributions.map(c => Math.abs(c.impact)), 1.0);
+    function renderResults(data) {
+      const score = data.risk_score;
+      dom.scoreDisplay.textContent = score;
 
-      // Sort by impact descending to highlight biggest positive drivers
-      const sorted = [...contributions].sort((a, b) => b.impact - a.impact);
+      const badgeKey = data.risk_level.toLowerCase();
+      dom.badgeDisplay.className = `risk-badge-pill ${badgeKey}`;
+      dom.badgeLabel.textContent = `${data.risk_level} Risk`;
+
+      // Gauge animation
+      const circumference = 251.2;
+      const offset = circumference - (score / 100) * circumference;
+      dom.gaugeCircle.style.strokeDashoffset = offset;
+      dom.gaugeCaption.textContent = `${score}%`;
+
+      if (badgeKey === 'high') {
+        dom.gaugeCircle.style.stroke = 'var(--risk-high)';
+      } else if (badgeKey === 'moderate') {
+        dom.gaugeCircle.style.stroke = 'var(--risk-mod)';
+      } else {
+        dom.gaugeCircle.style.stroke = 'var(--risk-low)';
+      }
+
+      // Softmax Distribution
+      const pLow = (data.probabilities.Low || 0) * 100;
+      const pMod = (data.probabilities.Moderate || 0) * 100;
+      const pHigh = (data.probabilities.High || 0) * 100;
+
+      dom.segLow.style.width = `${pLow.toFixed(1)}%`;
+      dom.segMod.style.width = `${pMod.toFixed(1)}%`;
+      dom.segHigh.style.width = `${pHigh.toFixed(1)}%`;
+
+      dom.txtLow.textContent = `${pLow.toFixed(0)}%`;
+      dom.txtMod.textContent = `${pMod.toFixed(0)}%`;
+      dom.txtHigh.textContent = `${pHigh.toFixed(0)}%`;
+
+      let maxName = 'Low';
+      let maxVal = pLow;
+      if (pMod > maxVal) { maxName = 'Moderate'; maxVal = pMod; }
+      if (pHigh > maxVal) { maxName = 'High'; maxVal = pHigh; }
+      dom.highestDesc.textContent = `${maxName} Class: ${maxVal.toFixed(1)}%`;
+
+      // Feature Contributions
+      renderContributions(data.feature_contributions);
+
+      // Recommendations
+      renderRecs(data.recommendations);
+    }
+
+    function renderContributions(contribs) {
+      if (!contribs || !contribs.length) return;
+      const maxAbs = Math.max(...contribs.map(c => Math.abs(c.impact)), 1.0);
+      const sorted = [...contribs].sort((a, b) => b.impact - a.impact);
 
       let html = '';
-      sorted.forEach((item, index) => {
-        const isPositive = item.impact > 0;
+      sorted.forEach((item, idx) => {
+        const isPos = item.impact > 0;
         const absVal = Math.abs(item.impact);
-        const barPct = Math.min(100, Math.max(8, (absVal / maxAbs) * 100));
+        const barW = Math.min(100, Math.max(8, (absVal / maxAbs) * 100));
 
-        const isTop = isPositive && index < 2;
-        const rankBadge = isTop
-          ? `<span class="contrib-rank-badge top">#${index + 1} Driver</span>`
-          : `<span class="contrib-rank-badge neutral">${isPositive ? 'Driver' : 'Protective'}</span>`;
+        const isLead = isPos && idx < 2;
+        const badgeTag = isLead
+          ? `<span class="contrib-badge-tag lead">#${idx + 1} Driver</span>`
+          : `<span class="contrib-badge-tag sub">${isPos ? 'Driver' : 'Protective'}</span>`;
 
-        const impactText = isPositive
-          ? `+${absVal.toFixed(1)} risk elev.`
-          : `-${absVal.toFixed(1)} protective`;
-
-        const impactClass = isPositive ? 'risk-up' : 'risk-down';
-        const barFillClass = isPositive ? '' : 'protective';
+        const valTxt = isPos ? `+${absVal.toFixed(1)} log-odds` : `-${absVal.toFixed(1)} protective`;
+        const valClass = isPos ? 'risk-up' : 'risk-down';
+        const fillClass = isPos ? '' : 'protective';
 
         html += `
-          <div class="contrib-row">
-            <div class="contrib-meta">
-              <span class="contrib-name">
-                ${rankBadge} ${item.label}
-              </span>
-              <span class="contrib-impact-val ${impactClass}">${impactText}</span>
+          <div class="contrib-entry">
+            <div class="contrib-meta-row">
+              <span class="contrib-label-left">${badgeTag} ${item.label}</span>
+              <span class="contrib-val-right ${valClass}">${valTxt}</span>
             </div>
-            <div class="contrib-bar-track">
-              <div class="contrib-bar-fill ${barFillClass}" style="width: ${barPct}%;"></div>
+            <div class="contrib-track">
+              <div class="contrib-fill-bar ${fillClass}" style="width: ${barW}%;"></div>
             </div>
           </div>
         `;
       });
-
-      elements.contribListContainer.innerHTML = html;
+      dom.contribContainer.innerHTML = html;
     }
 
-    /**
-     * Renders 2 personalized tips based on top contributing factors
-     */
-    function renderPersonalizedTips(result) {
-      // Identify top 2 positive drivers
-      const positiveDrivers = result.contributions
-        .filter(c => c.impact > 0)
-        .sort((a, b) => b.impact - a.impact);
-
-      let tipsToDisplay = [];
-
-      if (positiveDrivers.length >= 2) {
-        tipsToDisplay.push({
-          key: positiveDrivers[0].key,
-          ...RECOMMENDATION_TIPS[positiveDrivers[0].key]
-        });
-        tipsToDisplay.push({
-          key: positiveDrivers[1].key,
-          ...RECOMMENDATION_TIPS[positiveDrivers[1].key]
-        });
-      } else if (positiveDrivers.length === 1) {
-        tipsToDisplay.push({
-          key: positiveDrivers[0].key,
-          ...RECOMMENDATION_TIPS[positiveDrivers[0].key]
-        });
-        tipsToDisplay.push({
-          key: 'preventative',
-          ...RECOMMENDATION_TIPS['preventative']
-        });
-      } else {
-        // User has a very healthy profile (low risk)
-        tipsToDisplay.push({
-          key: 'healthy_baseline',
-          ...RECOMMENDATION_TIPS['healthy_baseline']
-        });
-        tipsToDisplay.push({
-          key: 'preventative',
-          ...RECOMMENDATION_TIPS['preventative']
-        });
-      }
-
+    function renderRecs(recs) {
+      if (!recs || !recs.length) return;
       let html = '';
-      tipsToDisplay.slice(0, 2).forEach(tip => {
+      recs.slice(0, 2).forEach((txt, i) => {
         html += `
-          <div class="tip-box">
-            <div class="tip-factor">
+          <div class="rec-card-single">
+            <div class="rec-card-header">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <polyline points="20 6 9 17 4 12"></polyline>
               </svg>
-              ${tip.title}
+              Strategy #${i + 1}
             </div>
-            <div class="tip-text">${tip.text}</div>
+            <div class="rec-card-body">${txt}</div>
           </div>
         `;
       });
-
-      elements.tipsGridContainer.innerHTML = html;
+      dom.recsGrid.innerHTML = html;
     }
 
-    /**
-     * Apply preset scenario values
-     */
-    function applyPreset(presetKey) {
-      const cfg = PRESETS[presetKey];
-      if (!cfg) return;
+    function setPreset(key) {
+      const p = PRESETS[key];
+      if (!p) return;
+      dom.screenSlider.value = p.screen;
+      dom.unlocksSlider.value = p.unlocks;
+      dom.socialSlider.value = p.social;
+      dom.nightSlider.value = p.night;
+      dom.sleepSlider.value = p.sleep;
 
-      elements.sliderScreenTime.value = cfg.screen;
-      elements.sliderUnlocks.value = cfg.unlocks;
-      elements.sliderSocialMedia.value = cfg.social;
-      elements.sliderNightRatio.value = cfg.night;
-      elements.sliderSleep.value = cfg.sleep;
-
-      // Update button active state
-      document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
-      const activeBtn = document.getElementById(`preset-${presetKey}`);
+      document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById(`btn-preset-${key}`);
       if (activeBtn) activeBtn.classList.add('active');
 
-      updateUI();
+      evaluate();
     }
 
-    // Initialize Event Listeners
-    function initListeners() {
+    function init() {
       const sliders = [
-        elements.sliderScreenTime,
-        elements.sliderUnlocks,
-        elements.sliderSocialMedia,
-        elements.sliderNightRatio,
-        elements.sliderSleep
+        dom.screenSlider,
+        dom.unlocksSlider,
+        dom.socialSlider,
+        dom.nightSlider,
+        dom.sleepSlider
       ];
 
-      sliders.forEach(slider => {
-        slider.addEventListener('input', () => {
-          document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
-          updateUI();
+      sliders.forEach(s => {
+        s.addEventListener('input', () => {
+          document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+          clearTimeout(debounceTimer);
+          debounceTimer = setTimeout(evaluate, 40);
         });
       });
 
-      // Preset buttons
-      document.getElementById('preset-minimalist').addEventListener('click', () => applyPreset('minimalist'));
-      document.getElementById('preset-average').addEventListener('click', () => applyPreset('average'));
-      document.getElementById('preset-nightowl').addEventListener('click', () => applyPreset('nightowl'));
-      document.getElementById('preset-heavy').addEventListener('click', () => applyPreset('heavy'));
-      document.getElementById('preset-reset').addEventListener('click', () => applyPreset('reset'));
+      document.getElementById('btn-preset-low').addEventListener('click', () => setPreset('low'));
+      document.getElementById('btn-preset-mod').addEventListener('click', () => setPreset('mod'));
+      document.getElementById('btn-preset-high').addEventListener('click', () => setPreset('high'));
+      document.getElementById('btn-preset-reset').addEventListener('click', () => setPreset('reset'));
 
-      // Tech details collapsible toggle
-      elements.techToggle.addEventListener('click', () => {
-        const isHidden = elements.techContent.style.display === 'none';
-        elements.techContent.style.display = isHidden ? 'grid' : 'none';
-        elements.techToggleIcon.textContent = isHidden ? '[-] Hide Model Parameters' : '[+] View Model Parameters';
-      });
-
-      // Display constants in tech details box
-      elements.codeScaler.textContent =
-`// StandardScaler Mean & Scale
-const SCALER_MEAN = [${SCALER_MEAN.join(', ')}];
-const SCALER_SCALE = [${SCALER_SCALE.join(', ')}];`;
-
-      elements.codeWeights.textContent =
-`// Softmax Coefficients [3x5] & Intercept [3]
-const LOGREG_INTERCEPT = [${LOGREG_INTERCEPT.join(', ')}];
-const LOGREG_COEF = [
-  Low:  [${LOGREG_COEF[0].join(', ')}],
-  Mod:  [${LOGREG_COEF[1].join(', ')}],
-  High: [${LOGREG_COEF[2].join(', ')}]
-];`;
+      evaluate();
     }
 
-    // Startup
-    document.addEventListener('DOMContentLoaded', () => {
-      initListeners();
-      updateUI();
-    });
+    document.addEventListener('DOMContentLoaded', init);
   </script>
 </body>
 </html>
