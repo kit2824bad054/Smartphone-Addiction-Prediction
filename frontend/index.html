@@ -889,145 +889,419 @@
     }
 
     /* -------------------------------------------------------------
-       VIEW 3: 7-DAY DETOX CHALLENGE
+       CHECK MY RESULT ACTION BUTTON & TOAST
     ------------------------------------------------------------- */
-    .protocol-cards-wall {
+    .check-result-section {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-check-result {
+      width: 100%;
+      background: linear-gradient(135deg, var(--teal-500), var(--teal-600));
+      color: #042f2e;
+      border: 1px solid var(--teal-300);
+      border-radius: var(--radius-md);
+      padding: 14px 20px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 16px rgba(20, 184, 166, 0.35);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-check-result:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(20, 184, 166, 0.45);
+      background: linear-gradient(135deg, var(--teal-400), var(--teal-500));
+    }
+
+    .btn-check-result:active {
+      transform: translateY(0);
+    }
+
+    .check-result-feedback {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #34d399;
+      font-size: 0.82rem;
+      font-family: var(--font-mono);
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    /* -------------------------------------------------------------
+       VIEW 2: AUDIT & HISTORY TREND CHART
+    ------------------------------------------------------------- */
+    .audit-container {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .chart-panel-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      position: relative;
+    }
+
+    .chart-canvas-container {
+      position: relative;
+      width: 100%;
+      height: 260px;
+      background: rgba(9, 14, 21, 0.6);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      overflow: hidden;
+      padding: 10px;
+    }
+
+    .chart-canvas-container canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .audit-stats-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
     }
 
     @media (max-width: 900px) {
-      .protocol-cards-wall { grid-template-columns: 1fr; }
+      .audit-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
 
-    .challenge-card {
+    @media (max-width: 540px) {
+      .audit-stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .audit-stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: border-color 0.2s ease;
+    }
+
+    .audit-stat-card:hover {
+      border-color: var(--border-teal);
+    }
+
+    .audit-stat-label {
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .audit-stat-value {
+      font-family: var(--font-mono);
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-white);
+    }
+
+    .audit-stat-value.green { color: #34d399; }
+    .audit-stat-value.red { color: #f87171; }
+    .audit-stat-value.teal { color: var(--teal-300); }
+
+    .audit-stat-sub {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    .audit-empty-state, .reset-empty-state {
+      padding: 44px 20px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      background: rgba(9, 14, 21, 0.4);
+      border: 1px dashed var(--border-subtle);
+      border-radius: var(--radius-md);
+    }
+
+    .empty-state-icon {
+      font-size: 2.2rem;
+      margin-bottom: 4px;
+    }
+
+    .empty-state-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-white);
+    }
+
+    .empty-state-desc {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      max-width: 440px;
+      line-height: 1.5;
+    }
+
+    .btn-action-teal {
+      background: rgba(20, 184, 166, 0.15);
+      border: 1px solid var(--border-teal);
+      color: var(--teal-300);
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 8px 18px;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 6px;
+    }
+
+    .btn-action-teal:hover {
+      background: var(--teal-500);
+      color: #042f2e;
+    }
+
+    /* -------------------------------------------------------------
+       VIEW 3: 7-DAY RESET PLAN COMPONENT
+    ------------------------------------------------------------- */
+    .reset-plan-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .reset-banner-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .reset-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .reset-factor-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(20, 184, 166, 0.15);
+      border: 1px solid var(--teal-500);
+      color: var(--teal-300);
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 0.78rem;
+      font-family: var(--font-mono);
+      font-weight: 700;
+    }
+
+    .reset-progress-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .reset-progress-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+    }
+
+    .reset-progress-text {
+      font-weight: 700;
+      color: var(--text-white);
+      font-family: var(--font-mono);
+    }
+
+    .reset-progress-pct {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--teal-300);
+    }
+
+    .reset-progress-track {
+      height: 10px;
+      background: var(--bg-input);
+      border-radius: var(--radius-pill);
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .reset-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--teal-600), var(--teal-400));
+      border-radius: var(--radius-pill);
+      transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 0 12px rgba(45, 212, 191, 0.5);
+    }
+
+    .reset-checklist-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 860px) {
+      .reset-checklist-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .reset-card {
       background: var(--bg-surface);
       border: 1px solid var(--border-card);
       border-radius: var(--radius-md);
       padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      transition: all 0.15s ease;
+      gap: 12px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       cursor: pointer;
+      position: relative;
     }
 
-    .challenge-card:hover {
+    .reset-card:hover {
       border-color: var(--border-teal);
       transform: translateY(-2px);
     }
 
-    .challenge-card.completed {
-      border-color: var(--teal-500);
-      background: rgba(20, 184, 166, 0.05);
+    .reset-card.completed {
+      border-color: rgba(20, 184, 166, 0.6);
+      background: rgba(20, 184, 166, 0.06);
     }
 
-    .challenge-top {
+    .reset-card-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    .day-tag-badge {
+    .reset-day-tag {
       font-family: var(--font-mono);
       font-size: 0.72rem;
       font-weight: 700;
       color: var(--teal-300);
       background: rgba(20, 184, 166, 0.12);
       border: 1px solid var(--border-teal);
-      padding: 2px 8px;
+      padding: 3px 9px;
       border-radius: var(--radius-pill);
     }
 
-    .custom-checkbox {
-      width: 18px;
-      height: 18px;
-      border-radius: 4px;
-      border: 1px solid var(--border-subtle);
+    .reset-checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .reset-checkbox-input {
+      display: none;
+    }
+
+    .reset-custom-checkbox {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      border: 1.5px solid var(--border-subtle);
       background: var(--bg-input);
       display: flex;
       align-items: center;
       justify-content: center;
       color: transparent;
-      transition: 0.15s;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
     }
 
-    .challenge-card.completed .custom-checkbox {
-      background: var(--teal);
-      border-color: var(--teal);
+    .reset-checkbox-input:checked + .reset-custom-checkbox,
+    .reset-card.completed .reset-custom-checkbox {
+      background: var(--teal-400);
+      border-color: var(--teal-400);
       color: #042f2e;
+      box-shadow: 0 0 10px rgba(45, 212, 191, 0.4);
     }
 
-    .challenge-title {
-      font-size: 1rem;
+    .reset-card-title {
+      font-size: 0.98rem;
       font-weight: 700;
       color: var(--text-white);
+      transition: color 0.15s ease;
+      line-height: 1.35;
     }
 
-    .challenge-card.completed .challenge-title {
+    .reset-card.completed .reset-card-title {
+      color: var(--text-secondary);
       text-decoration: line-through;
+    }
+
+    .reset-card-desc {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .reset-footer-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 16px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      font-size: 0.82rem;
       color: var(--text-muted);
     }
 
-    .challenge-text {
-      font-size: 0.82rem;
-      color: var(--text-secondary);
-      line-height: 1.45;
+    .btn-reset-plan {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
     }
 
-    /* -------------------------------------------------------------
-       VIEW 4: NEUROSCIENCE INSIGHTS
-    ------------------------------------------------------------- */
-    .science-insights-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
-
-    @media (max-width: 900px) {
-      .science-insights-grid { grid-template-columns: 1fr; }
-    }
-
-    .science-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-card);
-      border-radius: var(--radius-md);
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .science-card-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: var(--radius-sm);
-      background: rgba(20, 184, 166, 0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--teal-300);
-    }
-
-    .science-card-icon svg {
-      width: 20px;
-      height: 20px;
-      stroke: currentColor;
-      fill: none;
-      stroke-width: 2;
-    }
-
-    .science-heading {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--text-white);
-    }
-
-    .science-copy {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      line-height: 1.55;
+    .btn-reset-plan:hover {
+      border-color: #f87171;
+      color: #f87171;
     }
 
     /* -------------------------------------------------------------
@@ -1459,12 +1733,6 @@
               <span>7-Day Reset Plan</span>
             </button>
           </li>
-          <li>
-            <button class="nav-btn" data-tab="tab-science" type="button">
-              <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-              <span>The Neuroscience</span>
-            </button>
-          </li>
         </ul>
       </nav>
     </div>
@@ -1606,6 +1874,23 @@
               </div>
               <input type="range" id="input-sleep" min="3.0" max="10.0" step="0.1" value="6.5">
               <div class="range-limits"><span>3.0h (deprived)</span><span>10.0h (optimal)</span></div>
+            </div>
+
+            <!-- Check My Result Action Button -->
+            <div class="check-result-section">
+              <button type="button" class="btn-check-result" id="btn-check-result">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                <span>Check my result</span>
+              </button>
+              <div id="check-result-feedback" class="check-result-feedback" style="display: none;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span>Result saved to history &amp; 7-day reset plan updated!</span>
+              </div>
             </div>
           </div>
         </div>
@@ -1753,43 +2038,100 @@
 
     <!-- VIEW 2: LIFETIME & 24H AUDIT -->
     <div class="tab-content" id="tab-audit">
-      <div class="audit-grid">
-        <div class="big-stat-card">
-          <span style="font-size: 0.8rem; font-weight: 700; color: var(--teal-300); text-transform: uppercase;">Lifetime Screen Footprint</span>
-          <div class="stat-hero-number" id="audit-lifetime-num">12.5 Years</div>
-          <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
-            Based on your daily screen time of <strong id="audit-hrs-txt" style="color: #fff;">5.0 hours</strong>, over an average 60-year adult lifespan, you will spend over a decade looking down at a display.
-          </p>
-          <div style="background: var(--bg-input); border-radius: var(--radius-sm); padding: 14px; font-size: 0.85rem; color: var(--text-muted);">
-            💡 <strong>Opportunity Cost:</strong> If you reclaimed just 1.5 hours daily, you could read <strong>54 full books</strong>, complete <strong>360 workouts</strong>, or master a new language every 18 months.
+      <div class="audit-container">
+        <!-- History Trend Section -->
+        <div class="chart-panel-card">
+          <div class="panel-header">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--teal-400)" stroke-width="2.5">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+              </svg>
+              <span>Addiction Risk Score Trend</span>
+            </div>
+            <span class="tag" id="audit-history-count-badge">0 Check-ins</span>
+          </div>
+
+          <!-- Empty State (shown when fewer than 2 entries) -->
+          <div id="audit-empty-state" class="audit-empty-state">
+            <div class="empty-state-icon">📈</div>
+            <h4 class="empty-state-title">Trend Visualization Awaiting Data</h4>
+            <p class="empty-state-desc">Check your result a few times to start seeing your trend.</p>
+            <button type="button" class="btn-action-teal" onclick="switchToTab('tab-assessment')">
+              ← Go to Assessment to Check Result
+            </button>
+          </div>
+
+          <!-- Chart Canvas (shown when >= 2 entries) -->
+          <div id="audit-chart-wrapper" style="display: none;">
+            <div class="chart-canvas-container">
+              <canvas id="scoreHistoryCanvas"></canvas>
+            </div>
+          </div>
+
+          <!-- Stats Row -->
+          <div class="audit-stats-grid">
+            <div class="audit-stat-card">
+              <span class="audit-stat-label">Best Day</span>
+              <div class="audit-stat-value green" id="stat-best-day">--</div>
+              <span class="audit-stat-sub" id="stat-best-sub">Lowest risk score</span>
+            </div>
+            <div class="audit-stat-card">
+              <span class="audit-stat-label">Worst Day</span>
+              <div class="audit-stat-value red" id="stat-worst-day">--</div>
+              <span class="audit-stat-sub" id="stat-worst-sub">Highest risk score</span>
+            </div>
+            <div class="audit-stat-card">
+              <span class="audit-stat-label">Average Score</span>
+              <div class="audit-stat-value teal" id="stat-avg-score">--</div>
+              <span class="audit-stat-sub" id="stat-avg-sub">Across all checks</span>
+            </div>
+            <div class="audit-stat-card">
+              <span class="audit-stat-label">Number of Check-ins</span>
+              <div class="audit-stat-value" id="stat-total-checks">0</div>
+              <span class="audit-stat-sub">Logged assessments</span>
+            </div>
           </div>
         </div>
 
-        <div class="breakdown-bar-box">
-          <span style="font-size: 0.8rem; font-weight: 700; color: var(--teal-300); text-transform: uppercase;">24-Hour Day Allocation</span>
-          <div class="day-progress-bar">
-            <div class="slice-segment sleep" id="bar-sleep" style="width: 27%;">Sleep</div>
-            <div class="slice-segment social" id="bar-social" style="width: 10%;">Social</div>
-            <div class="slice-segment other" id="bar-other" style="width: 11%;">Screen</div>
-            <div class="slice-segment life" id="bar-life" style="width: 52%;">Real Life</div>
+        <!-- Lifetime Screen Footprint and 24-Hour Allocation -->
+        <div class="audit-grid">
+          <div class="big-stat-card">
+            <span style="font-size: 0.8rem; font-weight: 700; color: var(--teal-300); text-transform: uppercase;">Lifetime Screen Footprint</span>
+            <div class="stat-hero-number" id="audit-lifetime-num">12.5 Years</div>
+            <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+              Based on your daily screen time of <strong id="audit-hrs-txt" style="color: #fff;">5.0 hours</strong>, over an average 60-year adult lifespan, you will spend over a decade looking down at a display.
+            </p>
+            <div style="background: var(--bg-input); border-radius: var(--radius-sm); padding: 14px; font-size: 0.85rem; color: var(--text-muted);">
+              💡 <strong>Opportunity Cost:</strong> If you reclaimed just 1.5 hours daily, you could read <strong>54 full books</strong>, complete <strong>360 workouts</strong>, or master a new language every 18 months.
+            </div>
           </div>
 
-          <div class="alloc-summary-grid">
-            <div class="alloc-item-box">
-              <span class="alloc-label"><span class="alloc-dot" style="background:#64748b;"></span> Sleep Rest</span>
-              <span class="alloc-val-display" id="alloc-disp-sleep">6.5 hrs</span>
+          <div class="breakdown-bar-box">
+            <span style="font-size: 0.8rem; font-weight: 700; color: var(--teal-300); text-transform: uppercase;">24-Hour Day Allocation</span>
+            <div class="day-progress-bar">
+              <div class="slice-segment sleep" id="bar-sleep" style="width: 27%;">Sleep</div>
+              <div class="slice-segment social" id="bar-social" style="width: 10%;">Social</div>
+              <div class="slice-segment other" id="bar-other" style="width: 11%;">Screen</div>
+              <div class="slice-segment life" id="bar-life" style="width: 52%;">Real Life</div>
             </div>
-            <div class="alloc-item-box">
-              <span class="alloc-label"><span class="alloc-dot" style="background:var(--teal-400);"></span> Social Media</span>
-              <span class="alloc-val-display" id="alloc-disp-social">2.5 hrs</span>
-            </div>
-            <div class="alloc-item-box">
-              <span class="alloc-label"><span class="alloc-dot" style="background:var(--teal-700);"></span> Other Screen Time</span>
-              <span class="alloc-val-display" id="alloc-disp-other">2.5 hrs</span>
-            </div>
-            <div class="alloc-item-box">
-              <span class="alloc-label"><span class="alloc-dot" style="background:#1e293b; border: 1px solid var(--teal);"></span> Real Life Time</span>
-              <span class="alloc-val-display" id="alloc-disp-life">12.5 hrs</span>
+
+            <div class="alloc-summary-grid">
+              <div class="alloc-item-box">
+                <span class="alloc-label"><span class="alloc-dot" style="background:#64748b;"></span> Sleep Rest</span>
+                <span class="alloc-val-display" id="alloc-disp-sleep">6.5 hrs</span>
+              </div>
+              <div class="alloc-item-box">
+                <span class="alloc-label"><span class="alloc-dot" style="background:var(--teal-400);"></span> Social Media</span>
+                <span class="alloc-val-display" id="alloc-disp-social">2.5 hrs</span>
+              </div>
+              <div class="alloc-item-box">
+                <span class="alloc-label"><span class="alloc-dot" style="background:var(--teal-700);"></span> Other Screen Time</span>
+                <span class="alloc-val-display" id="alloc-disp-other">2.5 hrs</span>
+              </div>
+              <div class="alloc-item-box">
+                <span class="alloc-label"><span class="alloc-dot" style="background:#1e293b; border: 1px solid var(--teal);"></span> Real Life Time</span>
+                <span class="alloc-val-display" id="alloc-disp-life">12.5 hrs</span>
+              </div>
             </div>
           </div>
         </div>
@@ -1798,97 +2140,51 @@
 
     <!-- VIEW 3: 7-DAY RESET PLAN -->
     <div class="tab-content" id="tab-protocol">
-      <div style="margin-bottom: 16px; color: var(--text-secondary); font-size: 0.95rem;">
-        Click any challenge card to mark your daily milestone complete:
+      <!-- Empty State if no prediction has been run yet -->
+      <div id="reset-empty-state" class="reset-empty-state">
+        <div class="empty-state-icon">📋</div>
+        <h4 class="empty-state-title">No Personalized Plan Generated Yet</h4>
+        <p class="empty-state-desc">Run a check first so we can build a plan around what matters most for you.</p>
+        <button type="button" class="btn-action-teal" onclick="switchToTab('tab-assessment')">
+          ← Run Habit Assessment to Generate Plan
+        </button>
       </div>
-      <div class="protocol-cards-wall">
-        <div class="challenge-card" onclick="this.classList.toggle('completed')">
-          <div class="challenge-top">
-            <span class="day-tag-badge">Day 01</span>
-            <span class="custom-checkbox">✓</span>
+
+      <!-- Active Plan Wrapper -->
+      <div id="reset-plan-wrapper" class="reset-plan-wrapper" style="display: none;">
+        <div class="reset-banner-card">
+          <div class="reset-header-row">
+            <div>
+              <h3 style="font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 4px;">Targeted 7-Day Digital Reset</h3>
+              <p style="font-size: 0.85rem; color: var(--text-secondary);">Escalating daily behavioral actions engineered to dismantle your highest addiction driver.</p>
+            </div>
+            <div class="reset-factor-badge" id="reset-factor-badge">
+              <span>🎯 Target: Bedtime Share</span>
+            </div>
           </div>
-          <h4 class="challenge-title">Grayscale Mode</h4>
-          <p class="challenge-text">Switch your phone display to black &amp; white. Stripping colorful badges drops check impulses by up to 35%.</p>
+
+          <!-- Progress Bar Card -->
+          <div class="reset-progress-card">
+            <div class="reset-progress-meta">
+              <span class="reset-progress-text" id="reset-progress-text">0/7 days complete</span>
+              <span class="reset-progress-pct" id="reset-progress-pct">0% Complete</span>
+            </div>
+            <div class="reset-progress-track">
+              <div class="reset-progress-fill" id="reset-progress-fill" style="width: 0%;"></div>
+            </div>
+          </div>
         </div>
 
-        <div class="challenge-card" onclick="this.classList.toggle('completed')">
-          <div class="challenge-top">
-            <span class="day-tag-badge">Day 02</span>
-            <span class="custom-checkbox">✓</span>
-          </div>
-          <h4 class="challenge-title">30-Min Phone-Free Dawn</h4>
-          <p class="challenge-text">Do not touch your phone for the first 30 minutes after waking. Let cortisol naturally peak without algorithmic stimulation.</p>
+        <!-- 7-Day Dynamic Checklist Grid -->
+        <div class="reset-checklist-grid" id="reset-checklist-grid">
+          <!-- Dynamically populated from JS -->
         </div>
 
-        <div class="challenge-card" onclick="this.classList.toggle('completed')">
-          <div class="challenge-top">
-            <span class="day-tag-badge">Day 03</span>
-            <span class="custom-checkbox">✓</span>
-          </div>
-          <h4 class="challenge-title">Notification Purge</h4>
-          <p class="challenge-text">Turn off all banners, sounds, and red badges except direct phone calls. Batch check messages only at 3 fixed daily windows.</p>
-        </div>
-
-        <div class="challenge-card" onclick="this.classList.toggle('completed')">
-          <div class="challenge-top">
-            <span class="day-tag-badge">Day 04</span>
-            <span class="custom-checkbox">✓</span>
-          </div>
-          <h4 class="challenge-title">Bedroom Device Curfew</h4>
-          <p class="challenge-text">Charge your phone in the kitchen or hallway overnight. Keep screens completely out of the sleeping environment.</p>
-        </div>
-
-        <div class="challenge-card" onclick="this.classList.toggle('completed')">
-          <div class="challenge-top">
-            <span class="day-tag-badge">Day 05</span>
-            <span class="custom-checkbox">✓</span>
-          </div>
-          <h4 class="challenge-title">Home Screen Cleanse</h4>
-          <p class="challenge-text">Remove all social media icons from your dock and main screen. Force intentional search bar typing to access feeds.</p>
-        </div>
-
-        <div class="challenge-card" onclick="this.classList.toggle('completed')">
-          <div class="challenge-top">
-            <span class="day-tag-badge">Day 06–07</span>
-            <span class="custom-checkbox">✓</span>
-          </div>
-          <h4 class="challenge-title">Weekend Digital Sabbath</h4>
-          <p class="challenge-text">Place your device into a drawer for an uninterrupted 8-hour stretch on Saturday or Sunday. Reconnect with deep presence.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- VIEW 4: THE NEUROSCIENCE -->
-    <div class="tab-content" id="tab-science">
-      <div class="science-insights-grid">
-        <div class="science-card">
-          <div class="science-card-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-          </div>
-          <h4 class="science-heading">Variable Reward Schedules</h4>
-          <p class="science-copy">
-            Every unlock functions like a slot machine lever. You never know if an alert, like, or message awaits, creating powerful Pavlovian conditioning that triggers micro-checks.
-          </p>
-        </div>
-
-        <div class="science-card">
-          <div class="science-card-icon">
-            <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-          </div>
-          <h4 class="science-heading">Circadian Melatonin Blunting</h4>
-          <p class="science-copy">
-            Short-wavelength 450nm blue light stimulates melanopsin receptors in your retina, tricking the pineal gland into halting melatonin production and delaying deep REM sleep.
-          </p>
-        </div>
-
-        <div class="science-card">
-          <div class="science-card-icon">
-            <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
-          </div>
-          <h4 class="science-heading">Prefrontal Executive Fatigue</h4>
-          <p class="science-copy">
-            Accumulated sleep debt impairs the prefrontal cortex's self-regulatory control. A tired brain naturally defaults to passive, low-effort infinite-scrolling feeds.
-          </p>
+        <div class="reset-footer-bar">
+          <span id="reset-plan-status-msg">Check off each day as you finish the protocol. Progress is saved automatically.</span>
+          <button type="button" class="btn-reset-plan" id="btn-reset-plan" onclick="resetPlanChecklist()">
+            ↺ Clear Checklist
+          </button>
         </div>
       </div>
     </div>
@@ -2465,14 +2761,524 @@
       calculate();
     }
 
-    // Tab Switching
+    // Tab Switching Headers
     const TAB_HEADERS = {
       'tab-assessment': { title: 'Habit Assessment & Simulator', sub: 'Adjust your daily parameters to quantify addiction risk and habit drivers.' },
-      'tab-audit': { title: 'Lifetime & 24h Time Audit', sub: 'Understand where your daily hours go and project lifetime screen exposure.' },
-      'tab-protocol': { title: '7-Day Digital Reset Plan', sub: 'A structured, progressive checklist to rebuild attention span and dopamine balance.' },
-      'tab-science': { title: 'Behavioral Neuroscience', sub: 'The clinical mechanisms behind dopamine reward loops and circadian sleep loss.' }
+      'tab-audit': { title: 'Lifetime & 24h Time Audit', sub: 'Understand where your daily hours go, track historical score trends, and audit time allocation.' },
+      'tab-protocol': { title: '7-Day Digital Reset Plan', sub: 'A structured, progressive checklist engineered to rebuild attention span and dopamine balance.' }
     };
 
+    /* -------------------------------------------------------------
+       LOCAL STORAGE DATA ACCESS LAYER (ROBUST & RESILIENT)
+    ------------------------------------------------------------- */
+    let inMemoryHistory = null;
+    let inMemoryResetPlan = null;
+
+    function getHistory() {
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          const raw = localStorage.getItem('screenSignalHistory');
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) return parsed;
+          }
+        }
+      } catch (e) {
+        console.warn('localStorage read error for screenSignalHistory:', e);
+      }
+      return inMemoryHistory || [];
+    }
+
+    function saveHistory(hist) {
+      inMemoryHistory = hist;
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          localStorage.setItem('screenSignalHistory', JSON.stringify(hist));
+        }
+      } catch (e) {
+        console.warn('localStorage write error for screenSignalHistory:', e);
+      }
+    }
+
+    function getResetPlan() {
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          const raw = localStorage.getItem('screenSignalResetPlan');
+          if (raw) return JSON.parse(raw);
+        }
+      } catch (e) {
+        console.warn('localStorage read error for screenSignalResetPlan:', e);
+      }
+      return inMemoryResetPlan;
+    }
+
+    function saveResetPlan(plan) {
+      inMemoryResetPlan = plan;
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          localStorage.setItem('screenSignalResetPlan', JSON.stringify(plan));
+        }
+      } catch (e) {
+        console.warn('localStorage write error for screenSignalResetPlan:', e);
+      }
+    }
+
+    /* -------------------------------------------------------------
+       7-DAY RESET PLAN CURATED SEQUENCES (ESCALATING BY FACTOR)
+    ------------------------------------------------------------- */
+    const RESET_PLANS = {
+      night_usage_ratio: {
+        factorName: "Bedtime Screen Usage",
+        badgeLabel: "Target: Bedtime Screen Share",
+        days: [
+          { day: 1, title: "Charge Outside the Bedroom Tonight", desc: "Remove bedside temptation completely by plugging your phone charger in the hallway or kitchen before 9:00 PM." },
+          { day: 2, title: "Set a 10:00 PM 'Wind-Down' Reminder", desc: "Create an automatic evening alarm alerting you that all active screen interaction is concluding for the night." },
+          { day: 3, title: "Replace Night Scrolling with 10 Mins of Reading", desc: "Substitute high-stimulus feeds with a physical book, e-ink reader, or paper journal beside your bed." },
+          { day: 4, title: "Enable Warm Display Tint & Grayscale at 9:00 PM", desc: "Strip stimulating short-wavelength blue light and vibrant colors so looking at the screen becomes unrewarding." },
+          { day: 5, title: "Enforce a Strict 45-Min Pre-Bed Zero-Screen Curfew", desc: "Zero screens allowed 45 minutes before sleep. Transition to gentle stretching, light conversation, or slow breathing." },
+          { day: 6, title: "Permanent Bedroom De-Tech & Analog Alarm", desc: "Permanently banish all chargers from the bedroom and rely on an analog alarm clock for wake-ups." },
+          { day: 7, title: "Full 10-Hour Overnight Digital Fast", desc: "Power off or dock your device at 9:00 PM and do not interact with it until 7:00 AM. Experience uninterrupted restorative sleep." }
+        ]
+      },
+      unlocks_per_day: {
+        factorName: "Compulsive Phone Unlocks",
+        badgeLabel: "Target: Compulsive Pickups",
+        days: [
+          { day: 1, title: "Add Physical Friction to Your Phone", desc: "Place a rubber band or textured sticker on your phone case as a tactile pattern-interrupt against mindless reflex grabs." },
+          { day: 2, title: "Purge Non-Human Notifications", desc: "Turn off all banners, sounds, and badges for news, shopping, and social apps. Keep notifications active only for direct personal calls." },
+          { day: 3, title: "Designate 3 Fixed 15-Minute Check Windows", desc: "Batch communication checks to 9:30 AM, 1:30 PM, and 5:30 PM instead of glancing every few minutes." },
+          { day: 4, title: "Practice the 10-Second Breath Rule", desc: "Pause for 2 full breaths before unlocking: ask yourself, 'What specific task am I opening this device to do?'" },
+          { day: 5, title: "Out-of-Sight Focus Sprints", desc: "Store your phone inside a zipped backpack or drawer during two 60-minute deep work or study sessions." },
+          { day: 6, title: "12-Digit Passcode & App Obfuscation", desc: "Disable face/fingerprint unlock and switch to a 12-digit alphanumeric code; bury distracting apps 3 folders deep." },
+          { day: 7, title: "The 'Under-30 Unlocks' Challenge", desc: "Challenge yourself to keep total daily device unlocks under 30 for the entire day. Reclaim continuous presence and flow." }
+        ]
+      },
+      social_media_hours: {
+        factorName: "Social Media & Feed Scrolling",
+        badgeLabel: "Target: Social Media Feeds",
+        days: [
+          { day: 1, title: "Switch Phone Display to Grayscale Mode", desc: "Turn your screen to black & white (Settings > Accessibility). Stripping saturated red and colorful badges slashes dopamine pull by 35%." },
+          { day: 2, title: "Set a Hard 30-Minute Daily App Timer", desc: "Configure a strict 30-minute system limit in Digital Wellbeing across TikTok, Instagram, and YouTube." },
+          { day: 3, title: "Cleanse Your Home Screen & Dock", desc: "Remove all feed-based apps from your home screen dock. Require typing in search to access any social platform." },
+          { day: 4, title: "Replace Lunch Scrolling with a 15-Min Walk", desc: "Trade passive algorithmic scrolling during downtime for real daylight, movement, and natural endorphins." },
+          { day: 5, title: "The 20-Account Unfollow Purge", desc: "Aggressively unfollow or mute at least 20 accounts that trigger mindless rabbit holes, comparison, or outrage." },
+          { day: 6, title: "Delete Native Apps & Use Mobile Web Only", desc: "Uninstall native social apps. Browsing through mobile web lacks smooth infinite scroll and algorithmic auto-play." },
+          { day: 7, title: "24-Hour Social Media Blackout", desc: "Zero social media apps or browser logins for 24 continuous hours. Notice how calm and clear your headspace feels." }
+        ]
+      },
+      screen_time_hours: {
+        factorName: "Total Daily Screen Time",
+        badgeLabel: "Target: Total Screen Hours",
+        days: [
+          { day: 1, title: "Cap Your #1 Time-Drain App at 45 Minutes", desc: "Open battery settings, identify your single biggest non-work time sink, and enforce an immediate 45-minute daily cap." },
+          { day: 2, title: "Institute a 30-Minute Analog Morning", desc: "No screens for the first 30 minutes after waking up. Hydrate, make your bed, and plan your day on physical paper." },
+          { day: 3, title: "100% Device-Free Meals Today", desc: "Eat breakfast, lunch, and dinner with zero screens or video streams. Focus entirely on tasting your food and being present." },
+          { day: 4, title: "Two 50-Minute 'Do Not Disturb' Blocks", desc: "Activate Focus mode and place your phone in a separate room for two uninterrupted 50-minute productivity blocks." },
+          { day: 5, title: "Cut 1.5 Hours Off Your Assessment Baseline", desc: "Actively substitute 90 minutes of passive screen time with an offline hobby, reading, physical exercise, or socializing." },
+          { day: 6, title: "4-Hour Continuous Unplugged Afternoon", desc: "Spend 4 consecutive daytime hours on Saturday or Sunday with your phone safely stashed away in a drawer." },
+          { day: 7, title: "12-Hour Daylight Digital Detox Sprint", desc: "Keep your smartphone powered off or docked from 8:00 AM to 8:00 PM. Experience true uninterrupted cognitive flow." }
+        ]
+      },
+      sleep_hours: {
+        factorName: "Sleep Duration & Deficit",
+        badgeLabel: "Target: Sleep Rest & Duration",
+        days: [
+          { day: 1, title: "Automate 'Do Not Disturb / Bedtime Mode' at 9:30 PM", desc: "Mute all notifications and non-emergency calls 90 minutes before your planned bedtime automatically." },
+          { day: 2, title: "Create a 45-Minute Zero-Screen Sleep Buffer", desc: "Stop all phone and laptop use 45 minutes before turning off the lights to allow your melatonin curve to rise naturally." },
+          { day: 3, title: "Lock in an Unbroken 8-Hour Sleep Opportunity", desc: "Commit to being in bed with lights off for a full 8 hours tonight. Prioritize physiological cellular repair." },
+          { day: 4, title: "Get 10 Mins of Direct Morning Sunlight", desc: "Within 30 minutes of waking, step outside for natural light. This calibrates your circadian rhythm for tonight's sleep." },
+          { day: 5, title: "Zero Caffeine After 2:00 PM & Dark Bedroom", desc: "Ensure adenosine receptors are ready for deep sleep; keep your bedroom pitch-black, quiet, and comfortably cool." },
+          { day: 6, title: "Audio-Only Wind-Down (No Visual Screens)", desc: "Replace video feeds with a low-key podcast, audiobook, or sleep soundscape with the phone screen completely black." },
+          { day: 7, title: "Zero Middle-of-the-Night Phone Checks", desc: "If you wake up during the night, do not touch or glance at your phone screen. Keep your mind in relaxed sleep mode." }
+        ]
+      }
+    };
+
+    /* -------------------------------------------------------------
+       AUDIT SCORE TREND CHART RENDERER (PLAIN CANVAS, ZERO LIBS)
+    ------------------------------------------------------------- */
+    function renderScoreHistoryChart(history) {
+      const canvas = document.getElementById('scoreHistoryCanvas');
+      if (!canvas || !history || history.length < 2) return;
+
+      const container = canvas.parentElement;
+      const rect = container.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+
+      const w = Math.max(300, rect.width || 600);
+      const h = Math.max(180, rect.height || 260);
+
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+      canvas.style.width = `${w}px`;
+      canvas.style.height = `${h}px`;
+
+      const ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, w, h);
+
+      const padLeft = 44;
+      const padRight = 36;
+      const padTop = 32;
+      const padBottom = 42;
+
+      const graphW = Math.max(10, w - padLeft - padRight);
+      const graphH = Math.max(10, h - padTop - padBottom);
+
+      // Horizontal grid lines (0, 25, 50, 75, 100)
+      const yTicks = [0, 25, 50, 75, 100];
+      ctx.lineWidth = 1;
+      ctx.font = '11px JetBrains Mono, monospace';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+
+      yTicks.forEach(tick => {
+        const y = padTop + graphH - (tick / 100) * graphH;
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.07)';
+        ctx.moveTo(padLeft, y);
+        ctx.lineTo(w - padRight, y);
+        ctx.stroke();
+
+        ctx.fillStyle = '#64748b';
+        ctx.fillText(tick, padLeft - 10, y);
+      });
+
+      // Calculate data point coordinates
+      const points = history.map((item, idx) => {
+        const x = padLeft + (idx / (history.length - 1)) * graphW;
+        const scoreVal = Math.max(0, Math.min(100, Number(item.score) || 0));
+        const y = padTop + graphH - (scoreVal / 100) * graphH;
+        return { x, y, score: scoreVal, item, idx };
+      });
+
+      // Gradient area fill under curve
+      const grad = ctx.createLinearGradient(0, padTop, 0, padTop + graphH);
+      grad.addColorStop(0, 'rgba(45, 212, 191, 0.35)');
+      grad.addColorStop(0.7, 'rgba(20, 184, 166, 0.08)');
+      grad.addColorStop(1, 'rgba(20, 184, 166, 0.0)');
+
+      ctx.beginPath();
+      ctx.moveTo(points[0].x, padTop + graphH);
+      points.forEach((pt, i) => {
+        if (i === 0) {
+          ctx.lineTo(pt.x, pt.y);
+        } else {
+          const prev = points[i - 1];
+          const cx = (prev.x + pt.x) / 2;
+          ctx.bezierCurveTo(cx, prev.y, cx, pt.y, pt.x, pt.y);
+        }
+      });
+      ctx.lineTo(points[points.length - 1].x, padTop + graphH);
+      ctx.closePath();
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // Glowing line stroke
+      ctx.beginPath();
+      points.forEach((pt, i) => {
+        if (i === 0) {
+          ctx.moveTo(pt.x, pt.y);
+        } else {
+          const prev = points[i - 1];
+          const cx = (prev.x + pt.x) / 2;
+          ctx.bezierCurveTo(cx, prev.y, cx, pt.y, pt.x, pt.y);
+        }
+      });
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = '#2dd4bf';
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.shadowColor = 'rgba(45, 212, 191, 0.5)';
+      ctx.shadowBlur = 10;
+      ctx.stroke();
+      ctx.shadowBlur = 0; // reset shadow
+
+      // Draw data points and badges
+      points.forEach(pt => {
+        // Outer halo
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, 6.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#0b0f17';
+        ctx.fill();
+        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = '#2dd4bf';
+        ctx.stroke();
+
+        // Inner core
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, 2.8, 0, Math.PI * 2);
+        ctx.fillStyle = '#5eead4';
+        ctx.fill();
+
+        // Score badge text
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 11px JetBrains Mono, monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(`${pt.score}`, pt.x, pt.y - 10);
+
+        // Date / Check label
+        let dateLabel = '';
+        try {
+          const d = new Date(pt.item.date);
+          const m = d.getMonth() + 1;
+          const day = d.getDate();
+          const hr = String(d.getHours()).padStart(2, '0');
+          const min = String(d.getMinutes()).padStart(2, '0');
+          dateLabel = `${m}/${day} ${hr}:${min}`;
+        } catch (e) {
+          dateLabel = `#${pt.idx + 1}`;
+        }
+
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '10px JetBrains Mono, monospace';
+        ctx.textBaseline = 'top';
+        ctx.fillText(dateLabel, pt.x, padTop + graphH + 12);
+      });
+    }
+
+    /* -------------------------------------------------------------
+       AUDIT TAB STATS ROW & VIEW CONTROLLER
+    ------------------------------------------------------------- */
+    function updateAuditStatsAndChart() {
+      const history = getHistory();
+      const countBadge = document.getElementById('audit-history-count-badge');
+      const emptyState = document.getElementById('audit-empty-state');
+      const chartWrapper = document.getElementById('audit-chart-wrapper');
+
+      const bestElem = document.getElementById('stat-best-day');
+      const bestSub = document.getElementById('stat-best-sub');
+      const worstElem = document.getElementById('stat-worst-day');
+      const worstSub = document.getElementById('stat-worst-sub');
+      const avgElem = document.getElementById('stat-avg-score');
+      const totalElem = document.getElementById('stat-total-checks');
+
+      if (countBadge) countBadge.textContent = `${history.length} Check-in${history.length === 1 ? '' : 's'}`;
+      if (totalElem) totalElem.textContent = `${history.length}`;
+
+      if (history.length < 2) {
+        if (emptyState) emptyState.style.display = 'flex';
+        if (chartWrapper) chartWrapper.style.display = 'none';
+
+        if (history.length === 1) {
+          const single = history[0];
+          if (bestElem) bestElem.textContent = `${single.score}/100`;
+          if (worstElem) worstElem.textContent = `${single.score}/100`;
+          if (avgElem) avgElem.textContent = `${single.score}/100`;
+          if (bestSub) bestSub.textContent = '1 check logged';
+          if (worstSub) worstSub.textContent = '1 check logged';
+        } else {
+          if (bestElem) bestElem.textContent = '--';
+          if (worstElem) worstElem.textContent = '--';
+          if (avgElem) avgElem.textContent = '--';
+          if (bestSub) bestSub.textContent = 'Lowest risk score';
+          if (worstSub) worstSub.textContent = 'Highest risk score';
+        }
+        return;
+      }
+
+      // History has 2 or more entries: show chart and calculate detailed stats
+      if (emptyState) emptyState.style.display = 'none';
+      if (chartWrapper) chartWrapper.style.display = 'block';
+
+      let minScore = Infinity;
+      let maxScore = -Infinity;
+      let sumScore = 0;
+      let bestDate = null;
+      let worstDate = null;
+
+      history.forEach(item => {
+        const s = Number(item.score);
+        if (s < minScore) {
+          minScore = s;
+          bestDate = item.date;
+        }
+        if (s > maxScore) {
+          maxScore = s;
+          worstDate = item.date;
+        }
+        sumScore += s;
+      });
+
+      const avg = (sumScore / history.length).toFixed(1);
+
+      if (bestElem) bestElem.textContent = `${minScore}/100`;
+      if (worstElem) worstElem.textContent = `${maxScore}/100`;
+      if (avgElem) avgElem.textContent = `${avg}/100`;
+
+      function formatShortDate(dStr) {
+        try {
+          const d = new Date(dStr);
+          return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+        } catch (e) {
+          return '';
+        }
+      }
+
+      if (bestSub && bestDate) bestSub.textContent = `Best on ${formatShortDate(bestDate)}`;
+      if (worstSub && worstDate) worstSub.textContent = `Peak on ${formatShortDate(worstDate)}`;
+
+      // Draw canvas
+      renderScoreHistoryChart(history);
+    }
+
+    /* -------------------------------------------------------------
+       7-DAY RESET PLAN VIEW CONTROLLER & CHECKLIST STATE
+    ------------------------------------------------------------- */
+    function renderResetPlanTab() {
+      const history = getHistory();
+      const emptyState = document.getElementById('reset-empty-state');
+      const planWrapper = document.getElementById('reset-plan-wrapper');
+      if (!emptyState || !planWrapper) return;
+
+      if (history.length === 0) {
+        emptyState.style.display = 'flex';
+        planWrapper.style.display = 'none';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+      planWrapper.style.display = 'flex';
+
+      // Pick top factor from the most recent check-in
+      const latestEntry = history[history.length - 1];
+      const topFactorKey = latestEntry.top_factor || 'night_usage_ratio';
+
+      const planData = RESET_PLANS[topFactorKey] || RESET_PLANS['night_usage_ratio'];
+
+      // Update factor badge
+      const badgeElem = document.getElementById('reset-factor-badge');
+      if (badgeElem) {
+        badgeElem.innerHTML = `<span>🎯 ${planData.badgeLabel}</span>`;
+      }
+
+      // Load saved checked states from localStorage
+      const savedPlan = getResetPlan();
+      let checked = [];
+      if (savedPlan && savedPlan.topFactor === topFactorKey && Array.isArray(savedPlan.checked)) {
+        checked = savedPlan.checked;
+      } else {
+        checked = [false, false, false, false, false, false, false];
+        saveResetPlan({ topFactor: topFactorKey, checked: checked, updatedAt: new Date().toISOString() });
+      }
+
+      // Render 7-day checklist cards
+      const gridElem = document.getElementById('reset-checklist-grid');
+      if (gridElem) {
+        gridElem.innerHTML = planData.days.map((d, idx) => {
+          const isDone = !!checked[idx];
+          return `
+            <div class="reset-card ${isDone ? 'completed' : ''}" id="reset-card-${idx}" onclick="toggleResetDay(${idx})">
+              <div class="reset-card-top">
+                <span class="reset-day-tag">Day 0${d.day}</span>
+                <label class="reset-checkbox-label" onclick="event.stopPropagation();">
+                  <input type="checkbox" class="reset-checkbox-input" id="reset-chk-${idx}" ${isDone ? 'checked' : ''} onchange="toggleResetDay(${idx})">
+                  <span class="reset-custom-checkbox">✓</span>
+                </label>
+              </div>
+              <h4 class="reset-card-title">${d.title}</h4>
+              <p class="reset-card-desc">${d.desc}</p>
+            </div>
+          `;
+        }).join('');
+      }
+
+      updateResetProgressBar(checked);
+    }
+
+    function updateResetProgressBar(checked) {
+      const completedCount = checked.filter(Boolean).length;
+      const pct = Math.round((completedCount / 7) * 100);
+
+      const textElem = document.getElementById('reset-progress-text');
+      const pctElem = document.getElementById('reset-progress-pct');
+      const fillElem = document.getElementById('reset-progress-fill');
+
+      if (textElem) textElem.textContent = `${completedCount}/7 days complete`;
+      if (pctElem) pctElem.textContent = `${pct}% Complete`;
+      if (fillElem) fillElem.style.width = `${pct}%`;
+    }
+
+    window.toggleResetDay = function(idx) {
+      const history = getHistory();
+      if (history.length === 0) return;
+      const topFactorKey = history[history.length - 1].top_factor || 'night_usage_ratio';
+
+      const savedPlan = getResetPlan() || { topFactor: topFactorKey, checked: [false,false,false,false,false,false,false] };
+      if (!Array.isArray(savedPlan.checked)) {
+        savedPlan.checked = [false,false,false,false,false,false,false];
+      }
+
+      savedPlan.checked[idx] = !savedPlan.checked[idx];
+      savedPlan.topFactor = topFactorKey;
+      savedPlan.updatedAt = new Date().toISOString();
+      saveResetPlan(savedPlan);
+
+      // Update card UI
+      const card = document.getElementById(`reset-card-${idx}`);
+      const chk = document.getElementById(`reset-chk-${idx}`);
+      if (card) {
+        if (savedPlan.checked[idx]) card.classList.add('completed');
+        else card.classList.remove('completed');
+      }
+      if (chk) {
+        chk.checked = !!savedPlan.checked[idx];
+      }
+
+      updateResetProgressBar(savedPlan.checked);
+    };
+
+    window.resetPlanChecklist = function() {
+      const history = getHistory();
+      if (history.length === 0) return;
+      const topFactorKey = history[history.length - 1].top_factor || 'night_usage_ratio';
+
+      const emptyChecked = [false, false, false, false, false, false, false];
+      saveResetPlan({ topFactor: topFactorKey, checked: emptyChecked, updatedAt: new Date().toISOString() });
+      renderResetPlanTab();
+    };
+
+    window.switchToTab = function(tabId) {
+      const navBtn = document.querySelector(`.nav-btn[data-tab="${tabId}"]`);
+      if (navBtn) navBtn.click();
+    };
+
+    /* -------------------------------------------------------------
+       CHECK MY RESULT ACTION HANDLER
+    ------------------------------------------------------------- */
+    function handleCheckResult() {
+      calculate();
+
+      const entry = {
+        date: new Date().toISOString(),
+        score: Number(currentChatContext.score),
+        risk_level: currentChatContext.riskLevel,
+        top_factor: currentChatContext.topFactorKey
+      };
+
+      const history = getHistory();
+      history.push(entry);
+      saveHistory(history);
+
+      // Update both dynamic tabs
+      updateAuditStatsAndChart();
+      renderResetPlanTab();
+
+      // Show toast feedback
+      const fb = document.getElementById('check-result-feedback');
+      if (fb) {
+        fb.style.display = 'flex';
+        clearTimeout(window._checkFbTimer);
+        window._checkFbTimer = setTimeout(() => {
+          fb.style.display = 'none';
+        }, 4000);
+      }
+    }
+
+    /* -------------------------------------------------------------
+       NAVIGATION & LIFECYCLE INITIALIZATION
+    ------------------------------------------------------------- */
     function initNavigation() {
       const navButtons = document.querySelectorAll('.nav-btn');
       navButtons.forEach(btn => {
@@ -2489,6 +3295,14 @@
           if (meta) {
             dom.headingTitle.textContent = meta.title;
             dom.headingSub.textContent = meta.sub;
+          }
+
+          if (tabId === 'tab-audit') {
+            setTimeout(() => {
+              updateAuditStatsAndChart();
+            }, 60);
+          } else if (tabId === 'tab-protocol') {
+            renderResetPlanTab();
           }
         });
       });
@@ -2509,6 +3323,20 @@
       document.getElementById('chip-night').addEventListener('click', () => applyPreset('night'));
       document.getElementById('chip-high').addEventListener('click', () => applyPreset('high'));
 
+      // Check My Result button
+      const btnCheck = document.getElementById('btn-check-result');
+      if (btnCheck) {
+        btnCheck.addEventListener('click', handleCheckResult);
+      }
+
+      // Window resize re-renders chart
+      window.addEventListener('resize', () => {
+        const auditTab = document.getElementById('tab-audit');
+        if (auditTab && auditTab.classList.contains('active')) {
+          renderScoreHistoryChart(getHistory());
+        }
+      });
+
       // Form submission for chat
       const chatForm = document.getElementById('chat-input-form');
       if (chatForm) {
@@ -2522,6 +3350,8 @@
       }
 
       calculate();
+      updateAuditStatsAndChart();
+      renderResetPlanTab();
     }
 
     document.addEventListener('DOMContentLoaded', init);
