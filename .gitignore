@@ -10,3 +10,8 @@ __pycache__/
 # Operating System files
 .DS_Store
 Thumbs.db
+
+# Environment variables & secrets
+.env
+.env.*
+!.env.example

@@ -12,6 +12,12 @@ from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
+try:
+    from chat import ChatRequest, ChatResponse, generate_chat_reply
+except ImportError:
+    from .chat import ChatRequest, ChatResponse, generate_chat_reply
+
+
 # Initialize FastAPI application
 app = FastAPI(
     title="Screen Signal API",
@@ -241,6 +247,22 @@ def predict(request: PredictionRequest):
         },
     )
 
+@app.post("/chat", response_model=ChatResponse)
+def chat_endpoint(request: ChatRequest):
+    """
+    Real AI Digital-Wellbeing Chat endpoint powered by Anthropic Claude.
+    Accepts: {message: string, risk_level: string, top_factor: string, score: number}
+    Returns: {reply: string}
+    """
+    reply = generate_chat_reply(
+        message=request.message,
+        risk_level=request.risk_level,
+        top_factor=request.top_factor,
+        score=request.score,
+    )
+    return ChatResponse(reply=reply)
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+

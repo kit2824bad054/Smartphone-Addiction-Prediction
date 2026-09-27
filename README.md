@@ -143,26 +143,107 @@ const LOGREG_INTERCEPT = [-1.423745, 2.957644, -1.533899];
 
 ---
 
-## Step 4 — How to Run & Retrain
+## Step 4 — Real AI Chat Assistant & Backend API
 
-### 4.1 Running the Web App Locally
-Because `index.html` uses 100% client-side JavaScript, you can run it instantly using any of the following methods:
+Screen Signal includes a full-stack **AI Digital Wellbeing Coach** powered by Anthropic Claude (`claude-3-7-sonnet` / `claude-3-5-sonnet`). The AI assistant reviews your real-time risk assessment score, risk level, and top contributing habit driver to give brief, practical, non-judgmental suggestions under 100 words.
 
-#### Method A: Open Directly in Browser
-Double-click `index.html` or open it directly in Google Chrome, Microsoft Edge, Firefox, or Safari:
-```
-file:///c:/Users/Dharani/OneDrive/Documents/Smartphone%20Addiction/Smartphone-Addiction-Prediction/index.html
-```
+### 4.1 Getting an Anthropic API Key
+1. Go to the [Anthropic Console](https://console.anthropic.com/).
+2. Sign up or log into your Anthropic account.
+3. In the navigation menu, select **API Keys** (or go to Settings &gt; API Keys).
+4. Click **Create Key**, enter a descriptive name (e.g., `ScreenSignalCoach`), and click Create.
+5. Copy your newly generated API key (it begins with `sk-ant-api03-...`).
 
-#### Method B: Using Python's Built-in HTTP Server
+### 4.2 Creating Your `.env` File
+In the `backend/` directory or project root, create a file named `.env` (you can copy `.env.example` as a template):
+
 ```bash
-python -m http.server 8080
+# Copy example template
+cp .env.example .env
 ```
-Then navigate to: `http://localhost:8080/`
+
+Open `.env` in any text editor and add your Anthropic API key:
+
+```env
+# Anthropic API Key for Digital Wellbeing Chat
+ANTHROPIC_API_KEY=sk-ant-api03-your-actual-api-key-here
+
+# Optional: override default model (defaults to claude-3-7-sonnet-latest)
+# ANTHROPIC_MODEL=claude-3-7-sonnet-latest
+```
+
+### 4.3 Security Notice: NEVER Commit `.env`
+> [!CAUTION]
+> **Never commit your `.env` file to version control.** Your API key grants access to your Anthropic credits.
+> 
+> - `.env` is already configured in `.gitignore` to prevent accidental commits.
+> - Only commit `.env.example`, which contains empty placeholder templates.
+> - If you ever accidentally commit an API key, revoke and regenerate it immediately in the Anthropic Console.
+
+### 4.4 Installing Backend Dependencies & Starting the API
+Install the backend dependencies (including `fastapi`, `uvicorn`, `anthropic`, and `python-dotenv`):
+
+```bash
+cd backend
+pip install -r requirements.txt
+```
+
+Launch the FastAPI backend server with Uvicorn:
+
+```bash
+python -m uvicorn main:app --reload --host 127.0.0.1 --port 8000
+```
+
+The API will be available at:
+- **API Base:** `http://127.0.0.1:8000/`
+- **Interactive OpenAPI Docs:** `http://127.0.0.1:8000/docs`
+- **Chat Endpoint:** `POST http://127.0.0.1:8000/chat`
+- **Predict Endpoint:** `POST http://127.0.0.1:8000/predict`
+
+### 4.5 Testing the `/chat` Endpoint via cURL
+```bash
+curl -X POST http://127.0.0.1:8000/chat \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "What can I do instead of night scrolling?",
+    "risk_level": "High",
+    "top_factor": "Bedtime Screen",
+    "score": 75.0
+  }'
+```
+Response:
+```json
+{
+  "reply": "Replace bedtime scrolling with an analog buffer: charge your phone 10 feet away from your bed and place a physical book or journal on your nightstand..."
+}
+```
 
 ---
 
-### 4.2 Retraining the Model with New Data
+## Step 5 — How to Run & Retrain
+
+### 5.1 Running the Complete Application Locally
+1. **Start the Backend API:**
+   ```bash
+   cd backend
+   python -m uvicorn main:app --reload --port 8000
+   ```
+2. **Open the Frontend:**
+   Open `frontend/index.html` (or root `index.html`) directly in any browser:
+   ```bash
+   # Method A: Open directly in your default browser
+   start frontend/index.html   # On Windows
+
+   # Method B: Serve frontend via Python HTTP server
+   python -m http.server 8080
+   # Then open: http://localhost:8080/frontend/
+   ```
+
+Adjust the sliders in the **Habit Assessment** tab: the diagnostic score and top habit drivers will compute in real time, and the **AI Digital Wellbeing Coach** card will reveal with tailored suggested questions based on your top contributing factor.
+
+---
+
+### 5.2 Retraining the Model with New Data
 If you update or replace the dataset:
 
 1. Place the new CSV file in the `data/` directory.
@@ -170,21 +251,13 @@ If you update or replace the dataset:
    ```bash
    python train_model.py
    ```
-3. The script will print the new evaluation metrics and output the updated JavaScript constants:
-   ```
-   const SCALER_MEAN = [...];
-   const SCALER_SCALE = [...];
-   const LOGREG_COEF = [...];
-   const LOGREG_INTERCEPT = [...];
-   ```
-4. Open `index.html` in an editor.
-5. Locate lines ~380–405 inside `<script>` and replace `SCALER_MEAN`, `SCALER_SCALE`, `LOGREG_COEF`, and `LOGREG_INTERCEPT` with the freshly printed arrays.
-6. Save `index.html` and refresh your browser. Your updated model is live!
+3. The script will print the new evaluation metrics, regenerate `model.joblib` for the backend, and output updated JavaScript constants.
+4. Save the updated constants into `frontend/index.html`.
 
 ---
 
-## Technical Specifications & Zero-Dependency Guarantee
-- **Backend:** None. Zero network requests, zero telemetry, zero cookies.
-- **Privacy:** 100% on-device local computation. No user data ever leaves the browser.
-- **Dependencies:** Standard library HTML5, CSS3, ES6+ JavaScript.
-- **Training Environment:** Python 3.10+, `scikit-learn >= 1.2`, `pandas >= 2.0`, `numpy >= 1.24`.
+## Technical Specifications
+- **Backend:** FastAPI, Uvicorn, Anthropic Python SDK, python-dotenv, scikit-learn, joblib.
+- **AI Model:** Anthropic Claude (`claude-3-7-sonnet-latest` / `claude-3-5-sonnet-latest`).
+- **Frontend:** Vanilla HTML5, modern CSS3 (custom Dark Teal theme), ES6+ JavaScript.
+- **Privacy:** Assessment inference runs locally in the browser; AI chat calls pass only user query and behavioral summary tags.

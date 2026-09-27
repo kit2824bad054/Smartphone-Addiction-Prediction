@@ -1029,6 +1029,395 @@
       color: var(--text-secondary);
       line-height: 1.55;
     }
+
+    /* -------------------------------------------------------------
+       AI DIGITAL WELLBEING CHAT COMPONENT
+    ------------------------------------------------------------- */
+    .ai-chat-card {
+      grid-column: 1 / -1;
+      background: linear-gradient(180deg, rgba(15, 22, 34, 0.96), rgba(11, 15, 23, 0.99));
+      border: 1px solid var(--border-teal);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45), 0 0 24px rgba(20, 184, 166, 0.1);
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+      margin-top: 10px;
+    }
+
+    .ai-chat-card.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .chat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-card);
+    }
+
+    .chat-header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .chat-avatar-brand {
+      position: relative;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, rgba(20, 184, 166, 0.3), rgba(45, 212, 191, 0.1));
+      border: 1px solid var(--teal-500);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--teal-300);
+      box-shadow: 0 0 14px rgba(20, 184, 166, 0.25);
+    }
+
+    .online-indicator {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #10b981;
+      border: 2px solid var(--bg-surface);
+      box-shadow: 0 0 8px #10b981;
+    }
+
+    .chat-header-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .chat-title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .chat-title {
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: var(--text-white);
+      letter-spacing: -0.02em;
+    }
+
+    .ai-model-tag {
+      font-size: 0.68rem;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      background: rgba(20, 184, 166, 0.15);
+      color: var(--teal-300);
+      border: 1px solid rgba(20, 184, 166, 0.35);
+      border-radius: var(--radius-pill);
+      padding: 2px 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .chat-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .telemetry-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-pill);
+      padding: 6px 14px;
+      font-size: 0.78rem;
+      font-family: var(--font-mono);
+      color: var(--teal-300);
+    }
+
+    .telemetry-divider {
+      color: var(--text-dim);
+    }
+
+    /* Suggested Prompts */
+    .suggested-prompts-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 12px 16px;
+      background: rgba(9, 14, 21, 0.6);
+      border: 1px dashed rgba(20, 184, 166, 0.25);
+      border-radius: var(--radius-md);
+    }
+
+    .suggested-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.74rem;
+      font-family: var(--font-mono);
+      color: var(--teal-400);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+
+    .suggested-chips-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .suggested-chip {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-primary);
+      font-size: 0.82rem;
+      padding: 7px 15px;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      user-select: none;
+      font-family: var(--font-sans);
+    }
+
+    .suggested-chip:hover {
+      background: rgba(20, 184, 166, 0.16);
+      border-color: var(--teal-400);
+      color: var(--text-white);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(20, 184, 166, 0.2);
+    }
+
+    /* Chat Messages Container */
+    .chat-messages-container {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      height: 320px;
+      max-height: 380px;
+      overflow-y: auto;
+      padding: 8px 6px 8px 2px;
+      scroll-behavior: smooth;
+    }
+
+    .chat-messages-container::-webkit-scrollbar {
+      width: 6px;
+    }
+    .chat-messages-container::-webkit-scrollbar-track {
+      background: rgba(9, 14, 21, 0.5);
+      border-radius: var(--radius-pill);
+    }
+    .chat-messages-container::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: var(--radius-pill);
+    }
+    .chat-messages-container::-webkit-scrollbar-thumb:hover {
+      background: var(--teal-600);
+    }
+
+    .chat-msg {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      max-width: 84%;
+      animation: fadeInMsg 0.25s ease forwards;
+    }
+
+    @keyframes fadeInMsg {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .chat-msg.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .chat-msg.assistant {
+      align-self: flex-start;
+    }
+
+    .msg-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+
+    .msg-avatar.user-av {
+      background: linear-gradient(135deg, var(--teal-500), var(--teal-600));
+      color: #042f2e;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      box-shadow: 0 0 8px rgba(20, 184, 166, 0.3);
+    }
+
+    .msg-avatar.assistant-av {
+      background: var(--bg-card);
+      border: 1px solid var(--border-teal);
+      color: var(--teal-300);
+    }
+
+    .msg-bubble {
+      padding: 12px 18px;
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    .chat-msg.user .msg-bubble {
+      background: linear-gradient(135deg, var(--teal-600), var(--teal-700));
+      color: #ffffff;
+      border-bottom-right-radius: 2px;
+      box-shadow: 0 4px 16px rgba(13, 148, 136, 0.25);
+    }
+
+    .chat-msg.assistant .msg-bubble {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      color: var(--text-primary);
+      border-bottom-left-radius: 2px;
+    }
+
+    .chat-msg.assistant.error .msg-bubble {
+      border-color: rgba(244, 63, 94, 0.4);
+      background: rgba(244, 63, 94, 0.08);
+      color: #fca5a5;
+    }
+
+    .msg-bubble p {
+      margin-bottom: 8px;
+    }
+    .msg-bubble p:last-child {
+      margin-bottom: 0;
+    }
+    .msg-bubble strong {
+      color: var(--teal-200);
+    }
+    .msg-bubble code {
+      font-family: var(--font-mono);
+      background: rgba(0, 0, 0, 0.3);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--teal-300);
+      font-size: 0.82rem;
+    }
+
+    /* Typing Indicator */
+    .typing-dots-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 2px;
+    }
+    .typing-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--teal-400);
+      animation: typingBounce 1.4s infinite ease-in-out both;
+    }
+    .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+    .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+    .typing-dot:nth-child(3) { animation-delay: 0s; }
+
+    @keyframes typingBounce {
+      0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+      40% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 8px var(--teal-400); }
+    }
+
+    .typing-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      margin-left: 8px;
+    }
+
+    /* Input Bar */
+    .chat-input-bar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-pill);
+      padding: 6px 8px 6px 18px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .chat-input-bar:focus-within {
+      border-color: var(--teal-400);
+      box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.15);
+    }
+
+    .chat-text-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-white);
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+    }
+
+    .chat-text-input::placeholder {
+      color: var(--text-dim);
+    }
+
+    .chat-send-btn {
+      background: linear-gradient(135deg, var(--teal-500), var(--teal-600));
+      border: none;
+      outline: none;
+      color: #042f2e;
+      font-weight: 700;
+      font-size: 0.85rem;
+      border-radius: var(--radius-pill);
+      padding: 8px 18px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .chat-send-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 0 16px rgba(45, 212, 191, 0.4);
+      background: linear-gradient(135deg, var(--teal-400), var(--teal-500));
+    }
+
+    .chat-send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .chat-footer-note {
+      display: flex;
+      justify-content: center;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -1286,6 +1675,77 @@
             <div class="action-cards-duo" id="action-cards-container">
               <!-- Dynamically populated -->
             </div>
+          </div>
+        </div>
+
+        <!-- AI Wellbeing Coach Chat Section (Revealed after prediction) -->
+        <div class="panel-card ai-chat-card" id="ai-chat-card">
+          <div class="chat-header">
+            <div class="chat-header-left">
+              <div class="chat-avatar-brand">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                  <circle cx="9" cy="10" r="1" fill="currentColor"></circle>
+                  <circle cx="15" cy="10" r="1" fill="currentColor"></circle>
+                </svg>
+                <span class="online-indicator" title="AI Ready"></span>
+              </div>
+              <div class="chat-header-info">
+                <div class="chat-title-row">
+                  <span class="chat-title">AI Digital Wellbeing Coach</span>
+                  <span class="ai-model-tag">Claude Sonnet</span>
+                </div>
+                <div class="chat-subtitle" id="chat-telemetry-status">
+                  Personalized suggestions based on your behavioral telemetry
+                </div>
+              </div>
+            </div>
+            <div class="chat-header-right">
+              <div class="telemetry-pill" id="chat-context-badge">
+                <span id="chat-badge-level">Moderate Risk</span>
+                <span class="telemetry-divider">&bull;</span>
+                <span id="chat-badge-factor">Top: Bedtime Usage</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Suggested Prompts Row -->
+          <div class="suggested-prompts-wrapper">
+            <div class="suggested-label">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+              </svg>
+              <span>Suggested questions for your top factor:</span>
+            </div>
+            <div class="suggested-chips-row" id="suggested-chips-container">
+              <!-- Dynamically populated based on top contributing factor -->
+            </div>
+          </div>
+
+          <!-- Scrollable Message List -->
+          <div class="chat-messages-container" id="chat-messages-list">
+            <!-- Messages populated dynamically -->
+          </div>
+
+          <!-- Input Footer -->
+          <form class="chat-input-bar" id="chat-input-form">
+            <input 
+              type="text" 
+              id="chat-user-input" 
+              class="chat-text-input" 
+              placeholder="Ask Claude a question to reduce screen time or manage urges..." 
+              autocomplete="off"
+            />
+            <button type="submit" class="chat-send-btn" id="chat-send-btn">
+              <span>Send</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+            </button>
+          </form>
+          <div class="chat-footer-note">
+            <span>Powered by Anthropic Claude &bull; Brief, practical, non-judgmental replies under 100 words</span>
           </div>
         </div>
       </div>
@@ -1677,7 +2137,278 @@
 
       // Update Audit Tab calculations
       updateAuditTab(screen, social, sleep);
+
+      // Sync and reveal AI Chat Coach
+      const topDriver = impacts[0];
+      const topFeatureKey = MODEL.features[topDriver.idx];
+      const topFactorName = topDriver.label;
+
+      updateAiCoachContext({
+        score: score,
+        riskLevel: riskLevel,
+        topFactorKey: topFeatureKey,
+        topFactorName: topFactorName
+      });
+      revealChatCard();
     }
+
+    /* -------------------------------------------------------------
+       AI DIGITAL WELLBEING CHAT LOGIC
+    ------------------------------------------------------------- */
+    const FACTOR_QUESTIONS = {
+      night_usage_ratio: [
+        "What can I do instead of night scrolling?",
+        "How does late-night screen time disrupt melatonin and deep sleep?",
+        "How can I set up an effective 60-minute digital sunset routine?"
+      ],
+      unlocks_per_day: [
+        "How can I break the habit of compulsively checking my phone?",
+        "What friction techniques stop mindless pickups and reflex unlocks?",
+        "How should I batch my notifications to protect deep focus?"
+      ],
+      social_media_hours: [
+        "How do I stop infinite doomscrolling on social media feeds?",
+        "What are healthy dopamine replacement habits when I crave stimulation?",
+        "Should I delete social media apps or set daily 30-minute timers?"
+      ],
+      screen_time_hours: [
+        "What are 3 practical ways to cut 2 hours off my daily screen time?",
+        "How can I set up phone-free deep work blocks during the day?",
+        "What is the best way to handle phone cravings during downtime?"
+      ],
+      sleep_hours: [
+        "How does late phone use directly damage restorative sleep quality?",
+        "What is an analog bedtime wind-down routine to fall asleep faster?",
+        "How can I resist checking notifications first thing after waking up?"
+      ]
+    };
+
+    let currentChatContext = {
+      score: 51,
+      riskLevel: 'Moderate Risk',
+      topFactorKey: 'night_usage_ratio',
+      topFactorName: 'Bedtime Share'
+    };
+
+    let chatInitialized = false;
+
+    function revealChatCard() {
+      const card = document.getElementById('ai-chat-card');
+      if (card && !card.classList.contains('revealed')) {
+        card.classList.add('revealed');
+      }
+    }
+
+    function updateAiCoachContext(ctx) {
+      currentChatContext = ctx;
+
+      // Update header badge
+      const badgeElem = document.getElementById('chat-context-badge');
+      if (badgeElem) {
+        const colorVar = ctx.riskLevel.includes('High') 
+          ? 'var(--risk-high)' 
+          : ctx.riskLevel.includes('Moderate') 
+            ? 'var(--risk-mod)' 
+            : 'var(--risk-low)';
+        badgeElem.innerHTML = `
+          <span style="color: ${colorVar}; font-weight:700;">${ctx.riskLevel} (${ctx.score}/100)</span>
+          <span class="telemetry-divider">&bull;</span>
+          <span>Top Factor: <strong>${ctx.topFactorName}</strong></span>
+        `;
+      }
+
+      // Populate suggested questions
+      const chipsContainer = document.getElementById('suggested-chips-container');
+      if (chipsContainer) {
+        const questions = FACTOR_QUESTIONS[ctx.topFactorKey] || FACTOR_QUESTIONS['night_usage_ratio'];
+        chipsContainer.innerHTML = questions.map(q => {
+          const safeQ = q.replace(/'/g, "\\'");
+          return `
+            <button type="button" class="suggested-chip" onclick="handleSuggestedPromptClick('${safeQ}')">
+              <span style="color: var(--teal-400);">💬</span>
+              <span>${q}</span>
+            </button>
+          `;
+        }).join('');
+      }
+
+      // Initial welcome message from Coach
+      if (!chatInitialized) {
+        chatInitialized = true;
+        appendChatMessage('assistant', 
+          `👋 Welcome to your **Screen Signal AI Coach**! Your smartphone risk assessment shows: **${ctx.riskLevel}** (${ctx.score}/100) with **${ctx.topFactorName}** as your primary habit driver.\n\nClick any of the suggested questions above or ask me anything to get brief, practical suggestions to improve your daily digital balance.`
+        );
+      }
+    }
+
+    function formatAssistantMarkdown(text) {
+      let escaped = (text || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+      // Bold **text**
+      escaped = escaped.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      // Italic *text*
+      escaped = escaped.replace(/\*(.*?)\*/g, '<em>$1</em>');
+      // Inline code `text`
+      escaped = escaped.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+      // Paragraph formatting
+      const paragraphs = escaped.split(/\n\n+/);
+      return paragraphs.map(p => {
+        const lines = p.split(/\n/);
+        return `<p>${lines.join('<br>')}</p>`;
+      }).join('');
+    }
+
+    function appendChatMessage(role, content, isError = false) {
+      const container = document.getElementById('chat-messages-list');
+      if (!container) return;
+
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `chat-msg ${role}${isError ? ' error' : ''}`;
+
+      const avatar = document.createElement('div');
+      avatar.className = `msg-avatar ${role === 'user' ? 'user-av' : 'assistant-av'}`;
+      avatar.innerHTML = role === 'user' 
+        ? 'You' 
+        : `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path></svg>`;
+
+      const bubble = document.createElement('div');
+      bubble.className = 'msg-bubble';
+
+      if (role === 'assistant') {
+        bubble.innerHTML = formatAssistantMarkdown(content);
+      } else {
+        const p = document.createElement('p');
+        p.textContent = content;
+        bubble.appendChild(p);
+      }
+
+      msgDiv.appendChild(avatar);
+      msgDiv.appendChild(bubble);
+      container.appendChild(msgDiv);
+      scrollChatToBottom();
+    }
+
+    let loadingCounter = 0;
+    function appendLoadingIndicator() {
+      const container = document.getElementById('chat-messages-list');
+      if (!container) return null;
+
+      loadingCounter++;
+      const id = `loading-msg-${loadingCounter}`;
+
+      const msgDiv = document.createElement('div');
+      msgDiv.id = id;
+      msgDiv.className = 'chat-msg assistant loading-state';
+
+      msgDiv.innerHTML = `
+        <div class="msg-avatar assistant-av">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+        </div>
+        <div class="msg-bubble">
+          <div class="typing-dots-wrap">
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+            <span class="typing-label">Claude is analyzing &amp; replying...</span>
+          </div>
+        </div>
+      `;
+
+      container.appendChild(msgDiv);
+      return id;
+    }
+
+    function removeLoadingIndicator(id) {
+      if (!id) return;
+      const el = document.getElementById(id);
+      if (el) el.remove();
+    }
+
+    function scrollChatToBottom() {
+      const container = document.getElementById('chat-messages-list');
+      if (container) {
+        container.scrollTop = container.scrollHeight;
+      }
+    }
+
+    async function sendUserChatMessage(messageText) {
+      const text = (messageText || '').trim();
+      if (!text) return;
+
+      const input = document.getElementById('chat-user-input');
+      const sendBtn = document.getElementById('chat-send-btn');
+      if (input) input.value = '';
+
+      // Append user message
+      appendChatMessage('user', text);
+
+      // Disable send button while waiting
+      if (sendBtn) sendBtn.disabled = true;
+
+      // Append loading indicator
+      const loadingId = appendLoadingIndicator();
+      scrollChatToBottom();
+
+      // Endpoint resolution:
+      const baseUrl = (window.location.origin && window.location.origin.includes(':8000')) 
+        ? '' 
+        : 'http://127.0.0.1:8000';
+      const endpoint = `${baseUrl}/chat`;
+
+      const payload = {
+        message: text,
+        risk_level: currentChatContext.riskLevel.replace(' Risk', ''),
+        top_factor: currentChatContext.topFactorName,
+        score: Number(currentChatContext.score)
+      };
+
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        removeLoadingIndicator(loadingId);
+
+        if (!response.ok) {
+          let errDetail = `Server responded with status ${response.status}`;
+          try {
+            const errData = await response.json();
+            if (errData && (errData.detail || errData.reply)) {
+              errDetail = errData.detail || errData.reply;
+            }
+          } catch (e) {}
+          appendChatMessage('assistant', `⚠️ ${errDetail}`, true);
+        } else {
+          const data = await response.json();
+          appendChatMessage('assistant', data.reply || 'No reply received.');
+        }
+      } catch (networkErr) {
+        removeLoadingIndicator(loadingId);
+        appendChatMessage('assistant', 
+          `⚠️ Could not connect to the backend server at \`${endpoint}\`.\n\nMake sure the FastAPI backend is running:\n\`cd backend && python main.py\`\n\n*(Error: ${networkErr.message})*`,
+          true
+        );
+      } finally {
+        if (sendBtn) sendBtn.disabled = false;
+        if (input) input.focus();
+        scrollChatToBottom();
+      }
+    }
+
+    window.handleSuggestedPromptClick = function(questionText) {
+      sendUserChatMessage(questionText);
+    };
 
     function updateAuditTab(screen, social, sleep) {
       const lifetimeYrs = ((screen / 24) * 60).toFixed(1);
@@ -1762,6 +2493,18 @@
       document.getElementById('chip-mod').addEventListener('click', () => applyPreset('mod'));
       document.getElementById('chip-night').addEventListener('click', () => applyPreset('night'));
       document.getElementById('chip-high').addEventListener('click', () => applyPreset('high'));
+
+      // Form submission for chat
+      const chatForm = document.getElementById('chat-input-form');
+      if (chatForm) {
+        chatForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const input = document.getElementById('chat-user-input');
+          if (input && input.value.trim()) {
+            sendUserChatMessage(input.value.trim());
+          }
+        });
+      }
 
       calculate();
     }
