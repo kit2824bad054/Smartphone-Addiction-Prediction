@@ -35,23 +35,68 @@ class ChatResponse(BaseModel):
     reply: str
 
 
+def generate_smart_fallback(message: str, risk_level: str, top_factor: str, score: float) -> str:
+    """Provides high-quality, practical digital wellbeing suggestions if the API key is not yet configured."""
+    msg = message.lower()
+
+    if any(w in msg for w in ["night", "bed", "sleep", "scroll", "sunset", "melatonin", "evening"]):
+        return (
+            "**Nighttime Screen Interventions**:\n\n"
+            "1. **60-Minute Digital Sunset**: Cease all screen use 1 hour prior to sleep so melatonin can rise naturally.\n"
+            "2. **Charging Displacement**: Plug your charger in another room or at least 10 feet away from your bed.\n"
+            "3. **Analog Bedside Table**: Keep a physical book, journal, or standalone alarm clock near your bed instead of your phone."
+        )
+    elif any(w in msg for w in ["unlock", "check", "pick", "compulsive", "reflex", "habit", "twitch"]):
+        return (
+            "**Compulsive Pickup Interventions**:\n\n"
+            "1. **Notification Cleanse**: Turn off all banners and badges except direct human phone calls.\n"
+            "2. **3 Scheduled Windows**: Allocate dedicated 15-minute checking slots (e.g. 10 AM, 2 PM, 6 PM) rather than continuous micro-glances.\n"
+            "3. **Physical Friction**: Put an elastic band around your phone or use a complex alphanumeric passcode to disrupt mindless muscle memory."
+        )
+    elif any(w in msg for w in ["social", "instagram", "tiktok", "reels", "shorts", "feed", "doomscroll"]):
+        return (
+            "**Social Media Boundary Protocol**:\n\n"
+            "1. **Grayscale Display**: Switch your phone display to black & white (Settings > Accessibility > Color Filters). Without color, feeds lose up to 40% of their draw.\n"
+            "2. **30-Minute App Timer**: Enforce a strict daily cap in Digital Wellbeing / Screen Time.\n"
+            "3. **Browser Only**: Delete native apps and access feeds only via mobile browser to add intentional friction."
+        )
+    elif any(w in msg for w in ["screen", "time", "hour", "reduce", "cut", "focus", "work"]):
+        return (
+            f"**Action Plan for {risk_level} Risk ({score}/100)**:\n\n"
+            "1. **Out-of-Sight Work Sprints**: Place your phone in a desk drawer during 50-minute deep work intervals.\n"
+            "2. **Device-Free Morning**: Protect the first 30 minutes after waking up from all screen exposure.\n"
+            "3. **Analog Substitutions**: Fill micro-breaks with physical stretching, walking, or hydration instead of screen scrolling."
+        )
+    else:
+        return (
+            f"**Digital Wellbeing Coach Recommendation**:\n\n"
+            f"Based on your assessment ({risk_level} Risk, {score}/100 score, top driver: {top_factor}), "
+            "small environmental changes work better than willpower:\n\n"
+            "• **Home Screen Cleanse**: Remove distracting social and video apps from your main dock.\n"
+            "• **Nightly Displacement**: Charge your phone across the room or outside the bedroom.\n"
+            "• **Batch Notifications**: Schedule fixed daily check-in blocks to protect deep work."
+        )
+
+
 def generate_chat_reply(message: str, risk_level: str, top_factor: str, score: float) -> str:
     """
     Calls the Anthropic Claude API with a supportive digital-wellbeing system prompt.
     Gracefully handles missing API keys, rate limits, model availability, and network issues.
     """
-    # Reload .env if it was created/modified during runtime
+    # Reload .env if modified during runtime
     for p in _env_locations:
         if p.is_file():
             load_dotenv(dotenv_path=p, override=False)
 
     api_key = os.getenv("ANTHROPIC_API_KEY", "").strip()
 
-    # Graceful handling of missing or placeholder API key
+    # If API key is not yet configured, provide smart contextual suggestions + setup tip
     if not api_key or api_key.startswith("your_") or api_key == "placeholder":
+        advice = generate_smart_fallback(message, risk_level, top_factor, score)
         return (
-            "⚠️ Anthropic API key is not configured. "
-            "Please add ANTHROPIC_API_KEY to your .env file in the backend directory to enable live AI responses."
+            f"{advice}\n\n"
+            "*(💡 Tip: To enable real-time conversational responses with Claude 3.7 Sonnet, "
+            "add your `ANTHROPIC_API_KEY` to `backend/.env`).*"
         )
 
     # Build system prompt according to requirements
@@ -107,19 +152,22 @@ def generate_chat_reply(message: str, risk_level: str, top_factor: str, score: f
             last_error = e
             continue
         except anthropic.AuthenticationError:
+            fallback = generate_smart_fallback(message, risk_level, top_factor, score)
             return (
-                "⚠️ Authentication Error: The provided Anthropic API key is invalid. "
-                "Please verify your ANTHROPIC_API_KEY in the .env file."
+                f"{fallback}\n\n"
+                "*(⚠️ Note: The provided `ANTHROPIC_API_KEY` in `.env` is invalid. Showing offline guidance).* "
             )
         except anthropic.RateLimitError:
+            fallback = generate_smart_fallback(message, risk_level, top_factor, score)
             return (
-                "⚠️ Rate Limit: Anthropic API rate limit reached. "
-                "Please wait a few moments before trying again."
+                f"{fallback}\n\n"
+                "*(⚠️ Note: Anthropic rate limit reached. Showing offline guidance).* "
             )
         except anthropic.APIConnectionError:
+            fallback = generate_smart_fallback(message, risk_level, top_factor, score)
             return (
-                "⚠️ Connection Error: Unable to reach Anthropic API servers. "
-                "Please check your internet connection."
+                f"{fallback}\n\n"
+                "*(⚠️ Note: Could not reach Anthropic servers. Showing offline guidance).* "
             )
         except anthropic.BadRequestError as e:
             return f"⚠️ Anthropic Request Error: {e.message}"
@@ -129,6 +177,7 @@ def generate_chat_reply(message: str, risk_level: str, top_factor: str, score: f
             return f"⚠️ AI Assistant Error: {str(e)}"
 
     if last_error:
-        return f"⚠️ Anthropic Model Error: {str(last_error)}"
+        fallback = generate_smart_fallback(message, risk_level, top_factor, score)
+        return f"{fallback}\n\n*(Model note: {str(last_error)})*"
 
-    return "⚠️ Could not generate an AI response. Please try again."
+    return generate_smart_fallback(message, risk_level, top_factor, score)

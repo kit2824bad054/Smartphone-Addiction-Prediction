@@ -1728,7 +1728,7 @@
           </div>
 
           <!-- Input Footer -->
-          <form class="chat-input-bar" id="chat-input-form">
+          <form class="chat-input-bar" id="chat-input-form" onsubmit="event.preventDefault();">
             <input 
               type="text" 
               id="chat-user-input" 
@@ -2217,19 +2217,19 @@
         `;
       }
 
-      // Populate suggested questions
+      // Populate suggested questions with clean event listeners
       const chipsContainer = document.getElementById('suggested-chips-container');
       if (chipsContainer) {
+        chipsContainer.innerHTML = '';
         const questions = FACTOR_QUESTIONS[ctx.topFactorKey] || FACTOR_QUESTIONS['night_usage_ratio'];
-        chipsContainer.innerHTML = questions.map(q => {
-          const safeQ = q.replace(/'/g, "\\'");
-          return `
-            <button type="button" class="suggested-chip" onclick="handleSuggestedPromptClick('${safeQ}')">
-              <span style="color: var(--teal-400);">💬</span>
-              <span>${q}</span>
-            </button>
-          `;
-        }).join('');
+        questions.forEach(q => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'suggested-chip';
+          btn.innerHTML = `<span style="color: var(--teal-400);">💬</span><span>${q}</span>`;
+          btn.addEventListener('click', () => sendUserChatMessage(q));
+          chipsContainer.appendChild(btn);
+        });
       }
 
       // Initial welcome message from Coach
@@ -2395,14 +2395,29 @@
         }
       } catch (networkErr) {
         removeLoadingIndicator(loadingId);
+        const fallback = getLocalFallbackAdvice(text, currentChatContext);
         appendChatMessage('assistant', 
-          `⚠️ Could not connect to the backend server at \`${endpoint}\`.\n\nMake sure the FastAPI backend is running:\n\`cd backend && python main.py\`\n\n*(Error: ${networkErr.message})*`,
-          true
+          `${fallback}\n\n*(💡 Tip: Start the FastAPI backend with \`cd backend && python main.py\` to enable live Claude 3.7 Sonnet inference).*`
         );
       } finally {
         if (sendBtn) sendBtn.disabled = false;
         if (input) input.focus();
         scrollChatToBottom();
+      }
+    }
+
+    function getLocalFallbackAdvice(message, ctx) {
+      const msg = (message || '').toLowerCase();
+      if (/night|bed|sleep|scroll|sunset|melatonin/.test(msg)) {
+        return "**Bedtime Screen Protocol**:\n\n1. **60-Minute Digital Sunset**: Turn off all screens 1 hour before sleep to protect melatonin synthesis.\n2. **Charging Displacement**: Keep your phone charger outside the bedroom or at least 10 feet away from the bed.\n3. **Analog Routine**: Read a physical book or journal before sleeping instead of reaching for your phone.";
+      } else if (/unlock|check|pick|compulsive|reflex|habit/.test(msg)) {
+        return "**Taming Compulsive Pickups**:\n\n1. **Notification Cleanse**: Turn off all non-human banners and alerts.\n2. **3 Scheduled Check Windows**: Check messages at fixed times (e.g. 10 AM, 2 PM, 6 PM) rather than micro-glancing.\n3. **Physical Friction**: Put an elastic band on the phone or use a complex passcode to disrupt muscle memory.";
+      } else if (/social|instagram|tiktok|reels|shorts|feed/.test(msg)) {
+        return "**Social Media Boundaries**:\n\n1. **Grayscale Screen**: Turn display to black & white (Settings > Accessibility > Color Filters) to reduce dopamine draw by 40%.\n2. **30-Min App Limits**: Set a daily time cap in Digital Wellbeing.\n3. **Browser Only**: Delete native apps and access accounts strictly via mobile web browser.";
+      } else if (/screen|time|hour|reduce|cut|focus|work/.test(msg)) {
+        return `**Action Plan for ${ctx.riskLevel} (${ctx.score}/100)**:\n\n1. **Out-of-Sight Sprints**: Place phone in a drawer during 50-minute deep work blocks.\n2. **Analog Morning**: Protect the first 30 minutes after waking up from screens.\n3. **Movement Breaks**: Replace screen breaks with physical stretching or hydration.`;
+      } else {
+        return `**Personalized Guidance (${ctx.riskLevel}, ${ctx.score}/100)**:\n\nBased on your assessment (top driver: **${ctx.topFactorName}**):\n• Remove distracting apps from your home screen dock.\n• Charge your device outside the bedroom overnight.\n• Schedule daily phone-free focus blocks to rebuild sustained attention.`;
       }
     }
 
