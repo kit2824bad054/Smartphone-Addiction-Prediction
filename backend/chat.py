@@ -5,6 +5,7 @@ Loads ANTHROPIC_API_KEY from .env using python-dotenv and handles requests grace
 
 import os
 from pathlib import Path
+from typing import Optional, List, Dict, Any
 import requests
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
@@ -30,6 +31,7 @@ class ChatRequest(BaseModel):
     risk_level: str = Field(..., description="Current assessed risk level: Low, Moderate, or High")
     top_factor: str = Field(..., description="Top contributing habit factor, e.g. Bedtime Screen, Phone Unlocks")
     score: float = Field(..., ge=0.0, le=100.0, description="Risk assessment score (0 to 100)")
+    history: Optional[List[Dict[str, Any]]] = Field(default=None, description="Previous messages in the conversation")
 
 
 class ChatResponse(BaseModel):
@@ -79,8 +81,8 @@ def generate_smart_fallback(message: str, risk_level: str, top_factor: str, scor
         )
 
 
-def call_gemini_api(api_key: str, message: str, system_prompt: str) -> str:
-    """Calls Google Gemini API using fast and reliable candidate models."""
+def call_gemini_api(api_key: str, message: str, system_prompt: str, history: Optional[List[Dict[str, Any]]] = None) -> str:
+    """Calls Google Gemini API using fast and reliable candidate models with conversation history."""
     candidate_models = [
         "gemini-flash-lite-latest",
         "gemini-3.5-flash-lite",
@@ -89,19 +91,32 @@ def call_gemini_api(api_key: str, message: str, system_prompt: str) -> str:
         "gemini-3.1-flash-lite",
     ]
     headers = {"Content-Type": "application/json"}
+    
+    contents = []
+    if history:
+        for turn in history[-8:]:
+            raw_role = str(turn.get("role", "")).lower()
+            role = "model" if raw_role in ["assistant", "model", "bot"] else "user"
+            text_val = str(turn.get("content") or turn.get("text") or "").strip()
+            if text_val:
+                contents.append({
+                    "role": role,
+                    "parts": [{"text": text_val}]
+                })
+
+    contents.append({
+        "role": "user",
+        "parts": [{"text": message.strip()}]
+    })
+
     payload = {
         "systemInstruction": {
             "parts": [{"text": system_prompt}]
         },
-        "contents": [
-            {
-                "role": "user",
-                "parts": [{"text": message.strip()}]
-            }
-        ],
+        "contents": contents,
         "generationConfig": {
             "maxOutputTokens": 1000,
-            "temperature": 0.7
+            "temperature": 0.85
         }
     }
 
@@ -123,10 +138,10 @@ def call_gemini_api(api_key: str, message: str, system_prompt: str) -> str:
     return ""
 
 
-def generate_chat_reply(message: str, risk_level: str, top_factor: str, score: float) -> str:
+def generate_chat_reply(message: str, risk_level: str, top_factor: str, score: float, history: Optional[List[Dict[str, Any]]] = None) -> str:
     """
-    Calls Google Gemini API or Anthropic Claude API with a supportive digital-wellbeing system prompt.
-    Gracefully handles missing API keys, rate limits, model availability, and network issues.
+    Calls Google Gemini API (or Anthropic Claude API as fallback) with a supportive digital-wellbeing system prompt.
+    Includes past conversation turns and explicit instructions to prevent repetitive answers.
     """
     # Reload .env if modified during runtime
     for p in _env_locations:
@@ -140,18 +155,20 @@ def generate_chat_reply(message: str, risk_level: str, top_factor: str, score: f
     if not gemini_key and (anthropic_key.startswith("AQ.") or anthropic_key.startswith("AIza")):
         gemini_key = anthropic_key
 
-    # Build system prompt according to requirements
+    # Build system prompt with anti-repetition directive
     system_prompt = (
-        f"You are a supportive digital-wellbeing assistant. "
-        f"The user's smartphone risk assessment shows: "
-        f"risk_level={risk_level}, score={score}/100, top contributing factor={top_factor}. "
-        f"Give brief, practical, non-judgmental suggestions to reduce screen time related to their situation. "
-        f"Keep replies under 100 words."
+        f"You are an encouraging, practical digital-wellbeing AI coach. "
+        f"The user's smartphone risk assessment: "
+        f"risk_level={risk_level}, score={score}/100, top driver={top_factor}. "
+        f"Answer the user's latest query directly with actionable, compassionate guidance. "
+        f"CRITICAL RULE: Do NOT repeat the exact same suggestions, bullet points, or examples you have already given in this conversation. "
+        f"Introduce fresh strategies, psychological friction ideas, habit-stacking substitutions, or reflection exercises every time. "
+        f"Keep replies clear, engaging, and under 110 words."
     )
 
     # 1. Try Google Gemini API if Gemini key is available
     if gemini_key and not gemini_key.startswith("your_") and gemini_key != "placeholder":
-        reply = call_gemini_api(gemini_key, message, system_prompt)
+        reply = call_gemini_api(gemini_key, message, system_prompt, history=history)
         if reply:
             return reply
 

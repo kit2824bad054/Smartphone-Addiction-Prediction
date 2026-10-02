@@ -250,8 +250,8 @@ def predict(request: PredictionRequest):
 @app.post("/chat", response_model=ChatResponse)
 def chat_endpoint(request: ChatRequest):
     """
-    Real AI Digital-Wellbeing Chat endpoint powered by Anthropic Claude.
-    Accepts: {message: string, risk_level: string, top_factor: string, score: number}
+    Real AI Digital-Wellbeing Chat endpoint powered by Google Gemini.
+    Accepts: {message: string, risk_level: string, top_factor: string, score: number, history: list}
     Returns: {reply: string}
     """
     reply = generate_chat_reply(
@@ -259,6 +259,7 @@ def chat_endpoint(request: ChatRequest):
         risk_level=request.risk_level,
         top_factor=request.top_factor,
         score=request.score,
+        history=request.history,
     )
     return ChatResponse(reply=reply)
 
