@@ -1,0 +1,9 @@
+{
+  "name": "smartphone-addiction-frontend",
+  "version": "1.0.0",
+  "description": "Frontend for Smartphone Addiction Prediction",
+  "scripts": {
+    "dev": "npx -y serve -l 3000 .",
+    "start": "npx -y serve -l 3000 ."
+  }
+}

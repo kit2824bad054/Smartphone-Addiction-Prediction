@@ -10,6 +10,7 @@ import numpy as np
 import joblib
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 try:
@@ -118,6 +119,24 @@ class PredictionResponse(BaseModel):
 
 @app.get("/")
 def read_root():
+    frontend_candidates = [
+        os.path.join(os.path.dirname(__file__), "..", "frontend", "index.html"),
+        os.path.join(os.path.dirname(__file__), "..", "index.html"),
+        os.path.join(os.path.dirname(__file__), "index.html"),
+    ]
+    for p in frontend_candidates:
+        if os.path.exists(p):
+            return FileResponse(os.path.abspath(p))
+    return {
+        "app": "Screen Signal API",
+        "version": "1.0.0",
+        "status": "online",
+        "model_loaded": model_package is not None,
+        "docs_url": "/docs",
+    }
+
+@app.get("/api/status")
+def api_status():
     return {
         "app": "Screen Signal API",
         "version": "1.0.0",

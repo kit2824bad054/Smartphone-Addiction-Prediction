@@ -1,0 +1,11 @@
+{
+  "name": "smartphone-addiction-prediction",
+  "version": "1.0.0",
+  "description": "Smartphone Addiction Prediction & AI Digital Wellbeing Coach",
+  "scripts": {
+    "dev": "python -m uvicorn backend.main:app --reload --host 127.0.0.1 --port 8000",
+    "start": "python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000",
+    "backend": "python -m uvicorn backend.main:app --reload --host 127.0.0.1 --port 8000",
+    "frontend": "npx -y serve -l 3000 frontend"
+  }
+}
