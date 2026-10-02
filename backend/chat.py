@@ -5,6 +5,7 @@ Loads ANTHROPIC_API_KEY from .env using python-dotenv and handles requests grace
 
 import os
 from pathlib import Path
+import requests
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
 import anthropic
@@ -78,26 +79,66 @@ def generate_smart_fallback(message: str, risk_level: str, top_factor: str, scor
         )
 
 
+def call_gemini_api(api_key: str, message: str, system_prompt: str) -> str:
+    """Calls Google Gemini API using fast and reliable candidate models."""
+    candidate_models = [
+        "gemini-flash-lite-latest",
+        "gemini-3.5-flash-lite",
+        "gemini-3.8-flash",
+        "gemini-flash-latest",
+        "gemini-3.1-flash-lite",
+    ]
+    headers = {"Content-Type": "application/json"}
+    payload = {
+        "systemInstruction": {
+            "parts": [{"text": system_prompt}]
+        },
+        "contents": [
+            {
+                "role": "user",
+                "parts": [{"text": message.strip()}]
+            }
+        ],
+        "generationConfig": {
+            "maxOutputTokens": 1000,
+            "temperature": 0.7
+        }
+    }
+
+    for model_name in candidate_models:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+        try:
+            resp = requests.post(url, json=payload, headers=headers, timeout=10)
+            if resp.status_code == 200:
+                data = resp.json()
+                candidates = data.get("candidates", [])
+                if candidates and "content" in candidates[0]:
+                    parts = candidates[0]["content"].get("parts", [])
+                    reply = "".join(p.get("text", "") for p in parts if not p.get("thought", False)).strip()
+                    if reply:
+                        return reply
+        except Exception:
+            continue
+
+    return ""
+
+
 def generate_chat_reply(message: str, risk_level: str, top_factor: str, score: float) -> str:
     """
-    Calls the Anthropic Claude API with a supportive digital-wellbeing system prompt.
+    Calls Google Gemini API or Anthropic Claude API with a supportive digital-wellbeing system prompt.
     Gracefully handles missing API keys, rate limits, model availability, and network issues.
     """
     # Reload .env if modified during runtime
     for p in _env_locations:
         if p.is_file():
-            load_dotenv(dotenv_path=p, override=False)
+            load_dotenv(dotenv_path=p, override=True)
 
-    api_key = os.getenv("ANTHROPIC_API_KEY", "").strip()
+    gemini_key = os.getenv("GEMINI_API_KEY", "").strip()
+    anthropic_key = os.getenv("ANTHROPIC_API_KEY", "").strip()
 
-    # If API key is not yet configured, provide smart contextual suggestions + setup tip
-    if not api_key or api_key.startswith("your_") or api_key == "placeholder":
-        advice = generate_smart_fallback(message, risk_level, top_factor, score)
-        return (
-            f"{advice}\n\n"
-            "*(💡 Tip: To enable real-time conversational responses with Claude 3.7 Sonnet, "
-            "add your `ANTHROPIC_API_KEY` to `backend/.env`).*"
-        )
+    # Detect if user placed Gemini key in ANTHROPIC_API_KEY
+    if not gemini_key and (anthropic_key.startswith("AQ.") or anthropic_key.startswith("AIza")):
+        gemini_key = anthropic_key
 
     # Build system prompt according to requirements
     system_prompt = (
@@ -107,6 +148,18 @@ def generate_chat_reply(message: str, risk_level: str, top_factor: str, score: f
         f"Give brief, practical, non-judgmental suggestions to reduce screen time related to their situation. "
         f"Keep replies under 100 words."
     )
+
+    # 1. Try Google Gemini API if Gemini key is available
+    if gemini_key and not gemini_key.startswith("your_") and gemini_key != "placeholder":
+        reply = call_gemini_api(gemini_key, message, system_prompt)
+        if reply:
+            return reply
+
+    # 2. Try Anthropic Claude API if Anthropic key is available (starts with sk-)
+    api_key = anthropic_key
+    if not api_key or api_key.startswith("your_") or api_key == "placeholder" or api_key.startswith("AQ.") or api_key.startswith("AIza"):
+        advice = generate_smart_fallback(message, risk_level, top_factor, score)
+        return advice
 
     # Candidate models to try (latest sonnet / configurable)
     configured_model = os.getenv("ANTHROPIC_MODEL", "claude-3-7-sonnet-latest").strip()
