@@ -222,6 +222,19 @@
       gap: 4px;
     }
 
+    .mini-focus-stat {
+      margin-top: 6px;
+      padding-top: 6px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.08);
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--teal-300);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      line-height: 1.3;
+    }
+
     .mini-status-title {
       font-size: 0.68rem;
       font-family: var(--font-mono);
@@ -980,14 +993,8 @@
 
     .audit-stats-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
       gap: 16px;
-    }
-
-    @media (max-width: 900px) {
-      .audit-stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
     }
 
     @media (max-width: 540px) {
@@ -1302,6 +1309,337 @@
     .btn-reset-plan:hover {
       border-color: #f87171;
       color: #f87171;
+    }
+
+    /* -------------------------------------------------------------
+       VIEW 4: FOCUS MODE & DEEP WORK TIMER
+    ------------------------------------------------------------- */
+    .focus-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .focus-banner-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .focus-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .focus-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 0.78rem;
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+
+    .focus-pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      display: inline-block;
+      transition: all 0.3s ease;
+    }
+
+    .focus-pulse-dot.active {
+      background: var(--teal-400);
+      box-shadow: 0 0 10px var(--teal-400);
+      animation: focusPulse 2s infinite;
+    }
+
+    @keyframes focusPulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(45, 212, 191, 0.7); }
+      70% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(45, 212, 191, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(45, 212, 191, 0); }
+    }
+
+    .focus-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      padding: 8px 0;
+    }
+
+    .focus-ring-container {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+    }
+
+    .focus-ring-svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .focus-ring-progress {
+      transition: stroke-dashoffset 0.85s linear;
+    }
+
+    .focus-center-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 16px;
+      max-width: 220px;
+    }
+
+    .focus-timer-digits {
+      font-family: var(--font-mono);
+      font-size: 3.4rem;
+      font-weight: 800;
+      color: var(--text-white);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .focus-timer-sub {
+      font-size: 0.76rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      margin-top: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .focus-success-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      animation: fadeInScale 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .focus-success-icon-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2px;
+    }
+
+    .focus-checkmark-svg {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      display: block;
+      stroke-width: 3.5;
+      stroke: var(--teal-400);
+      stroke-miterlimit: 10;
+    }
+
+    .checkmark-circle {
+      stroke-dasharray: 166;
+      stroke-dashoffset: 166;
+      stroke-width: 3.5;
+      stroke-miterlimit: 10;
+      stroke: var(--teal-500);
+      fill: rgba(20, 184, 166, 0.1);
+      animation: checkStroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    }
+
+    .checkmark-check {
+      transform-origin: 50% 50%;
+      stroke-dasharray: 48;
+      stroke-dashoffset: 48;
+      stroke: var(--teal-300);
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      animation: checkStroke 0.35s cubic-bezier(0.65, 0, 0.45, 1) 0.5s forwards;
+    }
+
+    @keyframes checkStroke {
+      100% { stroke-dashoffset: 0; }
+    }
+
+    .focus-success-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-white);
+      line-height: 1.3;
+    }
+
+    .focus-reset-note {
+      font-size: 0.74rem;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: #34d399;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      margin-top: 4px;
+      line-height: 1.3;
+    }
+
+    .focus-message-card {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 8px 20px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px dashed var(--border-subtle);
+      border-radius: var(--radius-pill);
+      max-width: 520px;
+      margin: 0 auto;
+      transition: opacity 0.3s ease;
+    }
+
+    .focus-quote-icon {
+      color: var(--teal-400);
+      font-size: 0.85rem;
+    }
+
+    .focus-encouraging-text {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-style: italic;
+      text-align: center;
+      transition: opacity 0.3s ease;
+    }
+
+    .focus-presets-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .focus-presets-label {
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .focus-presets-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      width: 100%;
+      max-width: 460px;
+    }
+
+    .focus-preset-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: var(--text-primary);
+    }
+
+    .focus-preset-btn:hover {
+      border-color: var(--border-teal);
+      background: var(--bg-card-hover);
+      transform: translateY(-2px);
+    }
+
+    .focus-preset-btn.active {
+      border-color: var(--teal-400);
+      background: rgba(20, 184, 166, 0.12);
+      box-shadow: 0 0 16px rgba(20, 184, 166, 0.2);
+    }
+
+    .focus-preset-btn .preset-duration {
+      font-family: var(--font-mono);
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-white);
+    }
+
+    .focus-preset-btn.active .preset-duration {
+      color: var(--teal-300);
+    }
+
+    .focus-preset-btn .preset-tag {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .focus-actions-row {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      min-height: 42px;
+    }
+
+    .btn-focus-stop {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(244, 63, 94, 0.12);
+      border: 1px solid rgba(244, 63, 94, 0.35);
+      color: #fda4af;
+      padding: 10px 24px;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-focus-stop:hover {
+      background: rgba(244, 63, 94, 0.22);
+      border-color: rgba(244, 63, 94, 0.6);
+      color: #fff;
+    }
+
+    .focus-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .focus-meta-grid {
+        grid-template-columns: 1fr;
+      }
+      .focus-presets-grid {
+        max-width: 100%;
+      }
     }
 
     /* -------------------------------------------------------------
@@ -1733,6 +2071,16 @@
               <span>7-Day Reset Plan</span>
             </button>
           </li>
+          <li>
+            <button class="nav-btn" data-tab="tab-focus" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <circle cx="12" cy="12" r="6"></circle>
+                <circle cx="12" cy="12" r="2"></circle>
+              </svg>
+              <span>Focus Mode</span>
+            </button>
+          </li>
         </ul>
       </nav>
     </div>
@@ -1745,6 +2093,7 @@
           <span class="mini-score-val" id="sidebar-mini-score">51/100</span>
           <span class="mini-badge moderate" id="sidebar-mini-badge">Moderate</span>
         </div>
+        <div class="mini-focus-stat" id="sidebar-focus-sessions-line" style="display: none;"></div>
       </div>
       <div class="private-tag">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -2090,6 +2439,11 @@
               <div class="audit-stat-value" id="stat-total-checks">0</div>
               <span class="audit-stat-sub">Logged assessments</span>
             </div>
+            <div class="audit-stat-card">
+              <span class="audit-stat-label">Total Focus Time This Week</span>
+              <div class="audit-stat-value teal" id="stat-focus-week">0m</div>
+              <span class="audit-stat-sub" id="stat-focus-sub">0 sessions logged</span>
+            </div>
           </div>
         </div>
 
@@ -2185,6 +2539,122 @@
           <button type="button" class="btn-reset-plan" id="btn-reset-plan" onclick="resetPlanChecklist()">
             ↺ Clear Checklist
           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 4: FOCUS MODE -->
+    <div class="tab-content" id="tab-focus">
+      <div class="focus-container">
+        <!-- Banner Card -->
+        <div class="focus-banner-card">
+          <div class="focus-header-row">
+            <div>
+              <h3 style="font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 4px;">Deep Focus Sanctuary</h3>
+              <p style="font-size: 0.85rem; color: var(--text-secondary);">Single-task with zero distractions. Rebuild attention span and dopamine balance with timed focus intervals.</p>
+            </div>
+            <div class="focus-status-badge" id="focus-header-badge">
+              <span class="focus-pulse-dot" id="focus-pulse-dot"></span>
+              <span id="focus-badge-text">Ready to Focus</span>
+            </div>
+          </div>
+
+          <!-- Main Interactive Stage -->
+          <div class="focus-stage">
+            <!-- Circular Progress Ring (SVG) -->
+            <div class="focus-ring-container">
+              <svg class="focus-ring-svg" width="280" height="280" viewBox="0 0 280 280">
+                <defs>
+                  <linearGradient id="focusTealGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="var(--teal-300)" />
+                    <stop offset="100%" stop-color="var(--teal-500)" />
+                  </linearGradient>
+                </defs>
+                <!-- Background track -->
+                <circle class="focus-ring-bg" cx="140" cy="140" r="115" fill="none" stroke="rgba(255, 255, 255, 0.06)" stroke-width="12" />
+                <!-- Dynamic progress ring -->
+                <circle id="focus-progress-circle" class="focus-ring-progress" cx="140" cy="140" r="115" fill="none" stroke="url(#focusTealGradient)" stroke-width="12" stroke-linecap="round" stroke-dasharray="722.57" stroke-dashoffset="0" transform="rotate(-90 140 140)" />
+              </svg>
+
+              <!-- Center Display (Countdown MM:SS or Success State) -->
+              <div class="focus-center-content" id="focus-center-content">
+                <!-- Standard Countdown Display -->
+                <div id="focus-timer-box" class="focus-timer-box">
+                  <div class="focus-timer-digits" id="focus-timer-display">25:00</div>
+                  <div class="focus-timer-sub" id="focus-timer-sub">Select duration to start</div>
+                </div>
+
+                <!-- Success State (Shown when timer reaches 0) -->
+                <div id="focus-success-state" class="focus-success-state" style="display: none;">
+                  <div class="focus-success-icon-wrap">
+                    <svg class="focus-checkmark-svg" viewBox="0 0 52 52">
+                      <circle class="checkmark-circle" cx="26" cy="26" r="24" fill="none"/>
+                      <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                    </svg>
+                  </div>
+                  <div class="focus-success-title" id="focus-success-msg">Session complete! 25 minutes focused.</div>
+                  <div class="focus-reset-note" id="focus-reset-note" style="display: none;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Rotating Encouraging Message (While running) -->
+            <div class="focus-message-card" id="focus-message-card" style="visibility: hidden;">
+              <span class="focus-quote-icon">✦</span>
+              <p class="focus-encouraging-text" id="focus-encouraging-text">Stay with it — every minute strengthens your attention span.</p>
+            </div>
+
+            <!-- Duration Presets as Buttons -->
+            <div class="focus-presets-wrapper" id="focus-presets-wrapper">
+              <span class="focus-presets-label">Duration Presets</span>
+              <div class="focus-presets-grid">
+                <button type="button" class="focus-preset-btn" data-min="10" id="preset-btn-10" onclick="startFocusTimer(10)">
+                  <span class="preset-duration">10 min</span>
+                  <span class="preset-tag">Quick Sprint</span>
+                </button>
+                <button type="button" class="focus-preset-btn active" data-min="25" id="preset-btn-25" onclick="startFocusTimer(25)">
+                  <span class="preset-duration">25 min</span>
+                  <span class="preset-tag">Pomodoro Focus</span>
+                </button>
+                <button type="button" class="focus-preset-btn" data-min="45" id="preset-btn-45" onclick="startFocusTimer(45)">
+                  <span class="preset-duration">45 min</span>
+                  <span class="preset-tag">Deep Work</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Action Controls -->
+            <div class="focus-actions-row">
+              <button type="button" class="btn-focus-stop" id="btn-focus-stop" onclick="stopFocusTimer()" style="display: none;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="5" y="5" width="14" height="14" rx="2"></rect>
+                </svg>
+                <span>Stop Session</span>
+              </button>
+              <button type="button" class="btn-action-teal" id="btn-focus-again" onclick="resetFocusTimerToDefault()" style="display: none;">
+                ↺ Start Another Session
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Weekly Focus Summary Meta Cards -->
+        <div class="focus-meta-grid">
+          <div class="audit-stat-card">
+            <span class="audit-stat-label">Total Focus This Week</span>
+            <div class="audit-stat-value teal" id="focus-tab-weekly-time">0m</div>
+            <span class="audit-stat-sub">Across all completed sessions</span>
+          </div>
+          <div class="audit-stat-card">
+            <span class="audit-stat-label">Sessions Completed</span>
+            <div class="audit-stat-value" id="focus-tab-weekly-count">0</div>
+            <span class="audit-stat-sub">This week</span>
+          </div>
+          <div class="audit-stat-card">
+            <span class="audit-stat-label">Reset Plan Synergy</span>
+            <div class="audit-stat-value green" id="focus-tab-synergy-val">Auto-Advance</div>
+            <span class="audit-stat-sub">Advances 7-day checklist on complete</span>
+          </div>
         </div>
       </div>
     </div>
@@ -2355,6 +2825,7 @@
       dom.sideScore.textContent = `${score}/100`;
       dom.sideBadge.className = `mini-badge ${badgeClass}`;
       dom.sideBadge.textContent = badgeClass.toUpperCase();
+      updateFocusDashboardStats();
 
       // Gauge animation
       const circumference = 251.2;
@@ -2765,7 +3236,8 @@
     const TAB_HEADERS = {
       'tab-assessment': { title: 'Habit Assessment & Simulator', sub: 'Adjust your daily parameters to quantify addiction risk and habit drivers.' },
       'tab-audit': { title: 'Lifetime & 24h Time Audit', sub: 'Understand where your daily hours go, track historical score trends, and audit time allocation.' },
-      'tab-protocol': { title: '7-Day Digital Reset Plan', sub: 'A structured, progressive checklist engineered to rebuild attention span and dopamine balance.' }
+      'tab-protocol': { title: '7-Day Digital Reset Plan', sub: 'A structured, progressive checklist engineered to rebuild attention span and dopamine balance.' },
+      'tab-focus': { title: 'Focus Mode & Attention Sanctuary', sub: 'Single-task with zero distractions. Rebuild attention span and flow state with timed focus intervals.' }
     };
 
     /* -------------------------------------------------------------
@@ -2773,6 +3245,7 @@
     ------------------------------------------------------------- */
     let inMemoryHistory = null;
     let inMemoryResetPlan = null;
+    let inMemoryFocusSessions = null;
 
     function getHistory() {
       try {
@@ -2805,6 +3278,7 @@
         if (typeof window !== 'undefined' && window.localStorage) {
           const raw = localStorage.getItem('screenSignalResetPlan');
           if (raw) return JSON.parse(raw);
+          return null;
         }
       } catch (e) {
         console.warn('localStorage read error for screenSignalResetPlan:', e);
@@ -2820,6 +3294,35 @@
         }
       } catch (e) {
         console.warn('localStorage write error for screenSignalResetPlan:', e);
+      }
+    }
+
+    function getFocusSessions() {
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          const raw = localStorage.getItem('screenSignalFocusSessions');
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) return parsed;
+            if (parsed && typeof parsed === 'object') return [parsed];
+          }
+        }
+      } catch (e) {
+        console.warn('localStorage read error for screenSignalFocusSessions:', e);
+      }
+      return inMemoryFocusSessions || [];
+    }
+
+    function saveFocusSession(session) {
+      const list = getFocusSessions();
+      list.push(session);
+      inMemoryFocusSessions = list;
+      try {
+        if (typeof window !== 'undefined' && window.localStorage) {
+          localStorage.setItem('screenSignalFocusSessions', JSON.stringify(list));
+        }
+      } catch (e) {
+        console.warn('localStorage write error for screenSignalFocusSessions:', e);
       }
     }
 
@@ -3056,6 +3559,7 @@
 
       if (countBadge) countBadge.textContent = `${history.length} Check-in${history.length === 1 ? '' : 's'}`;
       if (totalElem) totalElem.textContent = `${history.length}`;
+      updateFocusDashboardStats();
 
       if (history.length < 2) {
         if (emptyState) emptyState.style.display = 'flex';
@@ -3245,6 +3749,389 @@
     };
 
     /* -------------------------------------------------------------
+       VIEW 4: FOCUS MODE TIMER & WEB AUDIO CONTROLLER
+    ------------------------------------------------------------- */
+    let focusTimerInterval = null;
+    let focusMessageInterval = null;
+    let focusDurationSeconds = 25 * 60;
+    let focusRemainingSeconds = 25 * 60;
+    let focusSelectedMinutes = 25;
+    let focusIsRunning = false;
+    let focusAudioCtx = null;
+
+    const FOCUS_RING_CIRCUMFERENCE = 2 * Math.PI * 115; // ~722.57
+
+    const FOCUS_MESSAGES = [
+      "Stay with it — every minute strengthens your attention span.",
+      "Almost there — feel the deep focus momentum building.",
+      "Your focus is building. Let all notifications wait.",
+      "Single-tasking mode active. One moment, one objective.",
+      "Protect your attention. You are in control of your screen.",
+      "Deep breath. Clear mind. Stay immersed in the flow.",
+      "You are rewiring your brain for deeper focus right now."
+    ];
+    let focusMessageIndex = 0;
+
+    function getAudioContext() {
+      if (!focusAudioCtx && (window.AudioContext || window.webkitAudioContext)) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        focusAudioCtx = new AudioCtx();
+      }
+      if (focusAudioCtx && focusAudioCtx.state === 'suspended') {
+        focusAudioCtx.resume().catch(() => {});
+      }
+      return focusAudioCtx;
+    }
+
+    function playFocusSuccessSound() {
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+        const notes = [
+          { freq: 659.25, time: 0, dur: 0.4 },     // E5
+          { freq: 987.77, time: 0.12, dur: 0.7 }   // B5
+        ];
+
+        notes.forEach(n => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(n.freq, now + n.time);
+
+          gain.gain.setValueAtTime(0, now + n.time);
+          gain.gain.linearRampToValueAtTime(0.12, now + n.time + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + n.time + n.dur);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(now + n.time);
+          osc.stop(now + n.time + n.dur);
+        });
+      } catch (e) {
+        console.warn('Audio playback error:', e);
+      }
+    }
+
+    function formatTimeMMSS(sec) {
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    function updateFocusRingProgress(remaining, total) {
+      const circle = document.getElementById('focus-progress-circle');
+      if (!circle) return;
+      const fraction = total > 0 ? (remaining / total) : 0;
+      const offset = FOCUS_RING_CIRCUMFERENCE * (1 - fraction);
+      circle.style.strokeDashoffset = offset;
+    }
+
+    function setFocusEncouragingMessage(text) {
+      const msgElem = document.getElementById('focus-encouraging-text');
+      if (!msgElem) return;
+      msgElem.style.opacity = '0';
+      setTimeout(() => {
+        msgElem.textContent = text;
+        msgElem.style.opacity = '1';
+      }, 200);
+    }
+
+    function rotateFocusMessage() {
+      focusMessageIndex = (focusMessageIndex + 1) % FOCUS_MESSAGES.length;
+      setFocusEncouragingMessage(FOCUS_MESSAGES[focusMessageIndex]);
+    }
+
+    function getFocusStatsThisWeek() {
+      const sessions = getFocusSessions();
+      const now = new Date();
+
+      const day = now.getDay();
+      const diffToMonday = (day === 0 ? -6 : 1) - day;
+      const startOfWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() + diffToMonday, 0, 0, 0, 0);
+      const rolling7DaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+      let totalMinutes = 0;
+      let sessionCount = 0;
+
+      sessions.forEach(s => {
+        if (!s || !s.date) return;
+        try {
+          const d = new Date(s.date);
+          if (isNaN(d.getTime())) return;
+
+          if ((d >= startOfWeek && d <= now) || (d >= rolling7DaysAgo && d <= now)) {
+            const mins = Number(s.durationMinutes) || 0;
+            totalMinutes += mins;
+            sessionCount++;
+          }
+        } catch (_) {}
+      });
+
+      return { totalMinutes, sessionCount };
+    }
+
+    function updateFocusDashboardStats() {
+      const stats = getFocusStatsThisWeek();
+
+      // 1. Lifetime & 24h Audit tab stat card
+      const auditFocusElem = document.getElementById('stat-focus-week');
+      const auditFocusSub = document.getElementById('stat-focus-sub');
+      if (auditFocusElem) {
+        const totalMin = stats.totalMinutes;
+        let formatted = `${totalMin}m`;
+        if (totalMin >= 60) {
+          const h = Math.floor(totalMin / 60);
+          const m = totalMin % 60;
+          formatted = m > 0 ? `${h}h ${m}m` : `${h}h`;
+        }
+        auditFocusElem.textContent = formatted;
+      }
+      if (auditFocusSub) {
+        auditFocusSub.textContent = `${stats.sessionCount} session${stats.sessionCount === 1 ? '' : 's'} logged`;
+      }
+
+      // 2. Main sidebar Current Risk Status card line: "🔥 X focus sessions this week"
+      const sideFocusLine = document.getElementById('sidebar-focus-sessions-line');
+      if (sideFocusLine) {
+        if (stats.sessionCount > 0) {
+          sideFocusLine.style.display = 'flex';
+          sideFocusLine.textContent = `🔥 ${stats.sessionCount} focus session${stats.sessionCount === 1 ? '' : 's'} this week`;
+        } else {
+          sideFocusLine.style.display = 'none';
+          sideFocusLine.textContent = '';
+        }
+      }
+
+      // 3. Focus Mode tab internal stat cards
+      const focusTabTime = document.getElementById('focus-tab-weekly-time');
+      const focusTabCount = document.getElementById('focus-tab-weekly-count');
+      if (focusTabTime) {
+        const totalMin = stats.totalMinutes;
+        let formatted = `${totalMin}m`;
+        if (totalMin >= 60) {
+          const h = Math.floor(totalMin / 60);
+          const m = totalMin % 60;
+          formatted = m > 0 ? `${h}h ${m}m` : `${h}h`;
+        }
+        focusTabTime.textContent = formatted;
+      }
+      if (focusTabCount) {
+        focusTabCount.textContent = `${stats.sessionCount}`;
+      }
+    }
+
+    window.startFocusTimer = function(minutes) {
+      getAudioContext(); // prime audio context on user gesture
+      if (focusTimerInterval) clearInterval(focusTimerInterval);
+      if (focusMessageInterval) clearInterval(focusMessageInterval);
+
+      focusSelectedMinutes = minutes;
+      focusDurationSeconds = minutes * 60;
+      focusRemainingSeconds = focusDurationSeconds;
+      focusIsRunning = true;
+
+      // Update preset buttons state
+      document.querySelectorAll('.focus-preset-btn').forEach(btn => {
+        if (parseInt(btn.getAttribute('data-min'), 10) === minutes) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+
+      const timerDisplay = document.getElementById('focus-timer-display');
+      const timerSub = document.getElementById('focus-timer-sub');
+      const timerBox = document.getElementById('focus-timer-box');
+      const successState = document.getElementById('focus-success-state');
+      const btnStop = document.getElementById('btn-focus-stop');
+      const btnAgain = document.getElementById('btn-focus-again');
+      const msgCard = document.getElementById('focus-message-card');
+      const badgeText = document.getElementById('focus-badge-text');
+      const pulseDot = document.getElementById('focus-pulse-dot');
+
+      if (timerBox) timerBox.style.display = 'block';
+      if (successState) successState.style.display = 'none';
+      if (timerDisplay) timerDisplay.textContent = formatTimeMMSS(focusRemainingSeconds);
+      if (timerSub) timerSub.textContent = `Deep Focus (${minutes} min session)`;
+
+      if (btnStop) btnStop.style.display = 'inline-flex';
+      if (btnAgain) btnAgain.style.display = 'none';
+
+      if (badgeText) badgeText.textContent = `In Focus Session (${minutes} min)`;
+      if (pulseDot) pulseDot.classList.add('active');
+
+      updateFocusRingProgress(focusRemainingSeconds, focusDurationSeconds);
+
+      // Rotating encouraging message
+      focusMessageIndex = 0;
+      setFocusEncouragingMessage(FOCUS_MESSAGES[focusMessageIndex]);
+      if (msgCard) msgCard.style.visibility = 'visible';
+
+      focusMessageInterval = setInterval(rotateFocusMessage, 30000);
+
+      focusTimerInterval = setInterval(() => {
+        focusRemainingSeconds--;
+        if (timerDisplay) timerDisplay.textContent = formatTimeMMSS(Math.max(0, focusRemainingSeconds));
+        updateFocusRingProgress(focusRemainingSeconds, focusDurationSeconds);
+
+        if (focusRemainingSeconds <= 0) {
+          clearInterval(focusTimerInterval);
+          clearInterval(focusMessageInterval);
+          focusIsRunning = false;
+          handleFocusSessionComplete(focusSelectedMinutes);
+        }
+      }, 1000);
+    };
+
+    window.stopFocusTimer = function() {
+      if (focusTimerInterval) clearInterval(focusTimerInterval);
+      if (focusMessageInterval) clearInterval(focusMessageInterval);
+      focusIsRunning = false;
+
+      focusRemainingSeconds = focusSelectedMinutes * 60;
+      focusDurationSeconds = focusRemainingSeconds;
+
+      const timerDisplay = document.getElementById('focus-timer-display');
+      const timerSub = document.getElementById('focus-timer-sub');
+      const timerBox = document.getElementById('focus-timer-box');
+      const successState = document.getElementById('focus-success-state');
+      const btnStop = document.getElementById('btn-focus-stop');
+      const btnAgain = document.getElementById('btn-focus-again');
+      const msgCard = document.getElementById('focus-message-card');
+      const badgeText = document.getElementById('focus-badge-text');
+      const pulseDot = document.getElementById('focus-pulse-dot');
+
+      if (timerBox) timerBox.style.display = 'block';
+      if (successState) successState.style.display = 'none';
+      if (timerDisplay) timerDisplay.textContent = formatTimeMMSS(focusRemainingSeconds);
+      if (timerSub) timerSub.textContent = 'Session stopped early';
+
+      if (btnStop) btnStop.style.display = 'none';
+      if (btnAgain) btnAgain.style.display = 'none';
+
+      if (badgeText) badgeText.textContent = 'Ready to Focus';
+      if (pulseDot) pulseDot.classList.remove('active');
+      if (msgCard) msgCard.style.visibility = 'hidden';
+
+      updateFocusRingProgress(focusRemainingSeconds, focusDurationSeconds);
+    };
+
+    function handleFocusSessionComplete(durationMinutes) {
+      playFocusSuccessSound();
+
+      const sessionObj = {
+        date: new Date().toISOString(),
+        durationMinutes: durationMinutes
+      };
+      saveFocusSession(sessionObj);
+
+      let resetPlanNote = '';
+      try {
+        const plan = getResetPlan();
+        if (plan && Array.isArray(plan.checked)) {
+          const nextIdx = plan.checked.findIndex(c => !c);
+          if (nextIdx !== -1 && nextIdx < 7) {
+            plan.checked[nextIdx] = true;
+            plan.updatedAt = new Date().toISOString();
+            saveResetPlan(plan);
+            const dayNum = nextIdx + 1;
+            resetPlanNote = `Day ${dayNum} of your Reset Plan marked complete!`;
+
+            const card = document.getElementById(`reset-card-${nextIdx}`);
+            const chk = document.getElementById(`reset-chk-${nextIdx}`);
+            if (card) card.classList.add('completed');
+            if (chk) chk.checked = true;
+            if (typeof updateResetProgressBar === 'function') {
+              updateResetProgressBar(plan.checked);
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('Error checking reset plan in focus completion:', e);
+      }
+
+      const timerBox = document.getElementById('focus-timer-box');
+      const successState = document.getElementById('focus-success-state');
+      const successMsg = document.getElementById('focus-success-msg');
+      const resetNoteElem = document.getElementById('focus-reset-note');
+      const btnStop = document.getElementById('btn-focus-stop');
+      const btnAgain = document.getElementById('btn-focus-again');
+      const badgeText = document.getElementById('focus-badge-text');
+      const pulseDot = document.getElementById('focus-pulse-dot');
+      const msgCard = document.getElementById('focus-message-card');
+
+      if (timerBox) timerBox.style.display = 'none';
+      if (successState) successState.style.display = 'flex';
+      if (successMsg) successMsg.textContent = `Session complete! ${durationMinutes} minutes focused.`;
+
+      if (resetNoteElem) {
+        if (resetPlanNote) {
+          resetNoteElem.textContent = resetPlanNote;
+          resetNoteElem.style.display = 'inline-block';
+        } else {
+          resetNoteElem.textContent = '';
+          resetNoteElem.style.display = 'none';
+        }
+      }
+
+      if (btnStop) btnStop.style.display = 'none';
+      if (btnAgain) btnAgain.style.display = 'inline-flex';
+
+      if (badgeText) badgeText.textContent = 'Session Complete!';
+      if (pulseDot) pulseDot.classList.remove('active');
+
+      if (msgCard) {
+        setFocusEncouragingMessage("Session finished! Great work taking control of your attention.");
+        msgCard.style.visibility = 'visible';
+      }
+
+      updateFocusRingProgress(focusDurationSeconds, focusDurationSeconds);
+
+      updateFocusDashboardStats();
+    }
+    window.handleFocusSessionComplete = handleFocusSessionComplete;
+    window.updateFocusDashboardStats = updateFocusDashboardStats;
+    window.getFocusSessions = getFocusSessions;
+    window.saveFocusSession = saveFocusSession;
+
+    window.resetFocusTimerToDefault = function() {
+      focusRemainingSeconds = focusSelectedMinutes * 60;
+      focusDurationSeconds = focusRemainingSeconds;
+
+      const timerDisplay = document.getElementById('focus-timer-display');
+      const timerSub = document.getElementById('focus-timer-sub');
+      const timerBox = document.getElementById('focus-timer-box');
+      const successState = document.getElementById('focus-success-state');
+      const resetNoteElem = document.getElementById('focus-reset-note');
+      const btnStop = document.getElementById('btn-focus-stop');
+      const btnAgain = document.getElementById('btn-focus-again');
+      const badgeText = document.getElementById('focus-badge-text');
+      const pulseDot = document.getElementById('focus-pulse-dot');
+      const msgCard = document.getElementById('focus-message-card');
+
+      if (timerBox) timerBox.style.display = 'block';
+      if (successState) successState.style.display = 'none';
+      if (resetNoteElem) {
+        resetNoteElem.textContent = '';
+        resetNoteElem.style.display = 'none';
+      }
+      if (timerDisplay) timerDisplay.textContent = formatTimeMMSS(focusRemainingSeconds);
+      if (timerSub) timerSub.textContent = 'Select duration to start';
+
+      if (btnStop) btnStop.style.display = 'none';
+      if (btnAgain) btnAgain.style.display = 'none';
+
+      if (badgeText) badgeText.textContent = 'Ready to Focus';
+      if (pulseDot) pulseDot.classList.remove('active');
+      if (msgCard) msgCard.style.visibility = 'hidden';
+
+      updateFocusRingProgress(focusRemainingSeconds, focusDurationSeconds);
+    };
+
+    /* -------------------------------------------------------------
        CHECK MY RESULT ACTION HANDLER
     ------------------------------------------------------------- */
     function handleCheckResult() {
@@ -3303,6 +4190,8 @@
             }, 60);
           } else if (tabId === 'tab-protocol') {
             renderResetPlanTab();
+          } else if (tabId === 'tab-focus') {
+            updateFocusDashboardStats();
           }
         });
       });
@@ -3310,6 +4199,7 @@
 
     function init() {
       initNavigation();
+      updateFocusDashboardStats();
 
       [dom.sScreen, dom.sUnlocks, dom.sSocial, dom.sNight, dom.sSleep].forEach(slider => {
         slider.addEventListener('input', () => {
